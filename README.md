@@ -1,6 +1,33 @@
 Proteus
-=====
+=======
 
-"Fork Proteus" to create a new MOOSE-based application.
+Proteus is a MOOSE based application for multiphysics simulation.
+It is focussed on fluid dynamics and its commonly coupled domains.
 
-For more information see: [http://mooseframework.org/create-an-app/](http://mooseframework.org/create-an-app/)
+Installation
+============
+
+Windows
+-------
+
+Proteus can be run on Windows by using the Windows Subsystem for Linux (WSL)
+and following the instructions for Linux below.
+
+Linux
+-----
+
+Once MOOSE is installed, change to the proteus directory and run:
+```
+make
+```
+After this completes successfully, use Proteus to run an input file
+as follows:
+```
+./proteus-opt -i <input-file>.i
+```
+
+Contributors
+============
+
+Aleksander J. Dubas
+UK Atomic Energy Authority
