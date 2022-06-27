@@ -16,6 +16,7 @@ export PROTEUS_DIR=`pwd`
 sudo dnf install gcc g++ gfortran cmake bison flex git
 sudo dnf install python3 python3-devel
 sudo dnf install openmpi openmpi-devel
+sudo dnf install libtirpc-devel
 
 # Make MOOSE profile
 
@@ -47,7 +48,7 @@ CC=$CC CXX=$CXX F90=$F90 F77=$F77 FC=$FC \
 
 # Build libMesh
 
-./scripts/update_and_rebuild_libmesh.sh --with-mpi
+./scripts/update_and_rebuild_libmesh.sh --with-mpi --disable-netcdf4 --disable-dap --disable-metaphysicl
 
 # Configure AD
 
