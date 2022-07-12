@@ -6,7 +6,7 @@ template <>
 InputParameters
 validParams<INSADKEpsilonMaterial>()
 {
-  InputParameters params = validParams<Material>();
+  InputParameters params = Material::validParams();
 
   params.addClassDescription("Material class for INS turbulence modeling.");
   params.addRequiredCoupledVar("k", "The turbulent kinetic energy");
