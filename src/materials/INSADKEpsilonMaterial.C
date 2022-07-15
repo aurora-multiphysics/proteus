@@ -2,9 +2,8 @@
 
 registerMooseObject("ProteusApp", INSADKEpsilonMaterial);
 
-template <>
 InputParameters
-validParams<INSADKEpsilonMaterial>()
+INSADKEpsilonMaterial::validParams()
 {
   InputParameters params = Material::validParams();
 
