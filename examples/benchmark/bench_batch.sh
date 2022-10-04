@@ -1,0 +1,21 @@
+#!/bin/bash
+/usr/bin/time -v mpirun -np 1 proteus-opt --n-threads=1 -t -i diffusion_3D_32.i &>> bench_batch.out
+/usr/bin/time -v mpirun -np 1 proteus-opt --n-threads=2 -t -i diffusion_3D_32.i &>> bench_batch.out
+/usr/bin/time -v mpirun -np 1 proteus-opt --n-threads=4 -t -i diffusion_3D_32.i &>> bench_batch.out
+/usr/bin/time -v mpirun -np 1 proteus-opt --n-threads=8 -t -i diffusion_3D_32.i &>> bench_batch.out
+/usr/bin/time -v mpirun -np 2 proteus-opt --n-threads=1 -t -i diffusion_3D_32.i &>> bench_batch.out
+/usr/bin/time -v mpirun -np 4 proteus-opt --n-threads=1 -t -i diffusion_3D_32.i &>> bench_batch.out
+/usr/bin/time -v mpirun -np 8 proteus-opt --n-threads=1 -t -i diffusion_3D_32.i &>> bench_batch.out
+/usr/bin/time -v mpirun -np 2 proteus-opt --n-threads=2 -t -i diffusion_3D_32.i &>> bench_batch.out
+/usr/bin/time -v mpirun -np 2 proteus-opt --n-threads=4 -t -i diffusion_3D_32.i &>> bench_batch.out
+/usr/bin/time -v mpirun -np 4 proteus-opt --n-threads=2 -t -i diffusion_3D_32.i &>> bench_batch.out
+/usr/bin/time -v mpirun -np 1 proteus-opt --n-threads=1 -t --distributed-mesh -i diffusion_3D_32.i &>> bench_batch.out
+/usr/bin/time -v mpirun -np 1 proteus-opt --n-threads=2 -t --distributed-mesh -i diffusion_3D_32.i &>> bench_batch.out
+/usr/bin/time -v mpirun -np 1 proteus-opt --n-threads=4 -t --distributed-mesh -i diffusion_3D_32.i &>> bench_batch.out
+/usr/bin/time -v mpirun -np 1 proteus-opt --n-threads=8 -t --distributed-mesh -i diffusion_3D_32.i &>> bench_batch.out
+/usr/bin/time -v mpirun -np 2 proteus-opt --n-threads=1 -t --distributed-mesh -i diffusion_3D_32.i &>> bench_batch.out
+/usr/bin/time -v mpirun -np 4 proteus-opt --n-threads=1 -t --distributed-mesh -i diffusion_3D_32.i &>> bench_batch.out
+/usr/bin/time -v mpirun -np 8 proteus-opt --n-threads=1 -t --distributed-mesh -i diffusion_3D_32.i &>> bench_batch.out
+/usr/bin/time -v mpirun -np 2 proteus-opt --n-threads=2 -t --distributed-mesh -i diffusion_3D_32.i &>> bench_batch.out
+/usr/bin/time -v mpirun -np 2 proteus-opt --n-threads=4 -t --distributed-mesh -i diffusion_3D_32.i &>> bench_batch.out
+/usr/bin/time -v mpirun -np 4 proteus-opt --n-threads=2 -t --distributed-mesh -i diffusion_3D_32.i &>> bench_batch.out
