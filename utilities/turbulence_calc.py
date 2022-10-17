@@ -66,7 +66,7 @@ else:
     sys.exit("Invalid Reynolds number.")
 
 # Calculate turbulent kinetic energy from turbulence intensity
-k = (1.5*I_tau*U)**2
+k = 1.5*(I_tau*U)**2
 
 if k > 0:
     print("Turbulent kinetic energy,             k = {:.2e} m²/s².".format(k))
