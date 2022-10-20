@@ -46,18 +46,18 @@
 
 [Functions]
   [magneticFieldFunction]
-  type = ParsedVectorFunction
-  value_x = '0'
-  value_y = '20'
-  value_z = '0'
+    type = ParsedVectorFunction
+    value_x = '0'
+    value_y = '20'
+    value_z = '0'
   []
   [velocityFunction]
-  type = ParsedVectorFunction
-  vars = 'u_max y_max z_max'
-  vals = '2     1     1'
-  value_x = 'u_max * (1 - (y*y)/(y_max*y_max))*(1-(z*z)/(z_max*z_max))'
-  value_y = '0'
-  value_z = '0'
+    type = ParsedVectorFunction
+    vars = 'u_max y_max z_max'
+    vals = '2     1     1'
+    value_x = 'u_max * (1 - (y*y)/(y_max*y_max))*(1-(z*z)/(z_max*z_max))'
+    value_y = '0'
+    value_z = '0'
   []
 []
 
@@ -79,34 +79,34 @@
 
 [BCs]
   [inlet]
-  type = NeumannBC
-  variable = electricPotential
-  boundary = left
-  value = 0
+    type = NeumannBC
+    variable = electricPotential
+    boundary = left
+    value = 0
   []
   [outlet]
-  type = NeumannBC
-  variable = electricPotential
-  boundary = right
-  value = 0
+    type = NeumannBC
+    variable = electricPotential
+    boundary = right
+    value = 0
   []
   [topWall]
-  type = NeumannBC
-  variable = electricPotential
-  boundary = top
-  value = 0
+    type = NeumannBC
+    variable = electricPotential
+    boundary = top
+    value = 0
   []
   [bottomWall]
-  type = NeumannBC
-  variable = electricPotential
-  boundary = bottom
-  value = 0
+    type = NeumannBC
+    variable = electricPotential
+    boundary = bottom
+    value = 0
   []
   [frontWall]
-  type = NeumannBC
-  variable = electricPotential
-  boundary = front
-  value = 0
+    type = NeumannBC
+    variable = electricPotential
+    boundary = front
+    value = 0
   []
   [backWall]
     type = NeumannBC
