@@ -5,7 +5,7 @@ registerMooseObject("ProteusApp", IRMINSADMomentumLorentzFlow);
 InputParameters
 IRMINSADMomentumLorentzFlow::validParams()
 {
-  InputParameters params = ADKernelValue::validParams();
+  InputParameters params = ADVectorKernelValue::validParams();
   params.addClassDescription(
       "The Lorentz force velocity term ($\\sigma (\\vec{u} \\times \\vec{B}_0) \\times \\vec{B}_0), "
       "with the weak form of $(\\phi_i, \\sigma (\\vec{u} \\times \\vec{B}_0) \\times \\vec{B}_0). "
@@ -18,7 +18,6 @@ IRMINSADMomentumLorentzFlow::validParams()
 }
 
 IRMINSADMomentumLorentzFlow::IRMINSADMomentumLorentzFlow(const InputParameters & parameters)
-  // : ADKernelValue(parameters),
   : ADVectorKernelValue(parameters),
   _velocity(adCoupledVectorValue("velocity")),
   _magnetic_field(adCoupledVectorValue("magneticField")),
@@ -29,7 +28,6 @@ IRMINSADMomentumLorentzFlow::IRMINSADMomentumLorentzFlow(const InputParameters &
 ADRealVectorValue
 IRMINSADMomentumLorentzFlow::precomputeQpResidual()
 {
-  // auto UxB = _velocity[_qp].cross(_magnetic_field[_qp]);
-  // return _conductivity[_qp] * UxB.cross(_magnetic_field[_qp]);
-  return -_magnetic_field[_qp];
+  auto UxB = _velocity[_qp].cross(_magnetic_field[_qp]);
+  return -_conductivity[_qp] * UxB.cross(_magnetic_field[_qp]);
 }

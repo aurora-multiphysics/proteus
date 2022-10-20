@@ -11,7 +11,7 @@
     ymax = 1
     zmin = -1
     zmax = 1
-    elem_type = HEX20
+    # elem_type = HEX20
   []
 []
 
@@ -23,6 +23,10 @@
   [pressure]
     order = FIRST
   []
+  # [lorentzForce]
+  #   family = LAGRANGE_VEC
+  #   order = FIRST
+  # []
 []
 
 [AuxVariables]
@@ -41,24 +45,12 @@
   []
 []
 
-
-[Functions]
-  [velocityInlet]
-  type = ParsedVectorFunction
-  vars = 'u_max y_max z_max'
-  vals = '2     1     1'
-  value_x = 'u_max * (1 - (y*y)/(y_max*y_max))*(1-(z*z)/(z_max*z_max))'
-  value_y = '0'
-  value_z = '0'
-  []
-[]
-
 [BCs]
   [inlet]
     type = VectorFunctionDirichletBC
     variable = velocity
     boundary = left
-    function = velocityInlet
+    function = velocityFunction
   []
   [no_slip]
     type = VectorDirichletBC
@@ -126,13 +118,6 @@
     velocity = velocity
     magneticField = magneticField
   []
-
-  # [lorentz_force]
-  #   type = INSADMomentumCoupledForce
-  #   variable = velocity
-  #   # velocity = velocity
-  #   coupled_vector_var = magneticField
-  # []
 []
 
 [AuxKernels]

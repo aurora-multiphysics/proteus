@@ -2,7 +2,6 @@
 
 #include "ADKernelValue.h"
 
-// class IRMINSADMomentumLorentzFlow : public ADKernelValue
 class IRMINSADMomentumLorentzFlow : public ADVectorKernelValue
 {
 public:
