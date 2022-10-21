@@ -10,7 +10,7 @@ IRMINSADMomentumLorentzElectrostatic::validParams()
       "The Lorentz force velocity term ($\\sigma (\\vec{u} \\times \\vec{B}_0) \\times \\vec{B}_0), "
       "with the weak form of $(\\phi_i, \\sigma (\\vec{u} \\times \\vec{B}_0) \\times \\vec{B}_0). "
       "The Jacobian is computed using automatic differentiation");
-  // need _grad_electic_potential
+  params.addCoupledVar("electricPotential", "The variable representing the electric potential.");
   params.addRequiredCoupledVar("magneticField", "The variable representing the magnetic field.");
   params.addParam<MaterialPropertyName>("conductivity", "conductivity", "The name of the conductivity");
 
@@ -19,7 +19,7 @@ IRMINSADMomentumLorentzElectrostatic::validParams()
 
 IRMINSADMomentumLorentzElectrostatic::IRMINSADMomentumLorentzElectrostatic(const InputParameters & parameters)
   : ADVectorKernelValue(parameters),
-  // need _grad_electric_potential
+  _grad_epot(adCoupledGradient("electricPotential")),
   _magnetic_field(adCoupledVectorValue("magneticField")),
   _conductivity(getADMaterialProperty<Real>("conductivity"))
 {
@@ -28,7 +28,7 @@ IRMINSADMomentumLorentzElectrostatic::IRMINSADMomentumLorentzElectrostatic(const
 ADRealVectorValue
 IRMINSADMomentumLorentzElectrostatic::precomputeQpResidual()
 {
-  // auto gradEPxB = _grad_electric_potential[_qp].cross(_magnetic_field[_qp]);
-  // return _conductivity[_qp] * gradEPxB;
-  return _magnetic_field[_qp]; //dummy
+  auto gradEPxB = _grad_epot[_qp].cross(_magnetic_field[_qp]);
+  return _conductivity[_qp] * gradEPxB;
+  // return _magnetic_field[_qp]; //dummy
 }
