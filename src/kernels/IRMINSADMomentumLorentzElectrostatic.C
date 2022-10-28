@@ -7,8 +7,8 @@ IRMINSADMomentumLorentzElectrostatic::validParams()
 {
   InputParameters params = ADVectorKernelValue::validParams();
   params.addClassDescription(
-      "The Lorentz force electrostatic term ($\\sigma \\nabla \\phi \\vec{B}_0), "
-      "with the weak form of $(\\phi_i, $\\sigma \\nabla \\phi \\vec{B}_0). "
+      "The Lorentz force electrostatic term ($\\sigma \\nabla \\phi \\times \\vec{B}_0), "
+      "with the weak form of $(\\phi_i, $\\sigma \\nabla \\phi \\times \\vec{B}_0). "
       "The Jacobian is computed using automatic differentiation");
   params.addCoupledVar("electricPotential", "The variable representing the electric potential.");
   params.addRequiredCoupledVar("magneticField", "The variable representing the magnetic field.");
