@@ -6,9 +6,9 @@ InputParameters
 IRMINSADMomentumLorentzElectrostatic::validParams()
 {
   InputParameters params = ADVectorKernelValue::validParams();
-  params.addClassDescription( // need to correct this
-      "The Lorentz force velocity term ($\\sigma (\\vec{u} \\times \\vec{B}_0) \\times \\vec{B}_0), "
-      "with the weak form of $(\\phi_i, \\sigma (\\vec{u} \\times \\vec{B}_0) \\times \\vec{B}_0). "
+  params.addClassDescription(
+      "The Lorentz force electrostatic term ($\\sigma \\nabla \\phi \\vec{B}_0), "
+      "with the weak form of $(\\phi_i, $\\sigma \\nabla \\phi \\vec{B}_0). "
       "The Jacobian is computed using automatic differentiation");
   params.addCoupledVar("electricPotential", "The variable representing the electric potential.");
   params.addRequiredCoupledVar("magneticField", "The variable representing the magnetic field.");
@@ -30,5 +30,4 @@ IRMINSADMomentumLorentzElectrostatic::precomputeQpResidual()
 {
   auto gradEPxB = _grad_epot[_qp].cross(_magnetic_field[_qp]);
   return _conductivity[_qp] * gradEPxB;
-  // return _magnetic_field[_qp]; //dummy
 }

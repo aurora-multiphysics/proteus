@@ -12,8 +12,8 @@ public:
 protected:
   virtual ADRealVectorValue precomputeQpResidual() override;
 
-  // need _grad_electric_potential
-  const ADVariableGradient & _grad_epot; // should this be in private?
+  const ADVariableGradient & _grad_epot;
+
   const ADVectorVariableValue & _magnetic_field;
 
   const ADMaterialProperty<Real> & _conductivity;
