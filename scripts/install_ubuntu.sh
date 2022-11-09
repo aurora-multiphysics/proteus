@@ -15,7 +15,7 @@ export PROTEUS_DIR=`pwd`
 
 sudo apt install gcc g++ gfortran cmake bison flex git
 sudo apt install python3 python3-dev python-is-python3 python3-packaging
-sudo apt install openmpi-bin libopenmpi-dev
+sudo apt install openmpi-bin libopenmpi-dev libboost-filesystem-dev
 
 # Make MOOSE profile
 
