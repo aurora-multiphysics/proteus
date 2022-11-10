@@ -1,4 +1,4 @@
-N_X = 50
+N_X = 200
 N_Y_half = 10
 
 [Mesh]
@@ -44,12 +44,6 @@ N_Y_half = 10
 []
 
 [ICs]
-  # [velocity]
-  #   type = VectorConstantIC
-  #   x_value = 1e-15
-  #   y_value = 1e-15
-  #   variable = velocity
-  # []
 	[velocity]
     type = VectorFunctionIC
     variable = velocity
@@ -59,15 +53,7 @@ N_Y_half = 10
 
 
 [Functions]
-  # [velocityInlet]
-  # type = ParsedVectorFunction
-  # vars = 'u_max y_max z_max'
-  # vals = '2     1     1'
-  # value_x = 'u_max * (1 - (y*y)/(y_max*y_max))*(1-(z*z)/(z_max*z_max))'
-  # value_y = '0'
-  # value_z = '0'
-  # []
-  [velocityInlet] # 2D
+  [velocityInlet]
     type = ParsedVectorFunction
     vars = 'u_max y_max'
     vals = '2     1'
@@ -149,11 +135,20 @@ N_Y_half = 10
   type = FEProblem
 []
 
+[Preconditioning]
+  [SMP]
+    type = SMP
+    full = true
+  []
+[]
+
 [Executioner]
   type = Steady
   solve_type = NEWTON
+  l_max_its = 30
+  nl_max_its = 150
   petsc_options_iname = '-pc_type -pc_hypre_type'
-  petsc_options_value = 'hypre boomeramg'
+  petsc_options_value = 'hypre euclid'
 []
 
 [Outputs]
