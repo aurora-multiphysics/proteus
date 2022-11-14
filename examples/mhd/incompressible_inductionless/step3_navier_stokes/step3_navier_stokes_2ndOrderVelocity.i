@@ -2,8 +2,10 @@
   [gmg]
     type = GeneratedMeshGenerator
     dim = 3
-    nx = 50
-    ny = 20
+    # nx = 50
+    # ny = 20
+    nx = 25
+    ny = 10
     nz = 10
     xmin = 0
     xmax = 20
@@ -11,13 +13,14 @@
     ymax = 1
     zmin = -1
     zmax = 1
+    elem_type = HEX20
   []
 []
 
 [Variables]
   [velocity]
     family = LAGRANGE_VEC
-    order = FIRST
+    order = SECOND
   []
   [pressure]
   []
@@ -83,10 +86,7 @@
     type = INSADMass
     variable = pressure
   []
-  [mass_pspg]
-    type = INSADMassPSPG
-    variable = pressure
-  []
+  # NOTE: PSPG stabilisation is not used
 
   [momentum_convection]
     type = INSADMomentumAdvection
@@ -104,12 +104,7 @@
     pressure = pressure
     integrate_p_by_parts = true
   []
-
-  [momentum_supg]
-    type = INSADMomentumSUPG
-    variable = velocity
-    velocity = velocity
-  []
+  # NOTE: SUPG stabilisation is not used
 []
 
 [Problem]
