@@ -1,24 +1,113 @@
+# N_X = 100
+# N_Y_half = 20
+# N_Z_half = 10
+
+N_X = 50
+N_Y_half = 10
+N_Z_half = 5
+# N_X = 25
+# N_Y_half = 5
+# N_Z_half = 3
+
+INTEGRATE_BY_PARTS_P = true
+# ELEMENT_TYPE = HEX20
+ELEMENT_TYPE = HEX27
+U_AVG = 1
+
 [Mesh]
-  [gmg]
+  [gmgTopBack]
     type = GeneratedMeshGenerator
     dim = 3
-    nx = 100
-    ny = 10
-    nz = 10
+    nx = ${N_X}
+    ny = ${N_Y_half}
+    nz = ${N_Z_half}
+    xmin = 0
+    xmax = 20
+    ymin = 0
+    ymax = 1
+    zmin = -1
+    zmax = 0
+		# bias_y = 0.8
+    # bias_z = 1.25
+    elem_type = ${ELEMENT_TYPE}
+  []
+  [gmgTopFront]
+    type = GeneratedMeshGenerator
+    dim = 3
+    nx = ${N_X}
+    ny = ${N_Y_half}
+    nz = ${N_Z_half}
+    xmin = 0
+    xmax = 20
+    ymin = 0
+    ymax = 1
+    zmin = 0
+    zmax = 1
+		# bias_y = 0.8
+    # bias_z = 0.8
+    elem_type = ${ELEMENT_TYPE}
+  []
+	[gmgBottomBack]
+    type = GeneratedMeshGenerator
+    dim = 3
+    nx = ${N_X}
+    ny = ${N_Y_half}
+    nz = ${N_Z_half}
     xmin = 0
     xmax = 20
     ymin = -1
-    ymax = 1
+    ymax = 0
     zmin = -1
-    zmax = 1
-    elem_type = HEX27
+    zmax = 0
+		# bias_y = 1.25
+    # bias_z = 1.25
+    elem_type = ${ELEMENT_TYPE}
   []
+  [gmgBottomFront]
+    type = GeneratedMeshGenerator
+    dim = 3
+    nx = ${N_X}
+    ny = ${N_Y_half}
+    nz = ${N_Z_half}
+    xmin = 0
+    xmax = 20
+    ymin = -1
+    ymax = 0
+    zmin = 0
+    zmax = 1
+		# bias_y = 1.25
+    # bias_z = 0.8
+    elem_type = ${ELEMENT_TYPE}
+  []
+	[meshTop]
+		type = StitchedMeshGenerator
+		inputs = 'gmgTopBack gmgTopFront'
+		clear_stitched_boundary_ids = true
+		stitch_boundaries_pairs = 'front back'
+		# show_info = true
+	[]
+  [meshBottom]
+		type = StitchedMeshGenerator
+		inputs = 'gmgBottomBack gmgBottomFront'
+		clear_stitched_boundary_ids = true
+		stitch_boundaries_pairs = 'front back'
+		# show_info = true
+	[]
+  [mesh]
+		type = StitchedMeshGenerator
+		inputs = 'meshTop meshBottom'
+		clear_stitched_boundary_ids = true
+		stitch_boundaries_pairs = 'bottom top'
+		show_info = true
+	[]
+
 []
 
 [Variables]
   [velocity]
     family = LAGRANGE_VEC
     order = SECOND
+    # order = FIRST
   []
   [pressure]
     family = LAGRANGE
@@ -27,33 +116,26 @@
   [electricPotential]
     family = LAGRANGE
     order = FIRST
+    # order = SECOND
   []
 []
 
 [AuxVariables]
   [magneticField]
-    order = FIRST
     family = LAGRANGE_VEC
+    order = FIRST
+    # order = SECOND
   []
 []
 
 [ICs]
-  # [velocityIC]
-  #   type = VectorConstantIC
-  #   x_value = 1e-15
-  #   y_value = 1e-15
-  #   variable = velocity
-  # []
   [velocityIC]
-    type = VectorFunctionIC
-    function = velocityFunction
+    type = VectorConstantIC
+    x_value = ${U_AVG}
+    y_value = 1e-15
+    z_value = 1e-15
     variable = velocity
   []
-  # [epotIC]
-  #   type = FunctionIC
-  #   function = epotFunction
-  #   variable = electricPotential
-  # []
 []
 
 [BCs]
@@ -69,12 +151,13 @@
     boundary = 'top bottom front back'
     values = '0 0 0'
   []
-  [velocity_outlet]
-    type = INSADMomentumNoBCBC
-    variable = velocity
-    pressure = pressure
-    boundary = 'right'
-  []
+  # [velocity_outlet]
+  #   type = INSADMomentumNoBCBC
+  #   variable = velocity
+  #   pressure = pressure
+  #   boundary = 'right'
+  #   integrate_p_by_parts = ${INTEGRATE_BY_PARTS_P}
+  # []
   [pressure_reference]
     type = DirichletBC
     variable = pressure
@@ -101,8 +184,13 @@
     prop_names = 'rho mu  conductivity'
     prop_values = '1  1   1'
   []
+  # [ins_mat_tau]
+  #   type = INSADTauMaterial
+  #   velocity = velocity
+  #   pressure = pressure
+  # []
   [ins_mat]
-    type = INSADTauMaterial
+    type = INSADMaterial
     velocity = velocity
     pressure = pressure
   []
@@ -118,10 +206,6 @@
   #   variable = pressure
   # []
 
-  # [momentum_time]
-  #   type = INSADMomentumTimeDerivative
-  #   variable = velocity
-  # []
   [momentum_convection]
     type = INSADMomentumAdvection
     variable = velocity
@@ -134,13 +218,13 @@
     type = INSADMomentumPressure
     variable = velocity
     pressure = pressure
-    integrate_p_by_parts = true
+    integrate_p_by_parts = ${INTEGRATE_BY_PARTS_P}
   []
-  [momentum_supg]
-    type = INSADMomentumSUPG
-    variable = velocity
-    velocity = velocity
-  []
+  # [momentum_supg]
+  #   type = INSADMomentumSUPG
+  #   variable = velocity
+  #   velocity = velocity
+  # []
   [lorentz_force_electrostatic]
     type = IRMINSADMomentumLorentzElectrostatic
     variable = velocity
@@ -179,9 +263,9 @@
 [Functions]
   [velocityFunction]
     type = ParsedVectorFunction
-    vars = 'u_max y_max z_max'
-    vals = '2     1     1'
-    value_x = 'u_max * (1 - (y*y)/(y_max*y_max))*(1-(z*z)/(z_max*z_max))'
+    vars = 'y_max z_max'
+    vals = '1     1'
+    value_x = '1.5 * ${U_AVG} * (1 - (y * y) / (y_max * y_max)) * (1 - (z * z) / (z_max * z_max))'
     value_y = '0'
     value_z = '0'
   []
@@ -191,10 +275,6 @@
     value_y = '20'
     value_z = '0'
   []
-  # [epotFunction]
-  #   type = ParsedFunction
-  #   value = '-4 * z'
-  # []
 []
 
 [Problem]
@@ -210,17 +290,17 @@
 
 [Executioner]
   type = Steady
-  # type = Transient
-  # num_steps = 5
-  # dt = 0.5
   solve_type = NEWTON
-  # automatic_scaling = true
+  automatic_scaling = true
+  # l_max_its = 100
   l_max_its = 30
   nl_max_its = 150
-  # petsc_options_iname = '-pc_type'
-  # petsc_options_value = 'asm'
+  # petsc_options_iname = '-pc_type -pc_hypre_type'
+  # petsc_options_value = 'hypre    euclid'
   petsc_options_iname = '-pc_type -pc_hypre_type'
-  petsc_options_value = 'hypre    euclid'
+  petsc_options_value = 'hypre    boomeramg'
+  # petsc_options_iname = '-pc_type'
+  # petsc_options_value = 'asm' # maybe doesn't work with this? Linear solve did not converge due to DIVERGED_PC_FAILED (PC failed due to SUBPC_ERROR)
 []
 
 [Outputs]

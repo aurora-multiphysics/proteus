@@ -2,9 +2,9 @@
   [gmg]
     type = GeneratedMeshGenerator
     dim = 3
-    nx = 50
+    nx = 200
     ny = 20
-    nz = 10
+    nz = 20
     xmin = 0
     xmax = 20
     ymin = -1
@@ -26,8 +26,9 @@
 [ICs]
   [velocity]
     type = VectorConstantIC
-    x_value = 1e-15
+    x_value = 1
     y_value = 1e-15
+    z_value = 1e-15
     variable = velocity
   []
 []
@@ -103,6 +104,7 @@
     variable = velocity
     pressure = pressure
     integrate_p_by_parts = true
+    # integrate_p_by_parts = false
   []
 
   [momentum_supg]
@@ -131,6 +133,8 @@
   automatic_scaling = true
   petsc_options_iname = '-pc_type'
   petsc_options_value = 'asm'
+  # petsc_options_iname = '-pc_type -pc_hypre_type'
+  # petsc_options_value = 'hypre    euclid'
 []
 
 [Outputs]

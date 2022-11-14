@@ -79,6 +79,11 @@
     velocity = velocity
     pressure = pressure
   []
+  # [ins_mat]
+  #   type = INSADMaterial
+  #   velocity = velocity
+  #   pressure = pressure
+  # []
 []
 
 [Kernels]
@@ -105,6 +110,11 @@
     integrate_p_by_parts = true
   []
   # NOTE: SUPG stabilisation is not used
+  [momentum_supg]
+    type = INSADMomentumSUPG
+    variable = velocity
+    velocity = velocity
+  []
 []
 
 [Problem]
@@ -124,8 +134,10 @@
   l_max_its = 100
   nl_max_its = 150
   automatic_scaling = true
-  petsc_options_iname = '-pc_type'
-  petsc_options_value = 'asm'
+  # petsc_options_iname = '-pc_type'
+  # petsc_options_value = 'asm'
+  petsc_options_iname = '-pc_type -pc_hypre_type'
+  petsc_options_value = 'hypre    euclid'
 []
 
 [Outputs]
