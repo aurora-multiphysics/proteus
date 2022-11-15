@@ -122,7 +122,7 @@ blockTemp=100       # degC
   []
 
   [extrude]
-    type = FancyExtruderGenerator
+    type = AdvancedExtruderGenerator
     input = merge_boundaries
     direction = '0 0 1'
     heights = ${monoBThick}
