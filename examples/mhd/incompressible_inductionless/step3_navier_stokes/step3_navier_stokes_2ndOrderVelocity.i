@@ -31,6 +31,7 @@
     type = VectorConstantIC
     x_value = 1e-15
     y_value = 1e-15
+    z_value = 1e-15
     variable = velocity
   []
 []
