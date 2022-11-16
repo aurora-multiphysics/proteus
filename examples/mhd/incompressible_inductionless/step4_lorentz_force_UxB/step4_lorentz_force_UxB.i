@@ -1,3 +1,5 @@
+U_AVG = 1
+
 [Mesh]
   [gmg]
     type = GeneratedMeshGenerator
@@ -23,10 +25,6 @@
   [pressure]
     order = FIRST
   []
-  # [lorentzForce]
-  #   family = LAGRANGE_VEC
-  #   order = FIRST
-  # []
 []
 
 [AuxVariables]
@@ -138,9 +136,9 @@
   []
   [velocityFunction]
     type = ParsedVectorFunction
-    vars = 'u_max y_max z_max'
-    vals = '2     1     1'
-    value_x = 'u_max * (1 - (y*y)/(y_max*y_max))*(1-(z*z)/(z_max*z_max))'
+    vars = 'y_max z_max'
+    vals = '1     1'
+    value_x = '(9/4) * ${U_AVG} * (1 - (y * y) / (y_max * y_max)) * (1 - (z * z) / (z_max * z_max))'
     value_y = '0'
     value_z = '0'
   []

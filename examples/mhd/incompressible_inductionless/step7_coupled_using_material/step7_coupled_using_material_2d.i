@@ -123,11 +123,6 @@ U_AVG = 1
     magneticField = magneticField
     electricPotential = electricPotential
   []
-  # [ins_mat]
-  #   type = INSADMaterial
-  #   velocity = velocity
-  #   pressure = pressure
-  # []
 []
 
 [Kernels]
@@ -164,19 +159,6 @@ U_AVG = 1
     variable = velocity
   []
 
-  # [lorentz_force_electrostatic]
-  #   type = IRMINSADMomentumLorentzElectrostatic
-  #   variable = velocity
-  #   electricPotential = electricPotential
-  #   magneticField = magneticField
-  # []
-  # [lorentz_force_flow]
-  #   type = IRMINSADMomentumLorentzFlow
-  #   variable = velocity
-  #   velocity = velocity
-  #   magneticField = magneticField
-  # []
-
   [epot_diffusion]
     type = ADDiffusion
     variable = electricPotential
@@ -202,17 +184,15 @@ U_AVG = 1
 [Functions]
   [velocityFunction]
     type = ParsedVectorFunction
-    vars = 'y_max z_max'
-    vals = '1     1'
-    value_x = '1.5 * ${U_AVG} * (1 - (y * y) / (y_max * y_max)) * (1 - (z * z) / (z_max * z_max))'
+    vars = 'y_max'
+    vals = '1'
+    value_x = '(3/2) * ${U_AVG} * (1 - (y * y) / (y_max * y_max))'
     value_y = '0'
-    value_z = '0'
   []
   [magneticFieldFunction]
     type = ParsedVectorFunction
     value_x = '0'
     value_y = '20'
-    value_z = '0'
   []
 []
 
@@ -230,7 +210,7 @@ U_AVG = 1
 [Executioner]
   type = Steady
   solve_type = NEWTON
-  # automatic_scaling = true
+  automatic_scaling = true
   l_max_its = 100
   nl_max_its = 150
   # petsc_options_iname = '-pc_type'

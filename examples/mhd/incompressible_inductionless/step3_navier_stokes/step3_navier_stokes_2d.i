@@ -1,5 +1,6 @@
 N_X = 200
 N_Y_half = 10
+U_AVG = 1
 
 [Mesh]
   [gmgTop]
@@ -55,11 +56,10 @@ N_Y_half = 10
 [Functions]
   [velocityInlet]
     type = ParsedVectorFunction
-    vars = 'u_max y_max'
-    vals = '2     1'
-    value_x = 'u_max * (1 - (y*y)/(y_max*y_max))'
+    vars = 'y_max'
+    vals = '1'
+    value_x = '(3/2) * ${U_AVG} * (1 - (y * y) / (y_max * y_max))'
     value_y = '0'
-    value_z = '0'
   []
 []
 

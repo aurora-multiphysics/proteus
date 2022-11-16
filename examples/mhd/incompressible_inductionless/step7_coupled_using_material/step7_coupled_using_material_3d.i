@@ -106,7 +106,6 @@ U_AVG = 1
 [Variables]
   [velocity]
     family = LAGRANGE_VEC
-    # order = SECOND
     order = FIRST
   []
   [pressure]
@@ -116,7 +115,6 @@ U_AVG = 1
   [electricPotential]
     family = LAGRANGE
     order = FIRST
-    # order = SECOND
   []
 []
 
@@ -124,7 +122,6 @@ U_AVG = 1
   [magneticField]
     family = LAGRANGE_VEC
     order = FIRST
-    # order = SECOND
   []
 []
 
@@ -184,16 +181,6 @@ U_AVG = 1
     prop_names = 'rho mu  conductivity'
     prop_values = '1  1   1'
   []
-  # [ins_mat_tau]
-  #   type = INSADTauMaterial
-  #   velocity = velocity
-  #   pressure = pressure
-  # []
-  # [ins_mat]
-  #   type = INSADMaterial
-  #   velocity = velocity
-  #   pressure = pressure
-  # []
   [irmins_mat_tau]
     type = IRMINSADTauMaterial
     velocity = velocity
@@ -236,18 +223,6 @@ U_AVG = 1
     type = IRMINSADMomentumLorentz
     variable = velocity
   []
-  # [lorentz_force_electrostatic]
-  #   type = IRMINSADMomentumLorentzElectrostatic
-  #   variable = velocity
-  #   electricPotential = electricPotential
-  #   magneticField = magneticField
-  # []
-  # [lorentz_force_flow]
-  #   type = IRMINSADMomentumLorentzFlow
-  #   variable = velocity
-  #   velocity = velocity
-  #   magneticField = magneticField
-  # []
 
   [epot_diffusion]
     type = ADDiffusion
@@ -276,7 +251,7 @@ U_AVG = 1
     type = ParsedVectorFunction
     vars = 'y_max z_max'
     vals = '1     1'
-    value_x = '1.5 * ${U_AVG} * (1 - (y * y) / (y_max * y_max)) * (1 - (z * z) / (z_max * z_max))'
+    value_x = '(9/4) * ${U_AVG} * (1 - (y * y) / (y_max * y_max)) * (1 - (z * z) / (z_max * z_max))'
     value_y = '0'
     value_z = '0'
   []

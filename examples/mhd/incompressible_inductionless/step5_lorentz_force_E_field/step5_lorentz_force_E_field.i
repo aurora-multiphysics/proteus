@@ -1,3 +1,5 @@
+U_AVG = 1
+
 [Mesh]
   [gmg]
     type = GeneratedMeshGenerator
@@ -149,15 +151,15 @@
   []
   [velocityFunction]
     type = ParsedVectorFunction
-    vars = 'u_max y_max z_max'
-    vals = '2     1     1'
-    value_x = 'u_max * (1 - (y*y)/(y_max*y_max))*(1-(z*z)/(z_max*z_max))'
+    vars = 'y_max z_max'
+    vals = '1     1'
+    value_x = '(9/4) * ${U_AVG} * (1 - (y * y) / (y_max * y_max)) * (1 - (z * z) / (z_max * z_max))'
     value_y = '0'
     value_z = '0'
   []
   [epotFunction]
     type = ParsedFunction
-    value = '-20 * z'
+    value = '20 * z'
   []
 []
 
@@ -168,8 +170,11 @@
 [Executioner]
   type = Steady
   solve_type = NEWTON
-  petsc_options_iname = '-pc_type -pc_hypre_type'
-  petsc_options_value = 'hypre boomeramg'
+  l_max_its = 100
+  petsc_options_iname = '-pc_type'
+  petsc_options_value = 'asm'
+  # petsc_options_iname = '-pc_type -pc_hypre_type'
+  # petsc_options_value = 'hypre euclid'
 []
 
 [Outputs]

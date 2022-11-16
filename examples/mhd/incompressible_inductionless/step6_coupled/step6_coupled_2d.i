@@ -83,13 +83,6 @@ U_AVG = 1
     boundary = 'top bottom'
     values = '0 0 0'
   []
-  # [velocity_outlet]
-  #   type = INSADMomentumNoBCBC
-  #   variable = velocity
-  #   pressure = pressure
-  #   boundary = 'right'
-  #   integrate_p_by_parts = ${INTEGRATE_BY_PARTS_P}
-  # []
   [pressure_reference]
     type = DirichletBC
     variable = pressure
@@ -116,11 +109,6 @@ U_AVG = 1
     prop_names = 'rho mu  conductivity'
     prop_values = '1  1   1'
   []
-  # [ins_mat_tau]
-  #   type = INSADTauMaterial
-  #   velocity = velocity
-  #   pressure = pressure
-  # []
   [ins_mat]
     type = INSADMaterial
     velocity = velocity
@@ -133,10 +121,6 @@ U_AVG = 1
     type = INSADMass
     variable = pressure
   []
-  # [mass_pspg]
-  #   type = INSADMassPSPG
-  #   variable = pressure
-  # []
 
   [momentum_convection]
     type = INSADMomentumAdvection
@@ -152,11 +136,6 @@ U_AVG = 1
     pressure = pressure
     integrate_p_by_parts = ${INTEGRATE_BY_PARTS_P}
   []
-  # [momentum_supg]
-  #   type = INSADMomentumSUPG
-  #   variable = velocity
-  #   velocity = velocity
-  # []
   [lorentz_force_electrostatic]
     type = IRMINSADMomentumLorentzElectrostatic
     variable = velocity
@@ -195,17 +174,15 @@ U_AVG = 1
 [Functions]
   [velocityFunction]
     type = ParsedVectorFunction
-    vars = 'y_max z_max'
-    vals = '1     1'
-    value_x = '1.5 * ${U_AVG} * (1 - (y * y) / (y_max * y_max)) * (1 - (z * z) / (z_max * z_max))'
+    vars = 'y_max'
+    vals = '1'
+    value_x = '(3/2) * ${U_AVG} * (1 - (y * y) / (y_max * y_max))'
     value_y = '0'
-    value_z = '0'
   []
   [magneticFieldFunction]
     type = ParsedVectorFunction
     value_x = '0'
     value_y = '20'
-    value_z = '0'
   []
 []
 

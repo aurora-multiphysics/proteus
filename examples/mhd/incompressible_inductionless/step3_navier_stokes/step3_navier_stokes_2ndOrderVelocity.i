@@ -1,3 +1,5 @@
+U_AVG = 1
+
 [Mesh]
   [gmg]
     type = GeneratedMeshGenerator
@@ -40,9 +42,9 @@
 [Functions]
   [velocityInlet]
   type = ParsedVectorFunction
-  vars = 'u_max y_max z_max'
-  vals = '2     1     1'
-  value_x = 'u_max * (1 - (y*y)/(y_max*y_max))*(1-(z*z)/(z_max*z_max))'
+  vars = 'y_max z_max'
+  vals = '1     1'
+  value_x = '(9/4) * ${U_AVG} * (1 - (y * y) / (y_max * y_max)) * (1 - (z * z) / (z_max * z_max))'
   value_y = '0'
   value_z = '0'
   []
@@ -75,16 +77,16 @@
     prop_names = 'rho mu'
     prop_values = '1  1'
   []
-  [ins_mat]
-    type = INSADTauMaterial
-    velocity = velocity
-    pressure = pressure
-  []
   # [ins_mat]
-  #   type = INSADMaterial
+  #   type = INSADTauMaterial
   #   velocity = velocity
   #   pressure = pressure
   # []
+  [ins_mat]
+    type = INSADMaterial
+    velocity = velocity
+    pressure = pressure
+  []
 []
 
 [Kernels]
@@ -111,11 +113,11 @@
     integrate_p_by_parts = true
   []
   # NOTE: SUPG stabilisation is not used
-  [momentum_supg]
-    type = INSADMomentumSUPG
-    variable = velocity
-    velocity = velocity
-  []
+  # [momentum_supg]
+  #   type = INSADMomentumSUPG
+  #   variable = velocity
+  #   velocity = velocity
+  # []
 []
 
 [Problem]
@@ -135,10 +137,10 @@
   l_max_its = 100
   nl_max_its = 150
   automatic_scaling = true
-  # petsc_options_iname = '-pc_type'
-  # petsc_options_value = 'asm'
-  petsc_options_iname = '-pc_type -pc_hypre_type'
-  petsc_options_value = 'hypre    euclid'
+  petsc_options_iname = '-pc_type'
+  petsc_options_value = 'asm'
+  # petsc_options_iname = '-pc_type -pc_hypre_type'
+  # petsc_options_value = 'hypre    euclid'
 []
 
 [Outputs]

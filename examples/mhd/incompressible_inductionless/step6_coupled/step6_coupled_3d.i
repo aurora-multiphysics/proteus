@@ -10,8 +10,8 @@ N_Z_half = 5
 # N_Z_half = 3
 
 INTEGRATE_BY_PARTS_P = true
-# ELEMENT_TYPE = HEX20
-ELEMENT_TYPE = HEX27
+ELEMENT_TYPE = HEX20
+# ELEMENT_TYPE = HEX27
 U_AVG = 1
 
 [Mesh]
@@ -107,7 +107,6 @@ U_AVG = 1
   [velocity]
     family = LAGRANGE_VEC
     order = SECOND
-    # order = FIRST
   []
   [pressure]
     family = LAGRANGE
@@ -116,7 +115,6 @@ U_AVG = 1
   [electricPotential]
     family = LAGRANGE
     order = FIRST
-    # order = SECOND
   []
 []
 
@@ -124,7 +122,6 @@ U_AVG = 1
   [magneticField]
     family = LAGRANGE_VEC
     order = FIRST
-    # order = SECOND
   []
 []
 
@@ -151,13 +148,6 @@ U_AVG = 1
     boundary = 'top bottom front back'
     values = '0 0 0'
   []
-  # [velocity_outlet]
-  #   type = INSADMomentumNoBCBC
-  #   variable = velocity
-  #   pressure = pressure
-  #   boundary = 'right'
-  #   integrate_p_by_parts = ${INTEGRATE_BY_PARTS_P}
-  # []
   [pressure_reference]
     type = DirichletBC
     variable = pressure
@@ -184,11 +174,6 @@ U_AVG = 1
     prop_names = 'rho mu  conductivity'
     prop_values = '1  1   1'
   []
-  # [ins_mat_tau]
-  #   type = INSADTauMaterial
-  #   velocity = velocity
-  #   pressure = pressure
-  # []
   [ins_mat]
     type = INSADMaterial
     velocity = velocity
@@ -201,10 +186,6 @@ U_AVG = 1
     type = INSADMass
     variable = pressure
   []
-  # [mass_pspg]
-  #   type = INSADMassPSPG
-  #   variable = pressure
-  # []
 
   [momentum_convection]
     type = INSADMomentumAdvection
@@ -220,11 +201,6 @@ U_AVG = 1
     pressure = pressure
     integrate_p_by_parts = ${INTEGRATE_BY_PARTS_P}
   []
-  # [momentum_supg]
-  #   type = INSADMomentumSUPG
-  #   variable = velocity
-  #   velocity = velocity
-  # []
   [lorentz_force_electrostatic]
     type = IRMINSADMomentumLorentzElectrostatic
     variable = velocity
@@ -265,7 +241,7 @@ U_AVG = 1
     type = ParsedVectorFunction
     vars = 'y_max z_max'
     vals = '1     1'
-    value_x = '1.5 * ${U_AVG} * (1 - (y * y) / (y_max * y_max)) * (1 - (z * z) / (z_max * z_max))'
+    value_x = '(9/4) * ${U_AVG} * (1 - (y * y) / (y_max * y_max)) * (1 - (z * z) / (z_max * z_max))'
     value_y = '0'
     value_z = '0'
   []
@@ -297,10 +273,10 @@ U_AVG = 1
   nl_max_its = 150
   # petsc_options_iname = '-pc_type -pc_hypre_type'
   # petsc_options_value = 'hypre    euclid'
-  petsc_options_iname = '-pc_type -pc_hypre_type'
-  petsc_options_value = 'hypre    boomeramg'
-  # petsc_options_iname = '-pc_type'
-  # petsc_options_value = 'asm' # maybe doesn't work with this? Linear solve did not converge due to DIVERGED_PC_FAILED (PC failed due to SUBPC_ERROR)
+  # petsc_options_iname = '-pc_type -pc_hypre_type'
+  # petsc_options_value = 'hypre    boomeramg'
+  petsc_options_iname = '-pc_type'
+  petsc_options_value = 'asm'
 []
 
 [Outputs]
