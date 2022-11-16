@@ -12,3 +12,5 @@ ARG coveralls_token=""
 
 # Branch name for coveralls
 ARG coveralls_branch=""
+
+Change this for git
