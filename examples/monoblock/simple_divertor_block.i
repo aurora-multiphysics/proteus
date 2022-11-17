@@ -67,8 +67,7 @@ blockTemp=100       # degC
 #-------------------------------------------------------------------------
 
 [GlobalParams]
-  # displacements = 'disp_x disp_y'  # 2D
-  displacements = 'disp_x disp_y disp_z'  # 3D
+  displacements = 'disp_x disp_y disp_z'
 []
 
 [Mesh]
@@ -81,8 +80,6 @@ blockTemp=100       # degC
     num_sectors_per_side = '12 12 12 12'
     ring_intervals = 5
     background_intervals = 5
-    # quad_center_elements = true
-    # center_quad_factor = 8
     preserve_volumes = on
     flat_side_up = true
     ring_block_names = 'pipe_tri pipe'
@@ -109,7 +106,6 @@ blockTemp=100       # degC
     inputs = 'pccmg gmg'
     stitch_boundaries_pairs = 'monoblock_boundary armour_bottom'
     clear_stitched_boundary_ids = true
-    parallel_type = replicated
   []
 
   [merge_blocks]
@@ -154,15 +150,6 @@ blockTemp=100       # degC
     type = HeatConduction
     variable = temperature
   []
-  # [time_derivative]
-  #   type = HeatConductionTimeDerivative
-  #   variable = temperature
-  # []
-  # [heat_source]
-  #   type = HeatSource
-  #   variable = temperature
-  #   value = ${blockTemp}
-  # []
 []
 
 [Modules/TensorMechanics/Master]
