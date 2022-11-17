@@ -135,6 +135,44 @@ blockTemp=100       # degC
     heights = ${monoBThick}
     num_layers = 10
   []
+
+  [pin_x0]
+    type = BoundingBoxNodeSetGenerator
+    input = extrude
+    bottom_left = '-1e-12
+                   ${fparse (monoBWidth/-2)-1e-12}
+                   -1e-12'
+    top_right = '+1e-12
+                ${fparse (monoBWidth/-2)+1e-12}
+                ${fparse (monoBThick)+1e-12}'
+    new_boundary = bottom_x0
+  []
+  [pin_z0]
+    type = BoundingBoxNodeSetGenerator
+    input = pin_x0
+    bottom_left = '${fparse (monoBWidth/-2)-1e-12}
+                   ${fparse (monoBWidth/-2)-1e-12}
+                   ${fparse (monoBThick/2)-1e-12}'
+    top_right = '${fparse (monoBWidth/2)+1e-12}
+                 ${fparse (monoBWidth/-2)+1e-12}
+                 ${fparse (monoBThick/2)+1e-12}'
+    new_boundary = bottom_z0
+  [] 
+  [full_volume]
+    type = BoundingBoxNodeSetGenerator
+    input = pin_z0
+    bottom_left = '
+      ${fparse -10 * (monoBWidth/2)}
+      ${fparse -10 * (monoBWidth/2)}
+      ${fparse -10 * monoBThick}
+    '
+    top_right = '
+      ${fparse 10 * (monoBWidth/2)}
+      ${fparse 10 * (monoBWidth/2 + monoBArmHeight)}
+      ${fparse 10 * monoBThick}
+    '
+    new_boundary = volume
+  []
 []
 
 [Variables]
@@ -220,16 +258,16 @@ blockTemp=100       # degC
 []
 
 [BCs]
-  # [block-temp]
-  #   type = DirichletBC
-  #   variable = temperature
-  #   boundary = 'top'
-  #   value = ${blockTemp}
-  # []
+  [block-temp]
+    type = DirichletBC
+    variable = temperature
+    boundary = 'volume'
+    value = ${blockTemp}
+  []
   [fixed_x]
     type = DirichletBC
     variable = disp_x
-    boundary = ''
+    boundary = 'bottom_x0'
     value = 0
   []
   [fixed_y]
@@ -241,7 +279,7 @@ blockTemp=100       # degC
   [fixed_z]
     type = DirichletBC
     variable = disp_z
-    boundary = ''
+    boundary = 'bottom_z0'
     value = 0
   []
 []
