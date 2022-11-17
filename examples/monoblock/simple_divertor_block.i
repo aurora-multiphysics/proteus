@@ -184,7 +184,7 @@ blockTemp=100       # degC
 []
 
 [Kernels]
-  [heat-conduction]
+  [heat_conduction]
     type = HeatConduction
     variable = temperature
   []
