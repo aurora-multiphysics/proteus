@@ -555,12 +555,9 @@ blockTemp=100       # degC
 
 [Executioner]
   type = Steady
-  # solve_type = 'NEWTON'
-  # petsc_options_iname = '-pc_type'
-  # petsc_options_value = 'lu'
-  # start_time = 0
-  # end_time = 5
-  # dt = 1
+  solve_type = 'PJFNK'
+  petsc_options_iname = '-pc_type -pc_hypre_type'
+  petsc_options_value = 'hypre    boomeramg'
 []
 
 [Outputs]
