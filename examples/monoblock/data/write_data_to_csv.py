@@ -97,7 +97,7 @@ copper_cte = [
 
 with open("copper_cte.csv", 'w') as file:
     file.write("# Thermal expansion data for copper\n")
-    file.write("# Temp. (C) CTE\n")
+    file.write("# Temp. (C), CTE\n")
 
     writer = csv.writer(file)
     for temp, cte in zip(copper_temperature, copper_cte):
@@ -197,7 +197,7 @@ cucrzr_cte = [
 
 with open("cucrzr_cte.csv", 'w') as file:
     file.write("# Thermal expansion data for Cu-Cr-Zr\n")
-    file.write("# Temp. (C) CTE\n")
+    file.write("# Temp. (C), CTE\n")
 
     writer = csv.writer(file)
     for temp, cte in zip(cucrzr_temperature, cucrzr_cte):
@@ -315,7 +315,7 @@ tungsten_cte = [
 
 with open("tungsten_cte.csv", 'w') as file:
     file.write("# Thermal expansion data for tungsten\n")
-    file.write("# Temp. (C) CTE\n")
+    file.write("# Temp. (C), CTE\n")
 
     writer = csv.writer(file)
     for temp, cte in zip(tungsten_temperature_cte, tungsten_cte):
