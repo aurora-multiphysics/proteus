@@ -57,8 +57,7 @@ monoBArmHeight=8e-3  # m
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Material Properties
 # Mono-Block/Armour = Tungsten
-# Interlayer = Copper
-# Cooling pipe = CuCrZr
+# Cooling pipe = OFHC Copper 
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Loads and BCs
