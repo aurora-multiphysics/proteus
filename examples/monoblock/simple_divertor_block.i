@@ -1,4 +1,16 @@
 #-------------------------------------------------------------------------
+# DESCRIPTION
+
+# Input file for computing the von-mises stress between the coolant pipe of a
+# tokamak divertor monoblock and its armour due to thermal expansion.
+# This simplified model is comprised of a solid OFHC copper cylinder surrounded
+# by tungsten armour; no interlayer is included and coolant flow is not
+# modelled. The boundary conditions are the stress-free temperature and the
+# block temperature to which the block is uniformly heated.
+# The solve is steady state and outputs temperature, displacement, and von
+# mises stress.
+
+#-------------------------------------------------------------------------
 # PARAMETER DEFINITIONS
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
