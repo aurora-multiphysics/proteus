@@ -15,9 +15,9 @@
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Geometry
-# PI=3.141592653589793
+PI=3.141592653589793
 
-# pipeIntDiam=12e-3    # m
+pipeIntDiam=12e-3    # m
 pipeExtDiam=15e-3    # m
 
 intLayerThick=1e-3   # m
@@ -29,7 +29,7 @@ monoBThick=12e-3     # m
 monoBArmHeight=8e-3  # m
 # monoBSpacing=0.5e-3  # m
 
-# pipeIntCirc=${fparse PI * pipeIntDiam}
+pipeIntCirc=${fparse PI * pipeIntDiam}
 # pipeExtCirc=${fparse PI * pipeExtDiam}
 # intLayerExtCirc=${fparse PI * intLayerExtDiam}
 
@@ -41,18 +41,27 @@ monoBArmHeight=8e-3  # m
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Mesh Sizing
-# MeshRefFact=1
+MeshRefFact=1
 
-# sweepDivs=10*${MeshRefFact}
-# monoBArmDivs=8*${MeshRefFact}
-# monoBRadDivs=5*${MeshRefFact}
-# pipeCircSectDivs=12*${MeshRefFact}
-# pipeRadDivs=3
-# intLayerRadDivs=5*${MeshRefFact}
+# Number of divisions along the top section of the monoblock armour.
+monoBArmDivs=${fparse 8*MeshRefFact}
 
-# monoBElemSize=${monoBThick/sweepDivs}
-# tol=${monoBElemSize/10}
-# ctol=${pipeIntCirc/(8*4*pipeCircSectDivs)}
+# Number of divisions around each quadrant of the circumference of the pipe,
+# interlater, and radial section of the monoblock armour.
+pipeCircSectDivs=${fparse 12*MeshRefFact}
+
+# Number of radial divisions for the pipe, interlayer, and radial section of
+# the monoblock armour respectively.
+pipeRadDivs=${fparse 5*MeshRefFact}
+# intLayerRadDivs=${fparse 5*MeshRefFact}
+monoBRadDivs=${fparse 5*MeshRefFact}
+
+# Number of divisions along monoblock thickness (i.e. z-dimension).
+extrudeDivs=${fparse 10*MeshRefFact}
+
+monoBElemSize=${fparse monoBThick/extrudeDivs}
+tol=${fparse monoBElemSize/10}
+ctol=${fparse pipeIntCirc/(8*4*pipeCircSectDivs)}
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Material Properties
@@ -77,9 +86,13 @@ blockTemp=100       # degC
     polygon_size = ${fparse monoBWidth / 2}
     polygon_size_style = apothem  # i.e. distance from centre to edge
     ring_radii = ${fparse intLayerExtDiam / 2}
-    num_sectors_per_side = '12 12 12 12'
-    ring_intervals = 5
-    background_intervals = 5
+    num_sectors_per_side = '
+      ${pipeCircSectDivs}
+      ${pipeCircSectDivs}
+      ${pipeCircSectDivs}
+      ${pipeCircSectDivs}'
+    ring_intervals = ${pipeRadDivs}
+    background_intervals = ${monoBRadDivs}
     preserve_volumes = on
     flat_side_up = true
     ring_block_names = 'pipe_tri pipe'
@@ -96,8 +109,8 @@ blockTemp=100       # degC
     xmax = ${fparse monoBWidth / 2}
     ymin = ${fparse monoBWidth / 2}
     ymax = ${fparse monoBWidth / 2 + monoBArmHeight}
-    nx = 12
-    ny = 8
+    nx = ${pipeCircSectDivs}
+    ny = ${monoBArmDivs}
     boundary_name_prefix = armour
   []
 
@@ -133,43 +146,43 @@ blockTemp=100       # degC
     input = merge_boundaries
     direction = '0 0 1'
     heights = ${monoBThick}
-    num_layers = 10
+    num_layers = ${extrudeDivs}
   []
 
   [pin_x0]
     type = BoundingBoxNodeSetGenerator
     input = extrude
-    bottom_left = '-1e-12
-                   ${fparse (monoBWidth/-2)-1e-12}
-                   -1e-12'
-    top_right = '+1e-12
-                ${fparse (monoBWidth/-2)+1e-12}
-                ${fparse (monoBThick)+1e-12}'
+    bottom_left = '${fparse -ctol}
+                   ${fparse (monoBWidth/-2)-ctol}
+                   ${fparse -tol}'
+    top_right = '${fparse ctol}
+                ${fparse (monoBWidth/-2)+ctol}
+                ${fparse (monoBThick)+tol}'
     new_boundary = bottom_x0
   []
   [pin_z0]
     type = BoundingBoxNodeSetGenerator
     input = pin_x0
-    bottom_left = '${fparse (monoBWidth/-2)-1e-12}
-                   ${fparse (monoBWidth/-2)-1e-12}
-                   ${fparse (monoBThick/2)-1e-12}'
-    top_right = '${fparse (monoBWidth/2)+1e-12}
-                 ${fparse (monoBWidth/-2)+1e-12}
-                 ${fparse (monoBThick/2)+1e-12}'
+    bottom_left = '${fparse (monoBWidth/-2)-ctol}
+                   ${fparse (monoBWidth/-2)-ctol}
+                   ${fparse (monoBThick/2)-tol}'
+    top_right = '${fparse (monoBWidth/2)+ctol}
+                 ${fparse (monoBWidth/-2)+ctol}
+                 ${fparse (monoBThick/2)+tol}'
     new_boundary = bottom_z0
-  [] 
+  []
   [full_volume]
     type = BoundingBoxNodeSetGenerator
     input = pin_z0
     bottom_left = '
-      ${fparse -10 * (monoBWidth/2)}
-      ${fparse -10 * (monoBWidth/2)}
-      ${fparse -10 * monoBThick}
+      ${fparse (monoBWidth/-2)-ctol}
+      ${fparse (monoBWidth/-2)-ctol}
+      ${fparse -tol}
     '
     top_right = '
-      ${fparse 10 * (monoBWidth/2)}
-      ${fparse 10 * (monoBWidth/2 + monoBArmHeight)}
-      ${fparse 10 * monoBThick}
+      ${fparse (monoBWidth/2)+ctol}
+      ${fparse (monoBWidth/2)+monoBArmHeight+ctol}
+      ${fparse monoBThick+tol}
     '
     new_boundary = volume
   []
