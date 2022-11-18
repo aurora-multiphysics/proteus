@@ -1,5 +1,8 @@
-# Get MOOSE image with deps
-FROM awhittle/proteus-deps-ubuntu:v.0.3.1
+#Final layer of build for Proteus image
+#Docker file to be built within the Proteus main directory
+
+# Get MOOSE base image already built 
+FROM 
 
 # By default 4 cores are used to compile
 ARG compile_cores=4
@@ -13,4 +16,27 @@ ARG coveralls_token=""
 # Branch name for coveralls
 ARG coveralls_branch=""
 
-Change this for git
+# Install extra packages if we want test coverage
+RUN if "$test_coverage" ; then \
+       apt-get update && \
+       apt-get install -y python3-pip && \
+       pip install cpp-coveralls && \
+       pip install coveralls && \
+       pip install gcovr; \
+    fi
+
+# Copy entire repository into image
+COPY ./ /home/proteus/
+
+# Build
+RUN if "$test_coverage" ; then \
+    
+
+# Generate test coverage report using coveralls and upload
+RUN if "$test_coverage" && ! [ "$coveralls_token" = "" ] ; then \
+
+    fi
+
+# Run examples
+RUN cd /home/proteus/ && \
+    ./run_tests
