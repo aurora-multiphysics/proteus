@@ -1,42 +1,33 @@
-#Final layer of build for Proteus image
 #Docker file to be built within the Proteus main directory
 
-# Get MOOSE base image already built 
-FROM 
+# Get latest base MOOSE image
+FROM idaholab/moose:latest
 
-# By default 4 cores are used to compile
-ARG compile_cores=4
+# By default 2 cores are used to compile
+ARG compile_cores=2
 
-# Should we generate a coverage report
-ARG test_coverage=false
+#Install dependencies
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get install -y \
+    gcc \
+    g++ \
+    gfortran \ 
+    cmake \
+    bison \
+    flex \
+    git \
+    python3 \
+    python3-dev \
+    python-is-python3 \
+    python3-packaging \
+    openmpi-bin \
+    libopenmpi-dev \
+    libboost-filesystem-dev \
 
-# Coverage repo token
-ARG coveralls_token=""
+#Build Proteus
+RUN cd /$WORKDIR && \
+    git clone https://github.com/aurora-multiphysics/proteus.git && \
+    cd proteus && \
+    make -j"$compile_cores"
 
-# Branch name for coveralls
-ARG coveralls_branch=""
+#Run tests
 
-# Install extra packages if we want test coverage
-RUN if "$test_coverage" ; then \
-       apt-get update && \
-       apt-get install -y python3-pip && \
-       pip install cpp-coveralls && \
-       pip install coveralls && \
-       pip install gcovr; \
-    fi
-
-# Copy entire repository into image
-COPY ./ /home/proteus/
-
-# Build
-RUN if "$test_coverage" ; then \
-    
-
-# Generate test coverage report using coveralls and upload
-RUN if "$test_coverage" && ! [ "$coveralls_token" = "" ] ; then \
-
-    fi
-
-# Run examples
-RUN cd /home/proteus/ && \
-    ./run_tests
