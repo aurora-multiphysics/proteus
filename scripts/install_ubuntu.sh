@@ -5,7 +5,7 @@
 # Optimised to the native system architecture.
 # A .moose_profile script is added to the $HOME directory.
 # This script is intended to be used from the proteus directory
-#   ./scripts/intall_ubuntu.sh
+#   ./scripts/install_ubuntu.sh
 # Use the installation by typing:
 #   source $HOME/.moose_profile
 

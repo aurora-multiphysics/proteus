@@ -1,34 +1,29 @@
 #!/bin/bash
 
-# This script installs Proteus on Fedora,
+# This script installs Proteus on CSD3,
 # including a MOOSE framework build in the $HOME directory.
-# Optimised to the native system architecture.
+# Optimised to the native system architecture on the cclake partition.
 # A .moose_profile script is added to the $HOME directory.
 # This script is intended to be used from the proteus directory
-#   ./scripts/install_fedora.sh
+#   ./scripts/install_csd3.sh
 # Use the installation by typing:
 #   source $HOME/.moose_profile
 
 export PROTEUS_DIR=`pwd`
 
-# Install pre-requisites
-
-sudo dnf install gcc gcc-c++ gcc-fortran cmake bison flex git
-sudo dnf install python3 python3-devel
-sudo dnf install openmpi openmpi-devel
-sudo dnf install libtirpc-devel zlib-devel
-sudo dnf install perl-File-Compare
-
 # Make MOOSE profile
 
-echo "export CC=mpicc" > $HOME/.moose_profile
+echo "module purge" > $HOME/.moose_profile
+echo "module load dot slurm cmake/latest rhel7/global" >> $HOME/.moose_profile
+echo "module load git-2.31.0-gcc-5.4.0-ec3ji34 python/3.8 gcc/9 openmpi/gcc/9.3/4.0.4" >> $HOME/.moose_profile
+echo "export CC=mpicc" >> $HOME/.moose_profile
 echo "export CXX=mpicxx" >> $HOME/.moose_profile
 echo "export F90=mpif90" >> $HOME/.moose_profile
 echo "export F77=mpif77" >> $HOME/.moose_profile
 echo "export FC=mpif90" >> $HOME/.moose_profile
 echo "export MOOSE_DIR="$HOME"/moose" >> $HOME/.moose_profile
 echo "export PATH=\$PATH:"$PROTEUS_DIR >> $HOME/.moose_profile
-echo "module load mpi/openmpi" >> $HOME/.moose_profile
+echo "export OMPI_MCA_mca_base_component_show_load_errors=0" >> $HOME/.moose_profile
 source $HOME/.moose_profile
 
 # Clone MOOSE from git
@@ -42,10 +37,10 @@ cd $MOOSE_DIR
 unset PETSC_DIR PETSC_ARCH
 ./scripts/update_and_rebuild_petsc.sh \
 CC=$CC CXX=$CXX F90=$F90 F77=$F77 FC=$FC \
---CXXOPTFLAGS="-O3 -march=native" \
---COPTFLAGS="-O3 -march=native" \
---FOPTFLAGS="-O3 -march=native" \
---download-mumps=0 --download-superlu_dist=0
+--CXXOPTFLAGS="-O3 -march=cascadelake -mtune=cascadelake" \
+--COPTFLAGS="-O3 -march=cascadelake -mtune=cascadelake" \
+--FOPTFLAGS="-O3 -march=cascadelake -mtune=cascadelake" \
+--download-mumps=0 --download-superlu_dist=0 --with-64-bit-indices=1
 
 # Build libMesh
 
