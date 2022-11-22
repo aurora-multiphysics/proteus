@@ -573,6 +573,13 @@ blockTemp=100       # degC
   petsc_options_value = 'hypre    boomeramg'
 []
 
+[Postprocessors]
+  [max_stress]
+    type = ElementExtremeValue
+    variable = vonmises_stress
+  []
+[]
+
 [Outputs]
   exodus = true
 []
