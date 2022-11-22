@@ -80,7 +80,7 @@ blockTemp=100       # degC
 []
 
 [Mesh]
-  [pccmg]
+  [mesh_pipe_and_block]
     type = PolygonConcentricCircleMeshGenerator
     num_sides = 4
     polygon_size = ${fparse monoBWidth / 2}
@@ -102,7 +102,7 @@ blockTemp=100       # degC
     external_boundary_name = monoblock_boundary
   []
 
-  [gmg]
+  [mesh_armour]
     type = GeneratedMeshGenerator
     dim = 2
     xmin = ${fparse monoBWidth /-2}
@@ -114,23 +114,23 @@ blockTemp=100       # degC
     boundary_name_prefix = armour
   []
 
-  [smg]
+  [combine_meshes]
     type = StitchedMeshGenerator
-    inputs = 'pccmg gmg'
+    inputs = 'mesh_pipe_and_block mesh_armour'
     stitch_boundaries_pairs = 'monoblock_boundary armour_bottom'
     clear_stitched_boundary_ids = true
   []
 
-  [merge_blocks]
+  [merge_block_names]
     type = RenameBlockGenerator
-    input = smg
+    input = combine_meshes
     old_block = '3 0'
     new_block = 'armour armour'
   []
 
-  [merge_boundaries]
+  [merge_boundary_names]
     type = RenameBoundaryGenerator
-    input = merge_blocks
+    input = merge_block_names
     old_boundary = 'armour_top
                     armour_left 10002 15002
                     armour_right 10004 15004
@@ -143,13 +143,13 @@ blockTemp=100       # degC
 
   [extrude]
     type = AdvancedExtruderGenerator
-    input = merge_boundaries
+    input = merge_boundary_names
     direction = '0 0 1'
     heights = ${monoBThick}
     num_layers = ${extrudeDivs}
   []
 
-  [pin_x0]
+  [pin_x]
     type = BoundingBoxNodeSetGenerator
     input = extrude
     bottom_left = '${fparse -ctol}
@@ -160,9 +160,9 @@ blockTemp=100       # degC
                 ${fparse (monoBThick)+tol}'
     new_boundary = bottom_x0
   []
-  [pin_z0]
+  [pin_z]
     type = BoundingBoxNodeSetGenerator
-    input = pin_x0
+    input = pin_x
     bottom_left = '${fparse (monoBWidth/-2)-ctol}
                    ${fparse (monoBWidth/-2)-ctol}
                    ${fparse (monoBThick/2)-tol}'
@@ -171,9 +171,9 @@ blockTemp=100       # degC
                  ${fparse (monoBThick/2)+tol}'
     new_boundary = bottom_z0
   []
-  [full_volume]
+  [define_full_volume_nodeset]
     type = BoundingBoxNodeSetGenerator
-    input = pin_z0
+    input = pin_z
     bottom_left = '
       ${fparse (monoBWidth/-2)-ctol}
       ${fparse (monoBWidth/-2)-ctol}
