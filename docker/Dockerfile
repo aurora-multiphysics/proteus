@@ -1,4 +1,4 @@
-#Docker file to be built within the Proteus main directory
+#Docker file to be built within the Proteus docker directory
 #Command to build the image: docker build --rm -t proteus:latest .
 
 #Get latest base MOOSE image
