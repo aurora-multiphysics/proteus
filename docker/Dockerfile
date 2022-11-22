@@ -50,5 +50,5 @@ RUN cd /$WORKDIR && \
     make -j"$compile_cores"
 
 #Run tests
-RUN cd /home/proteus/ && \
+RUN cd /proteus && \
     ./run_tests
