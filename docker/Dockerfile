@@ -10,7 +10,7 @@ FROM idaholab/moose:latest
 # By default 2 cores are used to compile
 ARG compile_cores=2
 
-#Install pre-requisites for Ubuntu
+#Install pre-requisites for Ubuntu or Fedora
 RUN apt-get update && apt-get install -y\
     gcc \
     g++ \
@@ -44,4 +44,5 @@ RUN cd /$WORKDIR && \
     make -j"$compile_cores"
 
 #Run tests
-
+RUN cd /home/proteus/ && \
+    ./run_tests
