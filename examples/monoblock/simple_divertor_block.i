@@ -14,6 +14,10 @@
 # PARAMETER DEFINITIONS
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# File handling
+name=simple_divertor_block
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Geometry
 PI=3.141592653589793
 
@@ -582,4 +586,9 @@ blockTemp=100       # degC
 
 [Outputs]
   exodus = true
+  [write_to_file]
+    type = CSV
+    show = 'max_stress'
+    file_base = 'outputs/${name}_out'
+  []
 []
