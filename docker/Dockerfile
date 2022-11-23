@@ -4,13 +4,10 @@
 #Get latest base MOOSE image
 FROM idaholab/moose:latest
 
-#Set author of the image
-#MAINTAINER Alexander Whittle
-
 #By default 2 cores are used to compile
 ARG compile_cores=2
 
-#By default ubuntu is the OS used to build the image
+#By default ubuntu is the OS used to build the image, change this if building on Fedora
 ARG OS="ubuntu" 
 
 #Install pre-requisites for Ubuntu or Fedora
