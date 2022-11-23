@@ -54,15 +54,15 @@ protected:
   /// Strong residual corresponding to the momentum advective term
   ADMaterialProperty<RealVectorValue> & _advective_strong_residual;
 
+  /// Strong residual corresponding to the momentum viscous term. This is only used by stabilization
+  /// kernels
+  ADMaterialProperty<RealVectorValue> & _viscous_strong_residual;
+
   /// Strong residual corresponding to the momentum electrostatic Lorentz force term
   ADMaterialProperty<RealVectorValue> & _lorentz_electrostatic_strong_residual; // IRM
 
   /// Strong residual corresponding to the momentum flow Lorentz force term
   ADMaterialProperty<RealVectorValue> & _lorentz_flow_strong_residual;  // IRM
-
-  /// Strong residual corresponding to the momentum viscous term. This is only used by stabilization
-  /// kernels
-  ADMaterialProperty<RealVectorValue> & _viscous_strong_residual;
 
   /// Strong residual corresponding to the momentum transient term
   ADMaterialProperty<RealVectorValue> & _td_strong_residual;
