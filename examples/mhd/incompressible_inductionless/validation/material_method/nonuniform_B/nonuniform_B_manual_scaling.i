@@ -19,7 +19,7 @@ Ha = ${fparse B_max * diameter * sqrt(conduct/dyn_visc)}
 Re = ${fparse u_avg * diameter * dens / dyn_visc}
 
 scaled_B_max = ${fparse Ha / (scaled_diameter * sqrt(scaled_conduct/scaled_dyn_visc))}
-scaled_u_avg = ${fparse Rm / (scaled_diameter * scaled_dens / scaled_dyn_visc)}
+scaled_u_avg = ${fparse Re / (scaled_diameter * scaled_dens / scaled_dyn_visc)}
 
 [Mesh]
   [mesh]
