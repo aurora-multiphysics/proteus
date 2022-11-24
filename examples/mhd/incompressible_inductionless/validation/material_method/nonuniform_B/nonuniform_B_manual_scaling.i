@@ -116,7 +116,8 @@ scaled_u_avg = ${fparse Re / (scaled_diameter * scaled_dens / scaled_dyn_visc)}
   [const]
     type = ADGenericConstantMaterial
     prop_names =  'rho  mu        conductivity'
-    prop_values = '870  9.4e-4    2.6e6'
+    prop_values = '${scaled_dens} ${scaled_dyn_visc} ${scaled_conduct}'
+    # prop_values = '870  9.4e-4    2.6e6'
     # prop_values = '1  1    1'
   []
   [irmins_mat_tau]
