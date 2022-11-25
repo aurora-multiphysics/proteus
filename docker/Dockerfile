@@ -14,6 +14,6 @@ RUN cd /$WORKDIR && \
     cd proteus && \
     make -j"$compile_cores"
 
-#Run tests
+# Run tests
 RUN cd /proteus && \
     ./run_tests
