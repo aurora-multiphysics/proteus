@@ -1,5 +1,6 @@
-#Docker file to be built within the Proteus docker directory
-#Command to build the image: docker build --rm -t proteus:latest .
+# To build the Docker container, run the following lines from your proteus root directory:
+# cd docker
+# docker build --rm -t proteus:latest .
 
 #Get latest base MOOSE image
 FROM idaholab/moose:latest
