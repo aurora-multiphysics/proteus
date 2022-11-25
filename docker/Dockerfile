@@ -8,7 +8,7 @@ FROM idaholab/moose:latest
 # By default, two cores are used to compile
 ARG compile_cores=2
 
-#Build Proteus
+# Build Proteus
 RUN cd /$WORKDIR && \
     git clone https://github.com/aurora-multiphysics/proteus.git && \
     cd proteus && \
