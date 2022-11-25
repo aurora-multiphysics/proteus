@@ -5,7 +5,7 @@
 #Get latest base MOOSE image
 FROM idaholab/moose:latest
 
-#By default 2 cores are used to compile
+# By default, two cores are used to compile
 ARG compile_cores=2
 
 #Build Proteus
