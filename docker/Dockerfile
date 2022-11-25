@@ -2,7 +2,7 @@
 # cd docker
 # docker build --rm -t proteus:latest .
 
-#Get latest base MOOSE image
+# Get latest base MOOSE image
 FROM idaholab/moose:latest
 
 # By default, two cores are used to compile
