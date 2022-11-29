@@ -29,8 +29,9 @@ as follows:
 Docker
 -----
 
-Proteus can be run in a container to make installation easier
-Run this command in the /docker directory to build the image
+Proteus can be run in a container to make installation easier.
+
+Run this command in the /docker directory to build the image.
 ```
 docker build --rm -t proteus:latest .
 ```
