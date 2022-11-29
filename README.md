@@ -26,6 +26,16 @@ as follows:
 ./proteus-opt -i <input-file>.i
 ```
 
+Docker
+-----
+
+Proteus can be run in a container to make installation easier.
+
+Run this command in the /docker directory to build the image.
+```
+docker build --rm -t proteus:latest .
+```
+
 Contributors
 ============
 
