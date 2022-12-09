@@ -16,7 +16,7 @@ RATIO_Z_INV = ${fparse 1/RATIO_Z_FWD}
 nodetol = 1e-12
 
 [Mesh]
-  [gmgTopBack]
+  [meshTopBack]
     type = GeneratedMeshGenerator
     dim = 3
     nx = ${N_X}
@@ -32,7 +32,7 @@ nodetol = 1e-12
     bias_z = ${RATIO_Z_FWD}
     elem_type = ${ELEMENT_TYPE}
   []
-  [gmgTopFront]
+  [meshTopFront]
     type = GeneratedMeshGenerator
     dim = 3
     nx = ${N_X}
@@ -48,7 +48,7 @@ nodetol = 1e-12
     bias_z = ${RATIO_Z_INV}
     elem_type = ${ELEMENT_TYPE}
   []
-	[gmgBottomBack]
+  [meshBottomBack]
     type = GeneratedMeshGenerator
     dim = 3
     nx = ${N_X}
@@ -64,7 +64,7 @@ nodetol = 1e-12
     bias_z = ${RATIO_Z_FWD}
     elem_type = ${ELEMENT_TYPE}
   []
-  [gmgBottomFront]
+  [meshBottomFront]
     type = GeneratedMeshGenerator
     dim = 3
     nx = ${N_X}
@@ -80,31 +80,25 @@ nodetol = 1e-12
     bias_z = ${RATIO_Z_INV}
     elem_type = ${ELEMENT_TYPE}
   []
-	[meshTop]
-		type = StitchedMeshGenerator
-		inputs = 'gmgTopBack gmgTopFront'
-		clear_stitched_boundary_ids = true
-		stitch_boundaries_pairs = 'front back'
-	[]
+  [meshTop]
+    type = StitchedMeshGenerator
+    inputs = 'meshTopBack meshTopFront'
+    clear_stitched_boundary_ids = true
+    stitch_boundaries_pairs = 'front back'
+  []
   [meshBottom]
-		type = StitchedMeshGenerator
-		inputs = 'gmgBottomBack gmgBottomFront'
-		clear_stitched_boundary_ids = true
-		stitch_boundaries_pairs = 'front back'
-	[]
+    type = StitchedMeshGenerator
+    inputs = 'meshBottomBack meshBottomFront'
+    clear_stitched_boundary_ids = true
+    stitch_boundaries_pairs = 'front back'
+  []
   [mesh]
-		type = StitchedMeshGenerator
-		inputs = 'meshTop meshBottom'
-		clear_stitched_boundary_ids = true
-		stitch_boundaries_pairs = 'bottom top'
-		show_info = true
-	[]
-  # [corner_node]
-  #   type = ExtraNodesetGenerator
-  #   new_boundary = 'pinned_node'
-  #   nodes = '0'
-  #   input = mesh
-  # []
+    type = StitchedMeshGenerator
+    inputs = 'meshTop meshBottom'
+    clear_stitched_boundary_ids = true
+    stitch_boundaries_pairs = 'bottom top'
+    show_info = true
+  []
   [centre_node]
     type = BoundingBoxNodeSetGenerator
     new_boundary = 'pinned_node'
@@ -163,13 +157,6 @@ nodetol = 1e-12
     boundary = 'top bottom front back'
     values = '0 0 0'
   []
-  # [velocity_outlet]
-  #   type = INSADMomentumNoBCBC
-  #   variable = velocity
-  #   pressure = pressure
-  #   boundary = 'right'
-  #   integrate_p_by_parts = ${INTEGRATE_BY_PARTS_P}
-  # []
   [pressure_reference]
     type = DirichletBC
     variable = pressure
@@ -255,7 +242,6 @@ nodetol = 1e-12
     velocity = velocity
     magneticField = magneticField
   []
-
 []
 
 [AuxKernels]
@@ -273,7 +259,6 @@ nodetol = 1e-12
     vars = 'y_max z_max'
     vals = '1     1'
     value_x = '(9/4) * ${U_AVG} * (1 - (y * y) / (y_max * y_max)) * (1 - (z * z) / (z_max * z_max))'
-    # value_x = '${U_AVG}'
     value_y = '0'
     value_z = '0'
   []

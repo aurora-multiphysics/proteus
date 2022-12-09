@@ -2,20 +2,12 @@ N_X = 100
 N_Y_half = 20
 N_Z_half = 10
 
-# N_X = 50
-# N_Y_half = 10
-# N_Z_half = 5
-# N_X = 25
-# N_Y_half = 5
-# N_Z_half = 3
-
 INTEGRATE_BY_PARTS_P = true
-# ELEMENT_TYPE = HEX20
 ELEMENT_TYPE = HEX8
 U_AVG = 1
 
 [Mesh]
-  [gmgTopBack]
+  [meshTopBack]
     type = GeneratedMeshGenerator
     dim = 3
     nx = ${N_X}
@@ -27,11 +19,11 @@ U_AVG = 1
     ymax = 1
     zmin = -1
     zmax = 0
-		# bias_y = 0.8
-    # bias_z = 1.25
+    bias_y = 0.8
+    bias_z = 1.25
     elem_type = ${ELEMENT_TYPE}
   []
-  [gmgTopFront]
+  [meshTopFront]
     type = GeneratedMeshGenerator
     dim = 3
     nx = ${N_X}
@@ -43,11 +35,11 @@ U_AVG = 1
     ymax = 1
     zmin = 0
     zmax = 1
-		# bias_y = 0.8
-    # bias_z = 0.8
+    bias_y = 0.8
+    bias_z = 0.8
     elem_type = ${ELEMENT_TYPE}
   []
-	[gmgBottomBack]
+  [meshBottomBack]
     type = GeneratedMeshGenerator
     dim = 3
     nx = ${N_X}
@@ -59,11 +51,11 @@ U_AVG = 1
     ymax = 0
     zmin = -1
     zmax = 0
-		# bias_y = 1.25
-    # bias_z = 1.25
+    bias_y = 1.25
+    bias_z = 1.25
     elem_type = ${ELEMENT_TYPE}
   []
-  [gmgBottomFront]
+  [meshBottomFront]
     type = GeneratedMeshGenerator
     dim = 3
     nx = ${N_X}
@@ -75,38 +67,34 @@ U_AVG = 1
     ymax = 0
     zmin = 0
     zmax = 1
-		# bias_y = 1.25
-    # bias_z = 0.8
+    bias_y = 1.25
+    bias_z = 0.8
     elem_type = ${ELEMENT_TYPE}
   []
-	[meshTop]
-		type = StitchedMeshGenerator
-		inputs = 'gmgTopBack gmgTopFront'
-		clear_stitched_boundary_ids = true
-		stitch_boundaries_pairs = 'front back'
-		# show_info = true
-	[]
+  [meshTop]
+    type = StitchedMeshGenerator
+    inputs = 'meshTopBack meshTopFront'
+    clear_stitched_boundary_ids = true
+    stitch_boundaries_pairs = 'front back'
+  []
   [meshBottom]
-		type = StitchedMeshGenerator
-		inputs = 'gmgBottomBack gmgBottomFront'
-		clear_stitched_boundary_ids = true
-		stitch_boundaries_pairs = 'front back'
-		# show_info = true
-	[]
+    type = StitchedMeshGenerator
+    inputs = 'meshBottomBack meshBottomFront'
+    clear_stitched_boundary_ids = true
+    stitch_boundaries_pairs = 'front back'
+  []
   [mesh]
-		type = StitchedMeshGenerator
-		inputs = 'meshTop meshBottom'
-		clear_stitched_boundary_ids = true
-		stitch_boundaries_pairs = 'bottom top'
-		show_info = true
-	[]
-
+    type = StitchedMeshGenerator
+    inputs = 'meshTop meshBottom'
+    clear_stitched_boundary_ids = true
+    stitch_boundaries_pairs = 'bottom top'
+    show_info = true
+  []
 []
 
 [Variables]
   [velocity]
     family = LAGRANGE_VEC
-    # order = SECOND
     order = FIRST
   []
   [pressure]
@@ -138,13 +126,6 @@ U_AVG = 1
     boundary = 'top bottom front back'
     values = '0 0 0'
   []
-  # [velocity_outlet]
-  #   type = INSADMomentumNoBCBC
-  #   variable = velocity
-  #   pressure = pressure
-  #   boundary = 'right'
-  #   integrate_p_by_parts = ${INTEGRATE_BY_PARTS_P}
-  # []
   [pressure_reference]
     type = DirichletBC
     variable = pressure
@@ -225,10 +206,6 @@ U_AVG = 1
   automatic_scaling = true
   l_max_its = 100
   nl_max_its = 150
-  # petsc_options_iname = '-pc_type -pc_hypre_type'
-  # petsc_options_value = 'hypre    euclid'
-  # petsc_options_iname = '-pc_type -pc_hypre_type'
-  # petsc_options_value = 'hypre    boomeramg'
   petsc_options_iname = '-pc_type'
   petsc_options_value = 'asm'
 []

@@ -3,7 +3,7 @@ N_Y_half = 10
 U_AVG = 1
 
 [Mesh]
-  [gmgTop]
+  [meshTop]
     type = GeneratedMeshGenerator
     dim = 2
     nx = ${N_X}
@@ -12,9 +12,9 @@ U_AVG = 1
     xmax = 20
     ymin = 0
     ymax = 1
-		# bias_y = 0.8
+    bias_y = 0.8
   []
-	[gmgBottom]
+  [meshBottom]
     type = GeneratedMeshGenerator
     dim = 2
     nx = ${N_X}
@@ -23,16 +23,14 @@ U_AVG = 1
     xmax = 20
     ymin = -1
     ymax = 0
-		# bias_y = 1.25
+    bias_y = 1.25
   []
-	[mesh]
-		type = StitchedMeshGenerator
-		inputs = 'gmgTop gmgBottom'
-		clear_stitched_boundary_ids = true
-		stitch_boundaries_pairs = 'bottom top'
-		# show_info = true
-		
-	[]
+  [meshComplete]
+    type = StitchedMeshGenerator
+    inputs = 'meshTop meshBottom'
+    clear_stitched_boundary_ids = true
+    stitch_boundaries_pairs = 'bottom top'
+  []
 []
 
 [Variables]
@@ -45,13 +43,12 @@ U_AVG = 1
 []
 
 [ICs]
-	[velocity]
+  [velocity]
     type = VectorFunctionIC
     variable = velocity
-		function = velocityInlet
+    function = velocityInlet
   []
 []
-
 
 [Functions]
   [velocityInlet]

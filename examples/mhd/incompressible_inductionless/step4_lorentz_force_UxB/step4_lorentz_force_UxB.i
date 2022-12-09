@@ -1,7 +1,7 @@
 U_AVG = 1
 
 [Mesh]
-  [gmg]
+  [mesh]
     type = GeneratedMeshGenerator
     dim = 3
     nx = 50
@@ -13,7 +13,6 @@ U_AVG = 1
     ymax = 1
     zmin = -1
     zmax = 1
-    # elem_type = HEX20
   []
 []
 
@@ -55,7 +54,7 @@ U_AVG = 1
     variable = velocity
     boundary = 'top bottom front back'
     values = '0 0 0'
-    []
+  []
   [pressure_set]
     type = DirichletBC
     variable = pressure

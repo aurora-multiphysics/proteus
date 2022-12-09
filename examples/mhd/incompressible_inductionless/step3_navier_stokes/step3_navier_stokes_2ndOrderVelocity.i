@@ -1,11 +1,9 @@
 U_AVG = 1
 
 [Mesh]
-  [gmg]
+  [mesh]
     type = GeneratedMeshGenerator
     dim = 3
-    # nx = 50
-    # ny = 20
     nx = 25
     ny = 10
     nz = 10
@@ -38,15 +36,14 @@ U_AVG = 1
   []
 []
 
-
 [Functions]
   [velocityInlet]
-  type = ParsedVectorFunction
-  vars = 'y_max z_max'
-  vals = '1     1'
-  value_x = '(9/4) * ${U_AVG} * (1 - (y * y) / (y_max * y_max)) * (1 - (z * z) / (z_max * z_max))'
-  value_y = '0'
-  value_z = '0'
+    type = ParsedVectorFunction
+    vars = 'y_max z_max'
+    vals = '1     1'
+    value_x = '(9/4) * ${U_AVG} * (1 - (y * y) / (y_max * y_max)) * (1 - (z * z) / (z_max * z_max))'
+    value_y = '0'
+    value_z = '0'
   []
 []
 
@@ -62,7 +59,7 @@ U_AVG = 1
     variable = velocity
     boundary = 'top bottom front back'
     values = '0 0 0'
-    []
+  []
   [pressure_set]
     type = DirichletBC
     variable = pressure
@@ -77,11 +74,6 @@ U_AVG = 1
     prop_names = 'rho mu'
     prop_values = '1  1'
   []
-  # [ins_mat]
-  #   type = INSADTauMaterial
-  #   velocity = velocity
-  #   pressure = pressure
-  # []
   [ins_mat]
     type = INSADMaterial
     velocity = velocity
@@ -94,7 +86,6 @@ U_AVG = 1
     type = INSADMass
     variable = pressure
   []
-  # NOTE: PSPG stabilisation is not used
 
   [momentum_convection]
     type = INSADMomentumAdvection
@@ -112,12 +103,6 @@ U_AVG = 1
     pressure = pressure
     integrate_p_by_parts = true
   []
-  # NOTE: SUPG stabilisation is not used
-  # [momentum_supg]
-  #   type = INSADMomentumSUPG
-  #   variable = velocity
-  #   velocity = velocity
-  # []
 []
 
 [Problem]
@@ -139,8 +124,6 @@ U_AVG = 1
   automatic_scaling = true
   petsc_options_iname = '-pc_type'
   petsc_options_value = 'asm'
-  # petsc_options_iname = '-pc_type -pc_hypre_type'
-  # petsc_options_value = 'hypre    euclid'
 []
 
 [Outputs]

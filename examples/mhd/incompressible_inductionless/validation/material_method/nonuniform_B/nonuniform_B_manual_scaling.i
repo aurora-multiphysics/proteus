@@ -13,7 +13,10 @@ conduct = 2.6e6
 scaled_dens = 1
 scaled_dyn_visc = 1
 scaled_conduct = 1
-scaled_diameter = ${diameter}
+
+length_scaling_factor = ${fparse diameter / 100}
+scaled_diameter = ${fparse diameter / length_scaling_factor}
+length_scale_multiplier = ${fparse 1 / length_scaling_factor}
 
 Ha = ${fparse B_max * diameter * sqrt(conduct/dyn_visc)}
 Re = ${fparse u_avg * diameter * dens / dyn_visc}
@@ -26,25 +29,6 @@ scaled_u_avg = ${fparse Re / (scaled_diameter * scaled_dens / scaled_dyn_visc)}
     type = FileMeshGenerator
     file = nonuniform_B_mesh.e
   []
-  # [mesh]
-  #   type = GeneratedMeshGenerator
-  #   dim = 3
-  #   xmin = -0.02
-  #   xmax = 0.02
-  #   ymin = -0.6
-  #   ymax = 0.8
-  #   zmin = -0.02
-  #   zmax = 0.02
-  #   nx = 20
-  #   ny = 100
-  #   nz = 20
-  # []
-  # [rename]
-  #   type = RenameBoundaryGenerator
-  #   input = mesh
-  #   old_boundary = 'bottom top left right front back'
-  #   new_boundary = 'inlet outlet walls walls walls walls'
-  # []
 []
 
 [Variables]
@@ -77,6 +61,11 @@ scaled_u_avg = ${fparse Re / (scaled_diameter * scaled_dens / scaled_dyn_visc)}
     z_value = 1e-15
     variable = velocity
   []
+  [epotIC]
+    type = ConstantIC
+    value = 0
+    variable = electricPotential
+  []
 []
 
 [BCs]
@@ -98,10 +87,10 @@ scaled_u_avg = ${fparse Re / (scaled_diameter * scaled_dens / scaled_dyn_visc)}
     boundary = outlet
     value = 0
   []
-  [epot_inlet_output]
+  [epot_inlet]
     type = NeumannBC
     variable = electricPotential
-    boundary = 'inlet outlet'
+    boundary = inlet
     value = 0
   []
   [epot_insulating_walls]
@@ -117,8 +106,6 @@ scaled_u_avg = ${fparse Re / (scaled_diameter * scaled_dens / scaled_dyn_visc)}
     type = ADGenericConstantMaterial
     prop_names =  'rho  mu        conductivity'
     prop_values = '${scaled_dens} ${scaled_dyn_visc} ${scaled_conduct}'
-    # prop_values = '870  9.4e-4    2.6e6'
-    # prop_values = '1  1    1'
   []
   [irmins_mat_tau]
     type = IRMINSADTauMaterial
@@ -195,7 +182,7 @@ scaled_u_avg = ${fparse Re / (scaled_diameter * scaled_dens / scaled_dyn_visc)}
     type = ParsedVectorFunction
     value_x = '0'
     value_y = '0'
-    value_z = '${scaled_B_max}*pow((1.0 + exp(${exp_factor}*y)), ${power_exp})'
+    value_z = '${scaled_B_max}*pow((1.0 + exp(${exp_factor}*y*${length_scaling_factor})), ${power_exp})'
   []
 []
 
@@ -216,11 +203,11 @@ scaled_u_avg = ${fparse Re / (scaled_diameter * scaled_dens / scaled_dyn_visc)}
   automatic_scaling = true
   l_max_its = 100
   nl_max_its = 1000
-  petsc_options_iname = '-pc_type'
-  petsc_options_value = 'asm'
+  petsc_options_iname = '-pc_type -pc_hypre_type'
+  petsc_options_value = 'hypre    euclid'
 []
 
 [Outputs]
   exodus = true
-  # execute_on = 'nonlinear'
+  execute_on = 'nonlinear'
 []

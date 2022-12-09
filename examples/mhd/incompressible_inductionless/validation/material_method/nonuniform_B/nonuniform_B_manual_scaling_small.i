@@ -1,39 +1,54 @@
-N_X = 100
-N_Y_half = 20
 INTEGRATE_BY_PARTS_P = true
-ELEMENT_TYPE = QUAD4
-U_AVG = 1
+
+exp_factor = 12.7416
+power_exp = -2.7845
+
+diameter = 0.04
+B_max = 0.5
+u_avg = 0.01
+dens = 870
+dyn_visc = 9.4e-4
+conduct = 2.6e6
+
+scaled_dens = 1
+scaled_dyn_visc = 1
+scaled_conduct = 1
+
+length_scaling_factor = ${fparse diameter / 100}
+scaled_diameter = ${fparse diameter / length_scaling_factor}
+length_scale_multiplier = ${fparse 1 / length_scaling_factor}
+
+Ha = ${fparse B_max * diameter * sqrt(conduct/dyn_visc)}
+Re = ${fparse u_avg * diameter * dens / dyn_visc}
+
+scaled_B_max = ${fparse Ha / (scaled_diameter * sqrt(scaled_conduct/scaled_dyn_visc))}
+scaled_u_avg = ${fparse Re / (scaled_diameter * scaled_dens / scaled_dyn_visc)}
 
 [Mesh]
-  [meshTop]
-    type = GeneratedMeshGenerator
-    dim = 2
-    nx = ${N_X}
-    ny = ${N_Y_half}
-    xmin = 0
-    xmax = 20
-    ymin = 0
-    ymax = 1
-    bias_y = 0.8
-    elem_type = ${ELEMENT_TYPE}
-  []
-  [meshBottom]
-    type = GeneratedMeshGenerator
-    dim = 2
-    nx = ${N_X}
-    ny = ${N_Y_half}
-    xmin = 0
-    xmax = 20
-    ymin = -1
-    ymax = 0
-    bias_y = 1.25
-    elem_type = ${ELEMENT_TYPE}
-  []
   [mesh]
-    type = StitchedMeshGenerator
-    inputs = 'meshTop meshBottom'
-    clear_stitched_boundary_ids = true
-    stitch_boundaries_pairs = 'bottom top'
+    type = GeneratedMeshGenerator
+    dim = 3
+    xmin = -0.02
+    xmax = 0.02
+    ymin = -0.6
+    ymax = 0.8
+    zmin = -0.02
+    zmax = 0.02
+    nx = 20
+    ny = 200
+    nz = 20
+  []
+  [rescaledMesh]
+    type = TransformGenerator
+    input = mesh
+    transform = SCALE
+    vector_value = '${length_scale_multiplier} ${length_scale_multiplier} ${length_scale_multiplier}'
+  []
+  [rename]
+    type = RenameBoundaryGenerator
+    input = rescaledMesh
+    old_boundary = 'bottom top left right front back'
+    new_boundary = 'inlet outlet walls walls walls walls'
   []
 []
 
@@ -54,17 +69,23 @@ U_AVG = 1
 
 [AuxVariables]
   [magneticField]
-    order = FIRST
     family = LAGRANGE_VEC
+    order = FIRST
   []
 []
 
 [ICs]
   [velocityIC]
     type = VectorConstantIC
-    x_value = ${U_AVG}
-    y_value = 1e-15
+    x_value = 1e-15
+    y_value = ${scaled_u_avg}
+    z_value = 1e-15
     variable = velocity
+  []
+  [epotIC]
+    type = ConstantIC
+    value = 0
+    variable = electricPotential
   []
 []
 
@@ -72,31 +93,31 @@ U_AVG = 1
   [velocity_inlet]
     type = VectorFunctionDirichletBC
     variable = velocity
-    boundary = left
+    boundary = inlet
     function = velocityFunction
   []
   [velocity_no_slip]
     type = VectorDirichletBC
     variable = velocity
-    boundary = 'top bottom'
+    boundary = walls
     values = '0 0 0'
   []
   [pressure_reference]
     type = DirichletBC
     variable = pressure
-    boundary = right
+    boundary = outlet
     value = 0
   []
-  [epot_inlet_output]
+  [epot_inlet]
     type = NeumannBC
     variable = electricPotential
-    boundary = 'left right'
+    boundary = inlet
     value = 0
   []
   [epot_insulating_walls]
     type = NeumannBC
     variable = electricPotential
-    boundary = 'top bottom'
+    boundary = 'inlet outlet walls'
     value = 0
   []
 []
@@ -104,8 +125,8 @@ U_AVG = 1
 [Materials]
   [const]
     type = ADGenericConstantMaterial
-    prop_names = 'rho mu  conductivity'
-    prop_values = '1  1   1'
+    prop_names =  'rho  mu        conductivity'
+    prop_values = '${scaled_dens} ${scaled_dyn_visc} ${scaled_conduct}'
   []
   [irmins_mat_tau]
     type = IRMINSADTauMaterial
@@ -174,15 +195,15 @@ U_AVG = 1
 [Functions]
   [velocityFunction]
     type = ParsedVectorFunction
-    vars = 'y_max'
-    vals = '1'
-    value_x = '(3/2) * ${U_AVG} * (1 - (y * y) / (y_max * y_max))'
-    value_y = '0'
+    value_x = '0'
+    value_y = '${scaled_u_avg}'
+    value_z = '0'
   []
   [magneticFieldFunction]
     type = ParsedVectorFunction
     value_x = '0'
-    value_y = '20'
+    value_y = '0'
+    value_z = '${scaled_B_max}*pow((1.0 + exp(${exp_factor}*y*${length_scaling_factor})), ${power_exp})'
   []
 []
 
@@ -202,7 +223,7 @@ U_AVG = 1
   solve_type = NEWTON
   automatic_scaling = true
   l_max_its = 100
-  nl_max_its = 150
+  nl_max_its = 1000
   petsc_options_iname = '-pc_type -pc_hypre_type'
   petsc_options_value = 'hypre    euclid'
 []

@@ -1,5 +1,5 @@
 [Mesh]
-  [gmg]
+  [mesh]
     type = GeneratedMeshGenerator
     dim = 3
     nx = 50
@@ -29,34 +29,34 @@
 
 [BCs]
   [inlet]
-  type = NeumannBC
-  variable = electricPotential
-  boundary = left
-  value = 0
+    type = NeumannBC
+    variable = electricPotential
+    boundary = left
+    value = 0
   []
   [outlet]
-  type = NeumannBC
-  variable = electricPotential
-  boundary = right
-  value = 0
+    type = NeumannBC
+    variable = electricPotential
+    boundary = right
+    value = 0
   []
   [topWall]
-  type = DirichletBC
-  variable = electricPotential
-  boundary = top
-  value = 4000
+    type = DirichletBC
+    variable = electricPotential
+    boundary = top
+    value = 4000
   []
   [bottomWall]
-  type = DirichletBC
-  variable = electricPotential
-  boundary = bottom
-  value = 0
+    type = DirichletBC
+    variable = electricPotential
+    boundary = bottom
+    value = 0
   []
   [frontWall]
-  type = NeumannBC
-  variable = electricPotential
-  boundary = front
-  value = 0
+    type = NeumannBC
+    variable = electricPotential
+    boundary = front
+    value = 0
   []
   [backWall]
     type = NeumannBC

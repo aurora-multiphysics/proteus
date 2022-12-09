@@ -14,7 +14,7 @@ RATIO_Z_FWD = ${fparse GRADING_R_Z ^ (1/(N_Z_half - 1))}
 RATIO_Z_INV = ${fparse 1/RATIO_Z_FWD}
 
 [Mesh]
-  [gmgTopBack]
+  [meshTopBack]
     type = GeneratedMeshGenerator
     dim = 3
     nx = ${N_X}
@@ -30,7 +30,7 @@ RATIO_Z_INV = ${fparse 1/RATIO_Z_FWD}
     bias_z = ${RATIO_Z_FWD}
     elem_type = ${ELEMENT_TYPE}
   []
-  [gmgTopFront]
+  [meshTopFront]
     type = GeneratedMeshGenerator
     dim = 3
     nx = ${N_X}
@@ -46,7 +46,7 @@ RATIO_Z_INV = ${fparse 1/RATIO_Z_FWD}
     bias_z = ${RATIO_Z_INV}
     elem_type = ${ELEMENT_TYPE}
   []
-	[gmgBottomBack]
+  [meshBottomBack]
     type = GeneratedMeshGenerator
     dim = 3
     nx = ${N_X}
@@ -62,7 +62,7 @@ RATIO_Z_INV = ${fparse 1/RATIO_Z_FWD}
     bias_z = ${RATIO_Z_FWD}
     elem_type = ${ELEMENT_TYPE}
   []
-  [gmgBottomFront]
+  [meshBottomFront]
     type = GeneratedMeshGenerator
     dim = 3
     nx = ${N_X}
@@ -78,25 +78,25 @@ RATIO_Z_INV = ${fparse 1/RATIO_Z_FWD}
     bias_z = ${RATIO_Z_INV}
     elem_type = ${ELEMENT_TYPE}
   []
-	[meshTop]
-		type = StitchedMeshGenerator
-		inputs = 'gmgTopBack gmgTopFront'
-		clear_stitched_boundary_ids = true
-		stitch_boundaries_pairs = 'front back'
-	[]
+  [meshTop]
+    type = StitchedMeshGenerator
+    inputs = 'meshTopBack meshTopFront'
+    clear_stitched_boundary_ids = true
+    stitch_boundaries_pairs = 'front back'
+  []
   [meshBottom]
-		type = StitchedMeshGenerator
-		inputs = 'gmgBottomBack gmgBottomFront'
-		clear_stitched_boundary_ids = true
-		stitch_boundaries_pairs = 'front back'
-	[]
+    type = StitchedMeshGenerator
+    inputs = 'meshBottomBack meshBottomFront'
+    clear_stitched_boundary_ids = true
+    stitch_boundaries_pairs = 'front back'
+  []
   [mesh]
-		type = StitchedMeshGenerator
-		inputs = 'meshTop meshBottom'
-		clear_stitched_boundary_ids = true
-		stitch_boundaries_pairs = 'bottom top'
-		show_info = true
-	[]
+    type = StitchedMeshGenerator
+    inputs = 'meshTop meshBottom'
+    clear_stitched_boundary_ids = true
+    stitch_boundaries_pairs = 'bottom top'
+    show_info = true
+  []
 []
 
 [Variables]
@@ -144,13 +144,6 @@ RATIO_Z_INV = ${fparse 1/RATIO_Z_FWD}
     boundary = 'top bottom front back'
     values = '0 0 0'
   []
-  # [velocity_outlet]
-  #   type = INSADMomentumNoBCBC
-  #   variable = velocity
-  #   pressure = pressure
-  #   boundary = 'right'
-  #   integrate_p_by_parts = ${INTEGRATE_BY_PARTS_P}
-  # []
   [pressure_reference]
     type = DirichletBC
     variable = pressure
@@ -236,7 +229,6 @@ RATIO_Z_INV = ${fparse 1/RATIO_Z_FWD}
     velocity = velocity
     magneticField = magneticField
   []
-
 []
 
 [AuxKernels]
@@ -254,7 +246,6 @@ RATIO_Z_INV = ${fparse 1/RATIO_Z_FWD}
     vars = 'y_max z_max'
     vals = '1     1'
     value_x = '(9/4) * ${U_AVG} * (1 - (y * y) / (y_max * y_max)) * (1 - (z * z) / (z_max * z_max))'
-    # value_x = '${U_AVG}'
     value_y = '0'
     value_z = '0'
   []

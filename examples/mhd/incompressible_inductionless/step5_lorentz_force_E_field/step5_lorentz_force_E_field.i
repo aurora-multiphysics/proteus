@@ -1,7 +1,7 @@
 U_AVG = 1
 
 [Mesh]
-  [gmg]
+  [mesh]
     type = GeneratedMeshGenerator
     dim = 3
     nx = 50
@@ -13,7 +13,6 @@ U_AVG = 1
     ymax = 1
     zmin = -1
     zmax = 1
-    # elem_type = HEX20
   []
 []
 
@@ -25,10 +24,6 @@ U_AVG = 1
   [pressure]
     order = FIRST
   []
-  # [lorentzForce]
-  #   family = LAGRANGE_VEC
-  #   order = FIRST
-  # []
 []
 
 [AuxVariables]
@@ -99,32 +94,27 @@ U_AVG = 1
     type = INSADMomentumAdvection
     variable = velocity
   []
-
   [momentum_viscous]
     type = INSADMomentumViscous
     variable = velocity
   []
-
   [momentum_pressure]
     type = INSADMomentumPressure
     variable = velocity
     pressure = pressure
     integrate_p_by_parts = true
   []
-
   [momentum_supg]
     type = INSADMomentumSUPG
     variable = velocity
     velocity = velocity
   []
-
   [lorentz_force]
     type = IRMINSADMomentumLorentzElectrostatic
     variable = velocity
     electricPotential = electricPotential
     magneticField = magneticField
   []
-
 []
 
 [AuxKernels]
@@ -173,8 +163,6 @@ U_AVG = 1
   l_max_its = 100
   petsc_options_iname = '-pc_type'
   petsc_options_value = 'asm'
-  # petsc_options_iname = '-pc_type -pc_hypre_type'
-  # petsc_options_value = 'hypre euclid'
 []
 
 [Outputs]

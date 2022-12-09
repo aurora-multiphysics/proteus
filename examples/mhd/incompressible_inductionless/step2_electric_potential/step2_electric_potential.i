@@ -1,7 +1,7 @@
 U_AVG = 1
 
 [Mesh]
-  [gmg]
+  [mesh]
     type = GeneratedMeshGenerator
     dim = 3
     nx = 50
@@ -77,7 +77,6 @@ U_AVG = 1
     execute_on = INITIAL
   []
 []
-
 
 [BCs]
   [inlet]

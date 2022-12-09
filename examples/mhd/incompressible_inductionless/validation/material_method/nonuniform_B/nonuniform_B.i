@@ -4,32 +4,12 @@ U_AVG = 0.01
 exp_factor = 12.7416
 power_exp = -2.7845
 B_max = 0.5
-# B_max = 500
 
 [Mesh]
   [mesh]
     type = FileMeshGenerator
     file = nonuniform_B_mesh.e
   []
-  # [mesh]
-  #   type = GeneratedMeshGenerator
-  #   dim = 3
-  #   xmin = -0.02
-  #   xmax = 0.02
-  #   ymin = -0.6
-  #   ymax = 0.8
-  #   zmin = -0.02
-  #   zmax = 0.02
-  #   nx = 20
-  #   ny = 100
-  #   nz = 20
-  # []
-  # [rename]
-  #   type = RenameBoundaryGenerator
-  #   input = mesh
-  #   old_boundary = 'bottom top left right front back'
-  #   new_boundary = 'inlet outlet walls walls walls walls'
-  # []
 []
 
 [Variables]
@@ -102,7 +82,6 @@ B_max = 0.5
     type = ADGenericConstantMaterial
     prop_names =  'rho  mu        conductivity'
     prop_values = '870  9.4e-4    2.6e6'
-    # prop_values = '1  1    1'
   []
   [irmins_mat_tau]
     type = IRMINSADTauMaterial
@@ -206,5 +185,4 @@ B_max = 0.5
 
 [Outputs]
   exodus = true
-  # execute_on = 'nonlinear'
 []

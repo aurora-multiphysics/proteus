@@ -1,7 +1,7 @@
 U_AVG = 1
 
 [Mesh]
-  [gmg]
+  [mesh]
     type = GeneratedMeshGenerator
     dim = 3
     nx = 200
@@ -35,15 +35,14 @@ U_AVG = 1
   []
 []
 
-
 [Functions]
   [velocityInlet]
-  type = ParsedVectorFunction
-  vars = 'y_max z_max'
-  vals = '1     1'
-  value_x = '(9/4) * ${U_AVG} * (1 - (y * y) / (y_max * y_max)) * (1 - (z * z) / (z_max * z_max))'
-  value_y = '0'
-  value_z = '0'
+    type = ParsedVectorFunction
+    vars = 'y_max z_max'
+    vals = '1     1'
+    value_x = '(9/4) * ${U_AVG} * (1 - (y * y) / (y_max * y_max)) * (1 - (z * z) / (z_max * z_max))'
+    value_y = '0'
+    value_z = '0'
   []
 []
 
@@ -59,7 +58,7 @@ U_AVG = 1
     variable = velocity
     boundary = 'top bottom front back'
     values = '0 0 0'
-    []
+  []
   [pressure_set]
     type = DirichletBC
     variable = pressure
@@ -106,7 +105,6 @@ U_AVG = 1
     variable = velocity
     pressure = pressure
     integrate_p_by_parts = true
-    # integrate_p_by_parts = false
   []
 
   [momentum_supg]
@@ -135,8 +133,6 @@ U_AVG = 1
   automatic_scaling = true
   petsc_options_iname = '-pc_type'
   petsc_options_value = 'asm'
-  # petsc_options_iname = '-pc_type -pc_hypre_type'
-  # petsc_options_value = 'hypre    euclid'
 []
 
 [Outputs]

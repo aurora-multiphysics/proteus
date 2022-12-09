@@ -1,12 +1,11 @@
 N_X = 100
-#N_X = 200
 N_Y_half = 10
 INTEGRATE_BY_PARTS_P = true
 ELEMENT_TYPE = QUAD9
 U_AVG = 1
 
 [Mesh]
-  [gmgTop]
+  [meshTop]
     type = GeneratedMeshGenerator
     dim = 2
     nx = ${N_X}
@@ -15,10 +14,10 @@ U_AVG = 1
     xmax = 20
     ymin = 0
     ymax = 1
-		bias_y = 0.8
+    bias_y = 0.8
     elem_type = ${ELEMENT_TYPE}
   []
-	[gmgBottom]
+  [meshBottom]
     type = GeneratedMeshGenerator
     dim = 2
     nx = ${N_X}
@@ -27,16 +26,15 @@ U_AVG = 1
     xmax = 20
     ymin = -1
     ymax = 0
-		bias_y = 1.25
+    bias_y = 1.25
     elem_type = ${ELEMENT_TYPE}
   []
-	[mesh]
-		type = StitchedMeshGenerator
-		inputs = 'gmgTop gmgBottom'
-		clear_stitched_boundary_ids = true
-		stitch_boundaries_pairs = 'bottom top'
-		# show_info = true
-	[]
+  [meshComplete]
+    type = StitchedMeshGenerator
+    inputs = 'meshTop meshBottom'
+    clear_stitched_boundary_ids = true
+    stitch_boundaries_pairs = 'bottom top'
+  []
 []
 
 [Variables]
@@ -159,7 +157,6 @@ U_AVG = 1
     velocity = velocity
     magneticField = magneticField
   []
-
 []
 
 [AuxKernels]
