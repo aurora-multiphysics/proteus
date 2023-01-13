@@ -1,5 +1,4 @@
 [Mesh]
-  
   [mesh]
     type = FileMeshGenerator
     file = cooling_channel.e
@@ -35,7 +34,8 @@
   [constant_inlet_velocity]
     type = NeumannBC
     variable = porepressure
-    value = 8
+    value = 0.2               # this seems to give a more correct answer
+    # value = 8               # this makes more sense mathematically
     boundary = Inlet
   []
   [no_flow_boundaries]
