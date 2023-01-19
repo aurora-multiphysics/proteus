@@ -15,8 +15,8 @@ IRMINSADMaterial::validParams()
                              "residuals for the INS equations.");
   params.addRequiredCoupledVar("velocity", "The velocity");
   params.addRequiredCoupledVar(NS::pressure, "The pressure");
-  params.addRequiredCoupledVar("electricPotential", "The variable representing the electric potential."); // IRM
-  params.addRequiredCoupledVar("magneticField", "The variable representing the magnetic field.");         // IRM
+  params.addRequiredCoupledVar("electricPotential", "The variable representing the electric potential"); // IRM
+  params.addRequiredCoupledVar("magneticField", "The variable representing the magnetic field");         // IRM
   params.addParam<MaterialPropertyName>("mu_name", "mu", "The name of the dynamic viscosity");
   params.addParam<MaterialPropertyName>("rho_name", "rho", "The name of the density");
   params.addParam<MaterialPropertyName>("conductivity", "conductivity", "The name of the conductivity");  // IRM

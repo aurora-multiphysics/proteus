@@ -4,6 +4,10 @@
 
 class INSADObjectTracker;
 
+/**
+ * This class computes the strong residuals of the various terms in the
+ * inductionless resistive MHD incompressible Navier-Stokes momentum equation.
+ */
 class IRMINSADMaterial : public Material
 {
 public:

@@ -46,7 +46,7 @@ RATIO_Z_INV = ${fparse 1/RATIO_Z_FWD}
     bias_z = ${RATIO_Z_INV}
     elem_type = ${ELEMENT_TYPE}
   []
-	[meshBottomBack]
+  [meshBottomBack]
     type = GeneratedMeshGenerator
     dim = 3
     nx = ${N_X}
@@ -78,25 +78,25 @@ RATIO_Z_INV = ${fparse 1/RATIO_Z_FWD}
     bias_z = ${RATIO_Z_INV}
     elem_type = ${ELEMENT_TYPE}
   []
-	[meshTop]
-		type = StitchedMeshGenerator
-		inputs = 'meshTopBack meshTopFront'
-		clear_stitched_boundary_ids = true
-		stitch_boundaries_pairs = 'front back'
-	[]
+  [meshTop]
+    type = StitchedMeshGenerator
+    inputs = 'meshTopBack meshTopFront'
+    clear_stitched_boundary_ids = true
+    stitch_boundaries_pairs = 'front back'
+  []
   [meshBottom]
-		type = StitchedMeshGenerator
-		inputs = 'meshBottomBack meshBottomFront'
-		clear_stitched_boundary_ids = true
-		stitch_boundaries_pairs = 'front back'
-	[]
+    type = StitchedMeshGenerator
+    inputs = 'meshBottomBack meshBottomFront'
+    clear_stitched_boundary_ids = true
+    stitch_boundaries_pairs = 'front back'
+  []
   [mesh]
-		type = StitchedMeshGenerator
-		inputs = 'meshTop meshBottom'
-		clear_stitched_boundary_ids = true
-		stitch_boundaries_pairs = 'bottom top'
-		show_info = true
-	[]
+    type = StitchedMeshGenerator
+    inputs = 'meshTop meshBottom'
+    clear_stitched_boundary_ids = true
+    stitch_boundaries_pairs = 'bottom top'
+    show_info = true
+  []
 []
 
 [Variables]

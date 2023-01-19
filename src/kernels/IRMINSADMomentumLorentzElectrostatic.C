@@ -9,9 +9,9 @@ IRMINSADMomentumLorentzElectrostatic::validParams()
   params.addClassDescription(
       "The Lorentz force electrostatic term ($\\sigma \\nabla \\phi \\times \\vec{B}_0), "
       "with the weak form of $(\\phi_i, $\\sigma \\nabla \\phi \\times \\vec{B}_0). "
-      "The Jacobian is computed using automatic differentiation");
-  params.addRequiredCoupledVar("electricPotential", "The variable representing the electric potential.");
-  params.addRequiredCoupledVar("magneticField", "The variable representing the magnetic field.");
+      "The Jacobian is computed using automatic differentiation.");
+  params.addRequiredCoupledVar("electricPotential", "The variable representing the electric potential");
+  params.addRequiredCoupledVar("magneticField", "The variable representing the magnetic field");
   params.addParam<MaterialPropertyName>("conductivity", "conductivity", "The name of the conductivity");
 
   return params;

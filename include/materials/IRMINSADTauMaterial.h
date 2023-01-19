@@ -12,6 +12,10 @@
 
 #include <vector>
 
+/**
+ * This material class computes the stabilisation parameter tau
+ * for use in pressure-stabilized and streamline-upwind kernels.
+ */
 class IRMINSADMaterial;
 
 template <typename T>
