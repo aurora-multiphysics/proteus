@@ -206,10 +206,14 @@ RATIO_Z_INV = ${fparse 1/RATIO_Z_FWD}
   [lorentz_force_electrostatic]
     type = IRMINSADMomentumLorentzElectrostatic
     variable = velocity
+    electricPotential = electricPotential
+    magneticField = magneticField
   []
   [lorentz_force_flow]
     type = IRMINSADMomentumLorentzFlow
     variable = velocity
+    velocity = velocity
+    magneticField = magneticField
   []
 
   [epot_diffusion]
