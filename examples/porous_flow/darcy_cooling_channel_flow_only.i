@@ -41,6 +41,12 @@
     boundary = Inlet
     value = 0.2
   []
+  [walls_pressure]
+    type = NeumannBC
+    variable = pressure
+    boundary = Walls
+    value = 0
+  []
   [outlet]
     type = DirichletBC
     variable = pressure

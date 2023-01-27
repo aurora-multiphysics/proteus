@@ -31,14 +31,13 @@
     variable = temperature
   []
   [heat_convection]
+    # this is the problematic kernel
+    # but it's also the one that advects heat with the fluid
+    # maybe the outlet condition is the problem?
     type = DarcyAdvection
     variable = temperature
     pressure = pressure
   []
-  # [heat_conduction_time_derivative]
-  #   type = ADHeatConductionTimeDerivative
-  #   variable = temperature
-  # []
   [heat_source]
     type = ADMatHeatSource
     variable = temperature
@@ -63,6 +62,12 @@
     boundary = Inlet
     value = 0.2
   []
+  [walls_pressure]
+    type = NeumannBC
+    variable = pressure
+    boundary = Walls
+    value = 0
+  []
   [outlet]
     type = DirichletBC
     variable = pressure
@@ -75,11 +80,16 @@
     boundary = Inlet
     value = 0
   []
-  [walls_temperature] # don't know if this is needed?
+  [walls_temperature]
     type = NeumannBC
     variable = temperature
-    boundary = 'Outlet Walls'
+    boundary = Walls
     value = 0
+  []
+  [outlet_temperature]
+    type = HeatConductionOutflow
+    variable = temperature
+    boundary = Outlet
   []
 []
 
@@ -113,8 +123,13 @@
   solve_type = NEWTON
   automatic_scaling = true
 
-  petsc_options_iname = '-pc_type -pc_hypre_type'
-  petsc_options_value = 'hypre boomeramg'
+  # petsc_options_iname = '-pc_type -pc_hypre_type'
+  # petsc_options_value = 'hypre boomeramg'
+
+  petsc_options_iname = '-pc_type'
+  petsc_options_value = 'ilu' # works
+
+  nl_abs_tol = 1e-14
 []
 
 [Outputs]
