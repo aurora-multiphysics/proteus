@@ -128,8 +128,6 @@
 
   petsc_options_iname = '-pc_type'
   petsc_options_value = 'ilu' # works
-
-  nl_abs_tol = 1e-14
 []
 
 [Outputs]
