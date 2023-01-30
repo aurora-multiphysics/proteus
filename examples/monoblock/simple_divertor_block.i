@@ -25,23 +25,15 @@ pipeIntDiam=12e-3    # m
 pipeExtDiam=15e-3    # m
 
 intLayerThick=1e-3   # m
-# intLayerIntDiam=${pipeExtDiam}
 intLayerExtDiam=${fparse pipeExtDiam + 2*intLayerThick}
 
 monoBWidth=23e-3     # m
 monoBThick=12e-3     # m
 monoBArmHeight=8e-3  # m
-# monoBSpacing=0.5e-3  # m
 
 pipeIntCirc=${fparse PI * pipeIntDiam}
-# pipeExtCirc=${fparse PI * pipeExtDiam}
-# intLayerExtCirc=${fparse PI * intLayerExtDiam}
-
-# monoBArmSide=${fparse (monoBWidth - intLayerExtDiam) / 2}
-# monoBHeight=${fparse monoBArmHeight + intLayerExtDiam + monoBArmSide}
-# monoBSquareL=${fparse intLayerExtDiam/2 + monoBArmSide}
-# monoBTopSurfY=${fparse monoBArmHeight + intLayerExtDiam/2}
-# monoBTileHeight=${fparse monoBTopSurfY - monoBSquareL}
+pipeExtCirc=${fparse PI * pipeExtDiam}
+intLayerExtCirc=${fparse PI * intLayerExtDiam}
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Mesh Sizing
@@ -54,10 +46,9 @@ monoBArmDivs=${fparse 8*MeshRefFact}
 # interlater, and radial section of the monoblock armour.
 pipeCircSectDivs=${fparse 12*MeshRefFact}
 
-# Number of radial divisions for the pipe, interlayer, and radial section of
-# the monoblock armour respectively.
+# Number of radial divisions for the pipe and radial section of the monoblock
+# armour respectively.
 pipeRadDivs=${fparse 5*MeshRefFact}
-# intLayerRadDivs=${fparse 5*MeshRefFact}
 monoBRadDivs=${fparse 5*MeshRefFact}
 
 # Number of divisions along monoblock thickness (i.e. z-dimension).
