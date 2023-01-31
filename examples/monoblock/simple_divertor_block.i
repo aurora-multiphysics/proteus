@@ -41,7 +41,7 @@ MeshRefFact=1
 monoBArmDivs=${fparse 8*MeshRefFact}
 
 # Number of divisions around each quadrant of the circumference of the pipe,
-# interlater, and radial section of the monoblock armour.
+# interlayer, and radial section of the monoblock armour.
 pipeCircSectDivs=${fparse 12*MeshRefFact}
 
 # Number of radial divisions for the pipe and radial section of the monoblock
@@ -149,8 +149,8 @@ blockTemp=100       # degC
                    ${fparse (monoBWidth/-2)-ctol}
                    ${fparse -tol}'
     top_right = '${fparse ctol}
-                ${fparse (monoBWidth/-2)+ctol}
-                ${fparse (monoBThick)+tol}'
+                 ${fparse (monoBWidth/-2)+ctol}
+                 ${fparse (monoBThick)+tol}'
     new_boundary = bottom_x0
   []
   [pin_z]
