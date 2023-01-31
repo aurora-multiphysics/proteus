@@ -32,8 +32,6 @@ monoBThick=12e-3     # m
 monoBArmHeight=8e-3  # m
 
 pipeIntCirc=${fparse PI * pipeIntDiam}
-pipeExtCirc=${fparse PI * pipeExtDiam}
-intLayerExtCirc=${fparse PI * intLayerExtDiam}
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Mesh Sizing
