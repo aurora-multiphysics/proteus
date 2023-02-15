@@ -4,11 +4,10 @@
 
 registerMooseObject("ProteusApp", PointForcingFunction3DEquivalent);
 
-template <>
 InputParameters
-validParams<PointForcingFunction3DEquivalent>()
+PointForcingFunction3DEquivalent::validParams()
 {
-  InputParameters params = validParams<NodalKernel>();
+  InputParameters params = NodalKernel::validParams();
   params.addRequiredParam<FunctionName>("function",
 					"The forcing function");
   params.addRequiredCoupledVar("nodal_area",
