@@ -46,7 +46,7 @@ CC=$CC CXX=$CXX F90=$F90 F77=$F77 FC=$FC \
 
 # Build libMesh
 
-./scripts/update_and_rebuild_libmesh.sh --with-mpi
+METHODS="opt" ./scripts/update_and_rebuild_libmesh.sh --with-mpi
 
 # Configure AD
 # Derivative size should be the total of
