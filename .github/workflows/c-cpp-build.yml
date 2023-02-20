@@ -1,0 +1,21 @@
+name: C/C++ Build CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Ubuntu based build
+      run: ./scripts/install_ubuntu.sh
+    - name: Source MOOSE Profile
+      run: source $HOME/.moose_profile
+    - name: Run Tests
+      run: ./run_tests
