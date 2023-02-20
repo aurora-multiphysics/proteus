@@ -16,5 +16,4 @@ jobs:
     - name: Ubuntu based build
       run: ./scripts/install_ubuntu.sh
     - name: Source MOOSE profile and run tests
-      run: source $HOME/.moose_profile
-      run: ./run_tests
+      run: source $HOME/.moose_profile; ./run_tests
