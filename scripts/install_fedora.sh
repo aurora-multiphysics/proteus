@@ -49,11 +49,14 @@ CC=$CC CXX=$CXX F90=$F90 F77=$F77 FC=$FC \
 
 # Build libMesh
 
-./scripts/update_and_rebuild_libmesh.sh --with-mpi
+METHODS="opt" ./scripts/update_and_rebuild_libmesh.sh --with-mpi
 
 # Configure AD
+# Derivative size should be the total of
+# 8 for each first order variable
+# 27 for each second order variable
 
-./configure --with-derivative-size=200 --with-ad-indexing-type=global
+./configure --with-derivative-size=81 --with-ad-indexing-type=global
 
 cd $PROTEUS_DIR
 make

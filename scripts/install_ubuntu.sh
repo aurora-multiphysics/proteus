@@ -13,9 +13,9 @@ export PROTEUS_DIR=`pwd`
 
 # Install pre-requisites
 
-sudo apt install gcc g++ gfortran cmake bison flex git
-sudo apt install python3 python3-dev python-is-python3 python3-packaging
-sudo apt install openmpi-bin libopenmpi-dev libboost-all-dev
+sudo apt install -y gcc g++ gfortran cmake bison flex git
+sudo apt install -y python3 python3-dev python-is-python3 python3-packaging
+sudo apt install -y openmpi-bin libopenmpi-dev libboost-all-dev
 
 # Make MOOSE profile
 
@@ -46,11 +46,14 @@ CC=$CC CXX=$CXX F90=$F90 F77=$F77 FC=$FC \
 
 # Build libMesh
 
-./scripts/update_and_rebuild_libmesh.sh --with-mpi
+METHODS="opt" ./scripts/update_and_rebuild_libmesh.sh --with-mpi
 
 # Configure AD
+# Derivative size should be the total of
+# 8 for each first order variable
+# 27 for each second order variable
 
-./configure --with-derivative-size=200 --with-ad-indexing-type=global
+./configure --with-derivative-size=81 --with-ad-indexing-type=global
 
 cd $PROTEUS_DIR
 make

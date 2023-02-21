@@ -14,11 +14,11 @@
 [Functions]
   [bc_func]
     type = ParsedFunction
-    value = "x*x + y*y + z*z - 2"
+    expression = "x*x + y*y + z*z - 2"
   []
   [f_func]
     type = ParsedFunction
-    value = "-6"
+    expression = "-6"
   []
 []
 
@@ -45,7 +45,7 @@
 
 [Executioner]
   type = Steady
-  solve_type = PJFNK
+  solve_type = NEWTON
   petsc_options_iname = "-pc_type -pc_hypre_type"
   petsc_options_value = "hypre    boomeramg"
 []
