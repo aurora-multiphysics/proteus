@@ -4,17 +4,17 @@
 # Input file for computing the von-mises stress between the coolant pipe of a
 # tokamak divertor monoblock and its armour due to thermal expansion.
 # This intermediate-complexity model is comprised of a solid OFHC copper pipe
-# surrounded by tungsten armour with a copper-corundum-zirconium (CuCrZr)
-# interlayer between. The mesh uses second order elements with approximately 1
+# surrounded by tungsten armour with a copper-chromium-zirconium (CuCrZr)
+# interlayer between. The coolant flow is not modelled.
+# The mesh uses second order elements with a nominal mesh refinement of one 
 # division per millimetre.
 # The incoming heat is modelled as a constant heat flux on the top surface of
 # the block (i.e. the plasma-facing side). The outgoing heat is modelled as a
-# convective heat flux on the internal surface of the copper pipe. The fluid
-# region is not modelled.
+# convective heat flux on the internal surface of the copper pipe.
 # The boundary conditions are the stress-free temperature for the block, the
 # incoming heat flux on the top surface, and the coolant temperature.
-# The solve is steady state and outputs temperature, displacement, and von
-# mises stress.
+# The solve is steady state and outputs temperature, displacement (magnitude
+# as well as the x, y, z components), and von mises stress.
 
 #-------------------------------------------------------------------------
 # PARAMETER DEFINITIONS 
@@ -54,7 +54,8 @@ orderString=SECOND
 monoBArmDivs=${fparse int(monoBArmHeight * meshDens * meshRefFact)}
 
 # Number of divisions around each quadrant of the circumference of the pipe,
-# interlater, and radial section of the monoblock armour. Note: must be even.
+# interlayer, and radial section of the monoblock armour.
+# Note: this value must be even, so it is halved, rounded to int, then doubled.
 pipeCircSectDivs=${fparse 2 * int(monoBWidth/4 * meshDens * meshRefFact)}
 
 # Number of radial divisions for the pipe, interlayer, and radial section of
@@ -68,9 +69,9 @@ monoBRadDivs=${
 # Number of divisions along monoblock thickness (i.e. z-dimension).
 extrudeDivs=${fparse monoBThick * meshDens * meshRefFact}
 
-monoBElemSize=${fparse monoBThick/extrudeDivs}
-tol=${fparse monoBElemSize/10}
-ctol=${fparse pipeIntCirc/(8*4*pipeCircSectDivs)}
+monoBElemSize=${fparse monoBThick / extrudeDivs}
+tol=${fparse monoBElemSize / 10}
+ctol=${fparse pipeIntCirc / (8 * 4 * pipeCircSectDivs)}
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Material Properties
