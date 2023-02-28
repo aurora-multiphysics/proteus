@@ -17,7 +17,7 @@
 # mises stress.
 
 #-------------------------------------------------------------------------
-# PARAMETER DEFINITIONS
+# PARAMETER DEFINITIONS 
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # File handling
@@ -79,7 +79,7 @@ ctol=${fparse pipeIntCirc/(8*4*pipeCircSectDivs)}
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Loads and BCs
-stressFreeTemp=450  # degC
+stressFreeTemp=20   # degC
 coolantTemp=150     # degC
 surfHeatFlux=10e6   # W/m^2
 
