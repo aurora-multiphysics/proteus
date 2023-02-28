@@ -59,11 +59,10 @@ pipeCircSectDivs=${fparse 2 * int(monoBWidth/4 * meshDens * meshRefFact)}
 
 # Number of radial divisions for the pipe, interlayer, and radial section of
 # the monoblock armour respectively.
-pipeRadDivs=${fparse max(int(pipeThick * meshDens * meshRefFact), 2)}
-intLayerRadDivs=${fparse max(
-  int(intLayerThick * meshDens * meshRefFact), 2)}
+pipeRadDivs=${fparse max(int(pipeThick * meshDens * meshRefFact), 3)}
+intLayerRadDivs=${fparse max(int(intLayerThick * meshDens * meshRefFact), 5)}
 monoBRadDivs=${
-  fparse max(int((monoBWidth-intLayerExtDiam)/2 * meshDens * meshRefFact), 2)
+  fparse max(int((monoBWidth-intLayerExtDiam)/2 * meshDens * meshRefFact), 5)
 }
 
 # Number of divisions along monoblock thickness (i.e. z-dimension).
