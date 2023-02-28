@@ -59,7 +59,7 @@ ctol=${fparse pipeIntCirc/(8*4*pipeCircSectDivs)}
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Material Properties
 # Mono-Block/Armour = Tungsten
-# Cooling pipe = OFHC Copper 
+# Cooling pipe = Oxygen-Free High-Conductivity (OFHC) Copper
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Loads and BCs
