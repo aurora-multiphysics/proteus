@@ -24,17 +24,12 @@ name=simple_divertor_block
 # Geometry
 PI=3.141592653589793
 
-pipeIntDiam=12e-3    # m
-pipeExtDiam=15e-3    # m
-
-intLayerThick=1e-3   # m
-intLayerExtDiam=${fparse pipeExtDiam + 2*intLayerThick}
+pipeDiam=16e-3    # m
+pipeCirc=${fparse PI * pipeDiam}
 
 monoBWidth=23e-3     # m
 monoBThick=12e-3     # m
 monoBArmHeight=8e-3  # m
-
-pipeIntCirc=${fparse PI * pipeIntDiam}
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Mesh Sizing
@@ -44,16 +39,16 @@ meshDens=1e3         # divisions per metre (nominal)
 # Number of divisions along the top section of the monoblock armour.
 monoBArmDivs=${fparse int(monoBArmHeight * meshDens * meshRefFact)}
 
-# Number of divisions around each quadrant of the circumference of the pipe,
-# interlayer, and radial section of the monoblock armour.
-# Note: this value must be even, so it is halved, rounded to int, then doubled.
+# Number of divisions around each quadrant of the circumference of the pipe and
+# radial section of the monoblock armour. Note: this value must be an even int,
+# so it is halved, rounded to int, then doubled.
 pipeCircSectDivs=${fparse 2 * int(monoBWidth/4 * meshDens * meshRefFact)}
 
 # Number of radial divisions for the pipe and radial section of the monoblock
 # armour respectively.
-pipeRadDivs=${fparse max(int(pipeThick * meshDens * meshRefFact), 3)}
+pipeRadDivs=${fparse max(int(pipeDiam/2 * meshDens * meshRefFact), 5)}
 monoBRadDivs=${
-  fparse max(int((monoBWidth-intLayerExtDiam)/2 * meshDens * meshRefFact), 5)
+  fparse max(int((monoBWidth-pipeDiam)/2 * meshDens * meshRefFact), 5)
 }
 
 # Number of divisions along monoblock thickness (i.e. z-dimension).
@@ -61,7 +56,7 @@ extrudeDivs=${fparse monoBThick * meshDens * meshRefFact}
 
 monoBElemSize=${fparse monoBThick / extrudeDivs}
 tol=${fparse monoBElemSize / 10}
-ctol=${fparse pipeIntCirc / (8 * 4 * pipeCircSectDivs)}
+ctol=${fparse pipeCirc / (8 * 4 * pipeCircSectDivs)}
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Material Properties
@@ -85,7 +80,7 @@ blockTemp=100       # degC
     num_sides = 4
     polygon_size = ${fparse monoBWidth / 2}
     polygon_size_style = apothem  # i.e. distance from centre to edge
-    ring_radii = ${fparse intLayerExtDiam / 2}
+    ring_radii = ${fparse pipeDiam / 2}
     num_sectors_per_side = '
       ${pipeCircSectDivs}
       ${pipeCircSectDivs}
