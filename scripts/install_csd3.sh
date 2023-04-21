@@ -57,6 +57,6 @@ METHODS="opt" ./scripts/update_and_rebuild_libmesh.sh --with-mpi
 ./configure --with-derivative-size=81 --with-ad-indexing-type=global
 
 cd $PROTEUS_DIR
-make -j 4
+make -j $MOOSE_JOBS
 
 echo "Installation complete."
