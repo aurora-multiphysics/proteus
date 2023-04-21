@@ -29,7 +29,10 @@ source $HOME/.moose_profile
 # Clone MOOSE from git
 
 cd $HOME
-git clone https://github.com/idaholab/moose.git
+git clone --depth=1 https://github.com/idaholab/moose.git
+
+# Set MOOSE jobs to 4 (max allowed on login node)
+export MOOSE_JOBS=4
 
 # Build PETSc
 
@@ -54,6 +57,6 @@ METHODS="opt" ./scripts/update_and_rebuild_libmesh.sh --with-mpi
 ./configure --with-derivative-size=81 --with-ad-indexing-type=global
 
 cd $PROTEUS_DIR
-make
+make -j 4
 
 echo "Installation complete."
