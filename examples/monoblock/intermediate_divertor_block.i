@@ -3,52 +3,67 @@
 
 # Input file for computing the von-mises stress between the coolant pipe of a
 # tokamak divertor monoblock and its armour due to thermal expansion.
-# This simplified model is comprised of a solid OFHC copper cylinder surrounded
-# by tungsten armour; no interlayer is included and coolant flow is not
-# modelled.
-# The mesh uses first order elements with a nominal mesh refinement of one 
+# This intermediate-complexity model is comprised of a solid OFHC copper pipe
+# surrounded by tungsten armour with a copper-chromium-zirconium (CuCrZr)
+# interlayer between. The coolant flow is not modelled.
+# The mesh uses second order elements with a nominal mesh refinement of one 
 # division per millimetre.
-# The boundary conditions are the stress-free temperature and the block
-# temperature to which the block is uniformly heated.
+# The incoming heat is modelled as a constant heat flux on the top surface of
+# the block (i.e. the plasma-facing side). The outgoing heat is modelled as a
+# convective heat flux on the internal surface of the copper pipe.
+# The boundary conditions are the stress-free temperature for the block, the
+# incoming heat flux on the top surface, and the coolant temperature.
 # The solve is steady state and outputs temperature, displacement (magnitude
 # as well as the x, y, z components), and von mises stress.
 
 #-------------------------------------------------------------------------
-# PARAMETER DEFINITIONS
+# PARAMETER DEFINITIONS 
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # File handling
-name=simple_divertor_block
+name=intermediate_divertor_block
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Geometry
 PI=3.141592653589793
 
-pipeDiam=16e-3    # m
-pipeCirc=${fparse PI * pipeDiam}
+pipeIntDiam=12e-3    # m
+pipeExtDiam=15e-3    # m
+pipeThick=${fparse (pipeExtDiam-pipeIntDiam)/2}
+
+intLayerThick=1e-3   # m
+intLayerIntDiam=${pipeExtDiam}
+intLayerExtDiam=${fparse intLayerIntDiam + 2*intLayerThick}
 
 monoBWidth=23e-3     # m
 monoBThick=12e-3     # m
 monoBArmHeight=8e-3  # m
+
+pipeIntCirc=${fparse PI * pipeIntDiam}
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Mesh Sizing
 meshRefFact=1
 meshDens=1e3         # divisions per metre (nominal)
 
+# Mesh Order
+secondOrder=true
+orderString=SECOND
+
 # Number of divisions along the top section of the monoblock armour.
 monoBArmDivs=${fparse int(monoBArmHeight * meshDens * meshRefFact)}
 
-# Number of divisions around each quadrant of the circumference of the pipe and
-# radial section of the monoblock armour. Note: this value must be an even int,
-# so it is halved, rounded to int, then doubled.
+# Number of divisions around each quadrant of the circumference of the pipe,
+# interlayer, and radial section of the monoblock armour.
+# Note: this value must be even, so it is halved, rounded to int, then doubled.
 pipeCircSectDivs=${fparse 2 * int(monoBWidth/4 * meshDens * meshRefFact)}
 
-# Number of radial divisions for the pipe and radial section of the monoblock
-# armour respectively.
-pipeRadDivs=${fparse max(int(pipeDiam/2 * meshDens * meshRefFact), 5)}
+# Number of radial divisions for the pipe, interlayer, and radial section of
+# the monoblock armour respectively.
+pipeRadDivs=${fparse max(int(pipeThick * meshDens * meshRefFact), 3)}
+intLayerRadDivs=${fparse max(int(intLayerThick * meshDens * meshRefFact), 5)}
 monoBRadDivs=${
-  fparse max(int((monoBWidth-pipeDiam)/2 * meshDens * meshRefFact), 5)
+  fparse max(int((monoBWidth-intLayerExtDiam)/2 * meshDens * meshRefFact), 5)
 }
 
 # Number of divisions along monoblock thickness (i.e. z-dimension).
@@ -56,17 +71,19 @@ extrudeDivs=${fparse monoBThick * meshDens * meshRefFact}
 
 monoBElemSize=${fparse monoBThick / extrudeDivs}
 tol=${fparse monoBElemSize / 10}
-ctol=${fparse pipeCirc / (8 * 4 * pipeCircSectDivs)}
+ctol=${fparse pipeIntCirc / (8 * 4 * pipeCircSectDivs)}
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Material Properties
 # Mono-Block/Armour = Tungsten
+# Interlayer = Copper Chromium Zirconium (CuCrZr)
 # Cooling pipe = Oxygen-Free High-Conductivity (OFHC) Copper
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Loads and BCs
 stressFreeTemp=20   # degC
-blockTemp=100       # degC
+coolantTemp=150     # degC
+surfHeatFlux=10e6   # W/m^2
 
 #-------------------------------------------------------------------------
 
@@ -75,25 +92,36 @@ blockTemp=100       # degC
 []
 
 [Mesh]
-  [mesh_pipe_and_block]
+  second_order = ${secondOrder}
+  
+  [mesh_monoblock]
     type = PolygonConcentricCircleMeshGenerator
     num_sides = 4
     polygon_size = ${fparse monoBWidth / 2}
     polygon_size_style = apothem  # i.e. distance from centre to edge
-    ring_radii = ${fparse pipeDiam / 2}
+    ring_radii = '
+      ${fparse pipeIntDiam / 2}
+      ${fparse pipeExtDiam / 2}
+      ${fparse intLayerExtDiam / 2}
+    '
     num_sectors_per_side = '
       ${pipeCircSectDivs}
       ${pipeCircSectDivs}
       ${pipeCircSectDivs}
-      ${pipeCircSectDivs}'
-    ring_intervals = ${pipeRadDivs}
+      ${pipeCircSectDivs}
+    '
+    ring_intervals = '1 ${pipeRadDivs} ${intLayerRadDivs}'
     background_intervals = ${monoBRadDivs}
     preserve_volumes = on
     flat_side_up = true
-    ring_block_names = 'pipe_tri pipe'
+    ring_block_names = 'void pipe interlayer'
     background_block_names = monoblock
     interface_boundary_id_shift = 1000
-    interface_boundary_names = pipe_boundary
+    interface_boundary_names = '
+      internal_boundary
+      pipe_boundary
+      interlayer_boundary
+    '
     external_boundary_name = monoblock_boundary
   []
 
@@ -111,15 +139,22 @@ blockTemp=100       # degC
 
   [combine_meshes]
     type = StitchedMeshGenerator
-    inputs = 'mesh_pipe_and_block mesh_armour'
+    inputs = 'mesh_monoblock mesh_armour'
     stitch_boundaries_pairs = 'monoblock_boundary armour_bottom'
     clear_stitched_boundary_ids = true
   []
 
+  [delete_void]
+    type = BlockDeletionGenerator
+    input = combine_meshes
+    block = void
+    new_boundary = internal_boundary
+  []
+
   [merge_block_names]
     type = RenameBlockGenerator
-    input = combine_meshes
-    old_block = '3 0'
+    input = delete_void
+    old_block = '4 0'
     new_block = 'armour armour'
   []
 
@@ -144,7 +179,7 @@ blockTemp=100       # degC
     num_layers = ${extrudeDivs}
   []
 
-  [pin_x]
+  [name_node_centre_x_bottom_y_back_z]
     type = BoundingBoxNodeSetGenerator
     input = extrude
     bottom_left = '${fparse -ctol}
@@ -152,42 +187,49 @@ blockTemp=100       # degC
                    ${fparse -tol}'
     top_right = '${fparse ctol}
                  ${fparse (monoBWidth/-2)+ctol}
-                 ${fparse (monoBThick)+tol}'
-    new_boundary = bottom_x0
+                 ${fparse tol}'
+    new_boundary = centre_x_bottom_y_back_z
   []
-  [pin_z]
+  [name_node_centre_x_bottom_y_front_z]
     type = BoundingBoxNodeSetGenerator
-    input = pin_x
+    input = name_node_centre_x_bottom_y_back_z
+    bottom_left = '${fparse -ctol}
+                   ${fparse (monoBWidth/-2)-ctol}
+                   ${fparse monoBThick-tol}'
+    top_right = '${fparse ctol}
+                 ${fparse (monoBWidth/-2)+ctol}
+                 ${fparse monoBThick+tol}'
+    new_boundary = centre_x_bottom_y_front_z
+  []
+  [name_node_left_x_bottom_y_centre_z]
+    type = BoundingBoxNodeSetGenerator
+    input = name_node_centre_x_bottom_y_front_z
     bottom_left = '${fparse (monoBWidth/-2)-ctol}
+                   ${fparse (monoBWidth/-2)-ctol}
+                   ${fparse (monoBThick/2)-tol}'
+    top_right = '${fparse (monoBWidth/-2)+ctol}
+                 ${fparse (monoBWidth/-2)+ctol}
+                 ${fparse (monoBThick/2)+tol}'
+    new_boundary = left_x_bottom_y_centre_z
+  []
+  [name_node_right_x_bottom_y_centre_z]
+    type = BoundingBoxNodeSetGenerator
+    input = name_node_left_x_bottom_y_centre_z
+    bottom_left = '${fparse (monoBWidth/2)-ctol}
                    ${fparse (monoBWidth/-2)-ctol}
                    ${fparse (monoBThick/2)-tol}'
     top_right = '${fparse (monoBWidth/2)+ctol}
                  ${fparse (monoBWidth/-2)+ctol}
                  ${fparse (monoBThick/2)+tol}'
-    new_boundary = bottom_z0
-  []
-  [define_full_volume_nodeset]
-    type = BoundingBoxNodeSetGenerator
-    input = pin_z
-    bottom_left = '
-      ${fparse (monoBWidth/-2)-ctol}
-      ${fparse (monoBWidth/-2)-ctol}
-      ${fparse -tol}
-    '
-    top_right = '
-      ${fparse (monoBWidth/2)+ctol}
-      ${fparse (monoBWidth/2)+monoBArmHeight+ctol}
-      ${fparse monoBThick+tol}
-    '
-    new_boundary = volume
+    new_boundary = right_x_bottom_y_centre_z
   []
 []
 
 [Variables]
   [temperature]
     family = LAGRANGE
-    order = FIRST
-    initial_condition = ${blockTemp}
+    order = ${orderString}
+    initial_condition = ${coolantTemp}
   []
 []
 
@@ -230,6 +272,24 @@ blockTemp=100       # degC
       800 1.96e-05
       850 1.98e-05
       900 2.01e-05
+    '
+  []
+  [cucrzr_thermal_expansion]
+    type = PiecewiseLinear
+    xy_data = '
+      20 1.67e-05
+      50 1.7e-05
+      100 1.73e-05
+      150 1.75e-05
+      200 1.77e-05
+      250 1.78e-05
+      300 1.8e-05
+      350 1.8e-05
+      400 1.81e-05
+      450 1.82e-05
+      500 1.84e-05
+      550 1.85e-05
+      600 1.86e-05
     '
   []
   [tungsten_thermal_expansion]
@@ -289,7 +349,7 @@ blockTemp=100       # degC
     '
     variable = temperature
     property = thermal_conductivity
-    block = 'pipe_tri pipe'
+    block = 'pipe'
   []
   [copper_density]
     type = PiecewiseLinearInterpolationMaterial
@@ -316,7 +376,7 @@ blockTemp=100       # degC
     '
     variable = temperature
     property = density
-    block = 'pipe_tri pipe'
+    block = 'pipe'
   []
   [copper_elastic_modulus]
     type = PiecewiseLinearInterpolationMaterial
@@ -333,7 +393,7 @@ blockTemp=100       # degC
     '
     variable = temperature
     property = elastic_modulus
-    block = 'pipe_tri pipe'
+    block = 'pipe'
   []
   [copper_specific_heat]
     type = PiecewiseLinearInterpolationMaterial
@@ -362,7 +422,92 @@ blockTemp=100       # degC
     '
     variable = temperature
     property = specific_heat
-    block = 'pipe_tri pipe'
+    block = 'pipe'
+  []
+
+  [cucrzr_thermal_conductivity]
+    type = PiecewiseLinearInterpolationMaterial
+    xy_data = '
+      20 318
+      50 324
+      100 333
+      150 339
+      200 343
+      250 345
+      300 346
+      350 347
+      400 347
+      450 346
+      500 346
+    '
+    variable = temperature
+    property = thermal_conductivity
+    block = 'interlayer'
+  []
+  [cucrzr_density]
+    type = PiecewiseLinearInterpolationMaterial
+    xy_data = '
+      20 8900
+      50 8886
+      100 8863
+      150 8840
+      200 8816
+      250 8791
+      300 8797
+      350 8742
+      400 8716
+      450 8691
+      500 8665
+    '
+    variable = temperature
+    property = density
+    block = 'interlayer'
+  []
+  [cucrzr_elastic_modulus]
+    type = PiecewiseLinearInterpolationMaterial
+    xy_data = '
+      20 128000000000.0
+      50 127000000000.0
+      100 127000000000.0
+      150 125000000000.0
+      200 123000000000.0
+      250 121000000000.0
+      300 118000000000.0
+      350 116000000000.0
+      400 113000000000.0
+      450 110000000000.0
+      500 106000000000.0
+      550 100000000000.0
+      600 95000000000.0
+      650 90000000000.0
+      700 86000000000.0
+    '
+    variable = temperature
+    property = elastic_modulus
+    block = 'interlayer'
+  []
+  [cucrzr_specific_heat]
+    type = PiecewiseLinearInterpolationMaterial
+    xy_data = '
+      20 390
+      50 393
+      100 398
+      150 402
+      200 407
+      250 412
+      300 417
+      350 422
+      400 427
+      450 432
+      500 437
+      550 442
+      600 447
+      650 452
+      700 458
+    '
+    variable = temperature
+    property = specific_heat
+    block = 'interlayer'
   []
 
   [tungsten_thermal_conductivity]
@@ -495,7 +640,14 @@ blockTemp=100       # degC
     args = temperature
     youngs_modulus = elastic_modulus
     poissons_ratio = 0.33
-    block = 'pipe_tri pipe'
+    block = 'pipe'
+  []
+  [cucrzr_elasticity]
+    type = ComputeVariableIsotropicElasticityTensor
+    args = temperature
+    youngs_modulus = elastic_modulus
+    poissons_ratio = 0.33
+    block = 'interlayer'
   []
   [tungsten_elasticity]
     type = ComputeVariableIsotropicElasticityTensor
@@ -511,7 +663,15 @@ blockTemp=100       # degC
     stress_free_temperature = ${stressFreeTemp}
     thermal_expansion_function = copper_thermal_expansion
     eigenstrain_name = thermal_expansion_eigenstrain
-    block = 'pipe_tri pipe'
+    block = 'pipe'
+  []
+  [cucrzr_expansion]
+    type = ComputeInstantaneousThermalExpansionFunctionEigenstrain
+    temperature = temperature
+    stress_free_temperature = ${stressFreeTemp}
+    thermal_expansion_function = cucrzr_thermal_expansion
+    eigenstrain_name = thermal_expansion_eigenstrain
+    block = 'interlayer'
   []
   [tungsten_expansion]
     type = ComputeInstantaneousThermalExpansionFunctionEigenstrain
@@ -525,19 +685,41 @@ blockTemp=100       # degC
   [stress]
     type = ComputeFiniteStrainElasticStress
   []
+
+  [coolant_heat_transfer_coefficient]
+    type = PiecewiseLinearInterpolationMaterial
+    xy_data = '
+      1 4
+      100 109.1e3
+      150 115.9e3
+      200 121.01e3
+      250 128.8e3
+      295 208.2e3
+    '
+    variable = temperature
+    property = heat_transfer_coefficient
+    boundary = 'internal_boundary'
+  []
 []
 
 [BCs]
-  [block-temp]
-    type = DirichletBC
+  [heat_flux_in]
+    type = NeumannBC
     variable = temperature
-    boundary = 'volume'
-    value = ${blockTemp}
+    boundary = 'top'
+    value = ${surfHeatFlux}
+  []
+  [heat_flux_out]
+    type = ConvectiveHeatFluxBC
+    variable = temperature
+    boundary = 'internal_boundary'
+    T_infinity = ${coolantTemp}
+    heat_transfer_coefficient = heat_transfer_coefficient
   []
   [fixed_x]
     type = DirichletBC
     variable = disp_x
-    boundary = 'bottom_x0'
+    boundary = 'centre_x_bottom_y_back_z centre_x_bottom_y_front_z'
     value = 0
   []
   [fixed_y]
@@ -549,7 +731,7 @@ blockTemp=100       # degC
   [fixed_z]
     type = DirichletBC
     variable = disp_z
-    boundary = 'bottom_z0'
+    boundary = 'left_x_bottom_y_centre_z right_x_bottom_y_centre_z'
     value = 0
   []
 []
