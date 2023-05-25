@@ -3,9 +3,11 @@
 
 # Input file for computing the von-mises stress between the coolant pipe of a
 # tokamak divertor monoblock and its armour due to thermal expansion.
-# This simplified model is comprised of a solid OFHC copper cylinder surrounded
-# by tungsten armour; no interlayer is included and coolant flow is not
-# modelled.
+# The monoblock is typically comprised of a copper-chromium-zirconium (CuCrZr)
+# pipe surrounded by tungsten armour with an OFHC copper pipe interlayer in
+# between. This simplified model is comprised of a solid/filled OFHC copper
+# cylinder by surrounded by tungsten armour; the CuCrZr pipe is not included
+# and coolant flow is not modelled.
 # The mesh uses first order elements with a nominal mesh refinement of one 
 # division per millimetre.
 # The boundary conditions are the stress-free temperature and the block
@@ -18,50 +20,63 @@
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # File handling
-name=simple_divertor_block
+name=simple_monoblock
+outputDir=outputs
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Geometry
 PI=3.141592653589793
 
-pipeDiam=16e-3    # m
-pipeCirc=${fparse PI * pipeDiam}
+intLayerExtDiam=16e-3 # m
+intLayerExtCirc=${fparse PI * intLayerExtDiam}
 
-monoBWidth=23e-3     # m
-monoBThick=12e-3     # m
-monoBArmHeight=8e-3  # m
+monoBThick=3.5e-3     # m
+monoBWidth=${fparse intLayerExtDiam + 2*monoBThick}
+monoBDepth=12e-3      # m
+monoBArmHeight=8e-3   # m
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Mesh Sizing
 meshRefFact=1
-meshDens=1e3         # divisions per metre (nominal)
+meshDens=1e3 # divisions per metre (nominal)
+
+# Mesh Order
+secondOrder=false
+orderString=FIRST
+
+# Note: some of the following values must be even integers. This is in some
+# cases a requirement for the meshing functions used, else is is to ensure a
+# division is present at the centreline, thus allowing zero-displacement
+# boundary conditions to be applied to the centre node. These values are
+# halved, rounded to int, then doubled to ensure the result is an even int.
 
 # Number of divisions along the top section of the monoblock armour.
 monoBArmDivs=${fparse int(monoBArmHeight * meshDens * meshRefFact)}
 
-# Number of divisions around each quadrant of the circumference of the pipe and
-# radial section of the monoblock armour. Note: this value must be an even int,
-# so it is halved, rounded to int, then doubled.
-pipeCircSectDivs=${fparse 2 * int(monoBWidth/4 * meshDens * meshRefFact)}
+# Number of divisions around each quadrant of the circumference of the cylinder
+# and radial section of the monoblock armour.
+pipeCircSectDivs=${fparse 2 * int(monoBWidth/2 * meshDens * meshRefFact / 2)}
 
-# Number of radial divisions for the pipe and radial section of the monoblock
-# armour respectively.
-pipeRadDivs=${fparse max(int(pipeDiam/2 * meshDens * meshRefFact), 5)}
+# Number of radial divisions for the interlayer and radial section of the
+# monoblock armour respectively.
+intLayerRadDivs=${
+  fparse max(int(intLayerExtDiam/2 * meshDens * meshRefFact), 5)
+}
 monoBRadDivs=${
-  fparse max(int((monoBWidth-pipeDiam)/2 * meshDens * meshRefFact), 5)
+  fparse max(int((monoBWidth-intLayerExtDiam)/2 * meshDens * meshRefFact), 5)
 }
 
-# Number of divisions along monoblock thickness (i.e. z-dimension).
-extrudeDivs=${fparse monoBThick * meshDens * meshRefFact}
+# Number of divisions along monoblock depth (i.e. z-dimension).
+extrudeDivs=${fparse max(2 * int(monoBDepth * meshDens * meshRefFact / 2), 4)}
 
-monoBElemSize=${fparse monoBThick / extrudeDivs}
+monoBElemSize=${fparse monoBDepth / extrudeDivs}
 tol=${fparse monoBElemSize / 10}
-ctol=${fparse pipeCirc / (8 * 4 * pipeCircSectDivs)}
+ctol=${fparse intLayerExtCirc / (8 * 4 * pipeCircSectDivs)}
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Material Properties
 # Mono-Block/Armour = Tungsten
-# Cooling pipe = Oxygen-Free High-Conductivity (OFHC) Copper
+# Interlayer = Oxygen-Free High-Conductivity (OFHC) Copper
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Loads and BCs
@@ -75,25 +90,28 @@ blockTemp=100       # degC
 []
 
 [Mesh]
-  [mesh_pipe_and_block]
+  second_order = ${secondOrder}
+
+  [mesh_monoblock]
     type = PolygonConcentricCircleMeshGenerator
     num_sides = 4
     polygon_size = ${fparse monoBWidth / 2}
     polygon_size_style = apothem  # i.e. distance from centre to edge
-    ring_radii = ${fparse pipeDiam / 2}
+    ring_radii = ${fparse intLayerExtDiam / 2}
     num_sectors_per_side = '
       ${pipeCircSectDivs}
       ${pipeCircSectDivs}
       ${pipeCircSectDivs}
-      ${pipeCircSectDivs}'
-    ring_intervals = ${pipeRadDivs}
+      ${pipeCircSectDivs}
+    '
+    ring_intervals = ${intLayerRadDivs}
     background_intervals = ${monoBRadDivs}
     preserve_volumes = on
     flat_side_up = true
-    ring_block_names = 'pipe_tri pipe'
+    ring_block_names = 'interlayer_tri interlayer'
     background_block_names = monoblock
     interface_boundary_id_shift = 1000
-    interface_boundary_names = pipe_boundary
+    interface_boundary_names = interlayer_boundary
     external_boundary_name = monoblock_boundary
   []
 
@@ -111,7 +129,7 @@ blockTemp=100       # degC
 
   [combine_meshes]
     type = StitchedMeshGenerator
-    inputs = 'mesh_pipe_and_block mesh_armour'
+    inputs = 'mesh_monoblock mesh_armour'
     stitch_boundaries_pairs = 'monoblock_boundary armour_bottom'
     clear_stitched_boundary_ids = true
   []
@@ -140,7 +158,7 @@ blockTemp=100       # degC
     type = AdvancedExtruderGenerator
     input = merge_boundary_names
     direction = '0 0 1'
-    heights = ${monoBThick}
+    heights = ${monoBDepth}
     num_layers = ${extrudeDivs}
   []
 
@@ -152,7 +170,7 @@ blockTemp=100       # degC
                    ${fparse -tol}'
     top_right = '${fparse ctol}
                  ${fparse (monoBWidth/-2)+ctol}
-                 ${fparse (monoBThick)+tol}'
+                 ${fparse (monoBDepth)+tol}'
     new_boundary = bottom_x0
   []
   [pin_z]
@@ -160,10 +178,10 @@ blockTemp=100       # degC
     input = pin_x
     bottom_left = '${fparse (monoBWidth/-2)-ctol}
                    ${fparse (monoBWidth/-2)-ctol}
-                   ${fparse (monoBThick/2)-tol}'
+                   ${fparse (monoBDepth/2)-tol}'
     top_right = '${fparse (monoBWidth/2)+ctol}
                  ${fparse (monoBWidth/-2)+ctol}
-                 ${fparse (monoBThick/2)+tol}'
+                 ${fparse (monoBDepth/2)+tol}'
     new_boundary = bottom_z0
   []
   [define_full_volume_nodeset]
@@ -177,7 +195,7 @@ blockTemp=100       # degC
     top_right = '
       ${fparse (monoBWidth/2)+ctol}
       ${fparse (monoBWidth/2)+monoBArmHeight+ctol}
-      ${fparse monoBThick+tol}
+      ${fparse monoBDepth+tol}
     '
     new_boundary = volume
   []
@@ -186,7 +204,7 @@ blockTemp=100       # degC
 [Variables]
   [temperature]
     family = LAGRANGE
-    order = FIRST
+    order = ${orderString}
     initial_condition = ${blockTemp}
   []
 []
@@ -198,12 +216,16 @@ blockTemp=100       # degC
   []
 []
 
-[Modules/TensorMechanics/Master]
-  [all]
-    add_variables = true
-    strain = FINITE
-    automatic_eigenstrain_names = true
-    generate_output = 'vonmises_stress'
+[Modules]
+  [TensorMechanics]
+    [Master]
+      [all]
+        add_variables = true
+        strain = FINITE
+        automatic_eigenstrain_names = true
+        generate_output = 'vonmises_stress'
+      []
+    []
   []
 []
 
@@ -289,82 +311,8 @@ blockTemp=100       # degC
     '
     variable = temperature
     property = thermal_conductivity
-    block = 'pipe_tri pipe'
+    block = 'interlayer_tri interlayer'
   []
-  [copper_density]
-    type = PiecewiseLinearInterpolationMaterial
-    xy_data = '
-      20 8940
-      50 8926
-      100 8903
-      150 8879
-      200 8854
-      250 8829
-      300 8802
-      350 8774
-      400 8744
-      450 8713
-      500 8681
-      550 8647
-      600 8612
-      650 8575
-      700 8536
-      750 8495
-      800 8453
-      850 8409
-      900 8363
-    '
-    variable = temperature
-    property = density
-    block = 'pipe_tri pipe'
-  []
-  [copper_elastic_modulus]
-    type = PiecewiseLinearInterpolationMaterial
-    xy_data = '
-      20 117000000000.0
-      50 116000000000.0
-      100 114000000000.0
-      150 112000000000.0
-      200 110000000000.0
-      250 108000000000.0
-      300 105000000000.0
-      350 102000000000.0
-      400 98000000000.0
-    '
-    variable = temperature
-    property = elastic_modulus
-    block = 'pipe_tri pipe'
-  []
-  [copper_specific_heat]
-    type = PiecewiseLinearInterpolationMaterial
-    xy_data = '
-      20 388
-      50 390
-      100 394
-      150 398
-      200 401
-      250 406
-      300 410
-      350 415
-      400 419
-      450 424
-      500 430
-      550 435
-      600 441
-      650 447
-      700 453
-      750 459
-      800 466
-      850 472
-      900 479
-      950 487
-      1000 494
-    '
-    variable = temperature
-    property = specific_heat
-    block = 'pipe_tri pipe'
-  []
-
   [tungsten_thermal_conductivity]
     type = PiecewiseLinearInterpolationMaterial
     xy_data = '
@@ -395,6 +343,34 @@ blockTemp=100       # degC
     variable = temperature
     property = thermal_conductivity
     block = 'armour'
+  []
+
+  [copper_density]
+    type = PiecewiseLinearInterpolationMaterial
+    xy_data = '
+      20 8940
+      50 8926
+      100 8903
+      150 8879
+      200 8854
+      250 8829
+      300 8802
+      350 8774
+      400 8744
+      450 8713
+      500 8681
+      550 8647
+      600 8612
+      650 8575
+      700 8536
+      750 8495
+      800 8453
+      850 8409
+      900 8363
+    '
+    variable = temperature
+    property = density
+    block = 'interlayer_tri interlayer'
   []
   [tungsten_density]
     type = PiecewiseLinearInterpolationMaterial
@@ -427,6 +403,24 @@ blockTemp=100       # degC
     property = density
     block = 'armour'
   []
+
+  [copper_elastic_modulus]
+    type = PiecewiseLinearInterpolationMaterial
+    xy_data = '
+      20 117000000000.0
+      50 116000000000.0
+      100 114000000000.0
+      150 112000000000.0
+      200 110000000000.0
+      250 108000000000.0
+      300 105000000000.0
+      350 102000000000.0
+      400 98000000000.0
+    '
+    variable = temperature
+    property = elastic_modulus
+    block = 'interlayer_tri interlayer'
+  []
   [tungsten_elastic_modulus]
     type = PiecewiseLinearInterpolationMaterial
     xy_data = '
@@ -457,6 +451,36 @@ blockTemp=100       # degC
     variable = temperature
     property = elastic_modulus
     block = 'armour'
+  []
+
+  [copper_specific_heat]
+    type = PiecewiseLinearInterpolationMaterial
+    xy_data = '
+      20 388
+      50 390
+      100 394
+      150 398
+      200 401
+      250 406
+      300 410
+      350 415
+      400 419
+      450 424
+      500 430
+      550 435
+      600 441
+      650 447
+      700 453
+      750 459
+      800 466
+      850 472
+      900 479
+      950 487
+      1000 494
+    '
+    variable = temperature
+    property = specific_heat
+    block = 'interlayer_tri interlayer'
   []
   [tungsten_specific_heat]
     type = PiecewiseLinearInterpolationMaterial
@@ -495,7 +519,7 @@ blockTemp=100       # degC
     args = temperature
     youngs_modulus = elastic_modulus
     poissons_ratio = 0.33
-    block = 'pipe_tri pipe'
+    block = 'interlayer_tri interlayer'
   []
   [tungsten_elasticity]
     type = ComputeVariableIsotropicElasticityTensor
@@ -511,7 +535,7 @@ blockTemp=100       # degC
     stress_free_temperature = ${stressFreeTemp}
     thermal_expansion_function = copper_thermal_expansion
     eigenstrain_name = thermal_expansion_eigenstrain
-    block = 'pipe_tri pipe'
+    block = 'interlayer_tri interlayer'
   []
   [tungsten_expansion]
     type = ComputeInstantaneousThermalExpansionFunctionEigenstrain
@@ -580,6 +604,6 @@ blockTemp=100       # degC
   [write_to_file]
     type = CSV
     show = 'max_stress'
-    file_base = 'outputs/${name}_out'
+    file_base = '${outputDir}/${name}_out'
   []
 []
