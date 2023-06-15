@@ -28,7 +28,7 @@ outputDir=outputs
 # Geometry
 PI=3.141592653589793
 
-pipeThick=3e-3       # m
+pipeThick=1.5e-3     # m
 pipeIntDiam=12e-3    # m
 pipeExtDiam=${fparse pipeIntDiam + 2*pipeThick}
 
@@ -36,7 +36,7 @@ intLayerThick=1e-3   # m
 intLayerIntDiam=${pipeExtDiam}
 intLayerExtDiam=${fparse intLayerIntDiam + 2*intLayerThick}
 
-monoBThick=3.5e-3      # m
+monoBThick=3e-3      # m
 monoBWidth=${fparse intLayerExtDiam + 2*monoBThick}
 monoBArmHeight=8e-3  # m
 monoBDepth=12e-3     # m
