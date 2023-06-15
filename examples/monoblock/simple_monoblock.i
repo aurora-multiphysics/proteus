@@ -27,10 +27,10 @@ outputDir=outputs
 # Geometry
 PI=3.141592653589793
 
-intLayerExtDiam=16e-3 # m
+intLayerExtDiam=17e-3 # m
 intLayerExtCirc=${fparse PI * intLayerExtDiam}
 
-monoBThick=3.5e-3     # m
+monoBThick=3e-3     # m
 monoBWidth=${fparse intLayerExtDiam + 2*monoBThick}
 monoBDepth=12e-3      # m
 monoBArmHeight=8e-3   # m
