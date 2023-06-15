@@ -336,6 +336,11 @@ surfHeatFlux=10e6   # W/m^2
     data_file = ./data/tungsten_specific_heat.csv
     format = columns
   []
+  [water_heat_transfer_coefficient_func]
+    type = PiecewiseLinear
+    data_file = ./data/water_htc.csv
+    format = columns
+  []
 []
 
 [Materials]
