@@ -114,50 +114,84 @@
 
 [FVBCs]
   [x_walls]
-    type = FVDirichletBC
+    type = INSFVNoSlipWallBC
     variable = u_x
     boundary = 'top bottom front back'
-    value = 0.0
+    function = '0.0'
   []
   [y_walls]
-    type = FVDirichletBC
+    type = INSFVNoSlipWallBC
     variable = u_y
-    boundary = 'left right top bottom front back'
-    value = 0.0
+    boundary = 'top bottom front back'
+    function = '0.0'
   []
   [z_walls]
-    type = FVDirichletBC
+    type = INSFVNoSlipWallBC
     variable = u_z
-    boundary = 'left right top bottom front back'
-    value = 0.0
+    boundary = 'top bottom front back'
+    function = '0.0'
   []
-  [inlet_bc]
-    type = FVDirichletBC
+  [inlet_bc_x]
+    type = INSFVInletVelocityBC
     variable = u_x
     boundary = 'left'
-    value = 0.05
+    function = '0.05'
+  []
+  [inlet_bc_y]
+    type = INSFVInletVelocityBC
+    variable = u_y
+    boundary = 'left'
+    function = '0.0'
+  []
+  [inlet_bc_z]
+    type = INSFVInletVelocityBC
+    variable = u_z
+    boundary = 'left'
+    function = '0.0'
   []
   [outlet_bc]
-    type = FVDirichletBC
+    type = INSFVOutletPressureBC
     variable = p
     boundary = 'right'
-    value = 0
+    function = '0.0'
   []
 []
 
 [Preconditioning]
+  active = FSP
+  [FSP]
+    type = FSP
+    topsplit = 'up'
+    [up]
+      splitting = 'u p'
+      splitting_type = schur
+
+      petsc_options_iname = '-pc_fieldsplit_schur_fact_type -pc_fieldsplit_schur_precondition -ksp_gmres_restart -ksp_rtol -ksp_type'
+      petsc_options_value = 'full  selfp  300  1e-4  fgmres'
+    []
+    [u]
+      vars = 'u_x u_y u_z'
+      petsc_options_iname = '-pc_type -pc_hypre_type -ksp_type -ksp_rtol -ksp_gmres_restart -ksp_pc_side'
+      petsc_options_value = 'hypre  boomeramg  gmres  5e-1  300  right'
+    []
+    [p]
+      vars = 'p'
+      petsc_options_iname = '-ksp_type -ksp_gmres_restart -ksp_rtol -pc_type -ksp_pc_side'
+      petsc_options_value = 'gmres  300  5e-1  jacobi  right'
+    []
+  []
   [SMP]
     type = SMP
     full = true
+  petsc_options_iname = '-pc_type -pc_factor_shift_type'
+  petsc_options_value = 'lu       NONZERO'
   []
 []
 
 [Executioner]
   type = Steady
   solve_type = NEWTON
-  petsc_options_iname = '-pc_type -pc_hypre_type -pc_factor_shift_type'
-  petsc_options_value = 'hypre    euclid         NONZERO'
-  l_max_its = 30
+  nl_rel_tol = 1e-12
   automatic_scaling = true
 []
 
