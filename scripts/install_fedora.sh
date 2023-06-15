@@ -56,7 +56,7 @@ METHODS="opt" ./scripts/update_and_rebuild_libmesh.sh --with-mpi
 # 8 for each first order variable
 # 27 for each second order variable
 
-./configure --with-derivative-size=81 --with-ad-indexing-type=global
+./configure --with-derivative-size=81
 
 cd $PROTEUS_DIR
 make
