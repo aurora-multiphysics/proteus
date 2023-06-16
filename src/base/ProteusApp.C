@@ -25,7 +25,7 @@ ProteusApp::~ProteusApp() {}
 void
 ProteusApp::registerAll(Factory & f, ActionFactory & af, Syntax & syntax)
 {
-  ModulesApp::registerAll(f, af, syntax);
+  ModulesApp::registerAllObjects<ProteusApp>(f, af, syntax);
   Registry::registerObjectsTo(f, {"ProteusApp"});
   Registry::registerActionsTo(af, {"ProteusApp"});
 

@@ -114,34 +114,46 @@
 
 [FVBCs]
   [x_walls]
-    type = FVDirichletBC
+    type = INSFVNoSlipWallBC
     variable = u_x
     boundary = 'top bottom front back'
-    value = 0.0
+    function = '0.0'
   []
   [y_walls]
-    type = FVDirichletBC
+    type = INSFVNoSlipWallBC
     variable = u_y
-    boundary = 'left right top bottom front back'
-    value = 0.0
+    boundary = 'top bottom front back'
+    function = '0.0'
   []
   [z_walls]
-    type = FVDirichletBC
+    type = INSFVNoSlipWallBC
     variable = u_z
-    boundary = 'left right top bottom front back'
-    value = 0.0
+    boundary = 'top bottom front back'
+    function = '0.0'
   []
-  [inlet_bc]
-    type = FVDirichletBC
+  [inlet_bc_x]
+    type = INSFVInletVelocityBC
     variable = u_x
     boundary = 'left'
-    value = 0.05
+    function = '0.05'
+  []
+  [inlet_bc_y]
+    type = INSFVInletVelocityBC
+    variable = u_y
+    boundary = 'left'
+    function = '0.0'
+  []
+  [inlet_bc_z]
+    type = INSFVInletVelocityBC
+    variable = u_z
+    boundary = 'left'
+    function = '0.0'
   []
   [outlet_bc]
-    type = FVDirichletBC
+    type = INSFVOutletPressureBC
     variable = p
     boundary = 'right'
-    value = 0
+    function = '0.0'
   []
 []
 
@@ -155,10 +167,10 @@
 [Executioner]
   type = Steady
   solve_type = NEWTON
-  petsc_options_iname = '-pc_type -pc_hypre_type -pc_factor_shift_type'
-  petsc_options_value = 'hypre    euclid         NONZERO'
-  l_max_its = 30
+  nl_rel_tol = 1e-12
   automatic_scaling = true
+  petsc_options_iname = '-pc_type -ksp_gmres_restart -sub_pc_type -pc_factor_shift_type'
+  petsc_options_value = 'asm      100                lu           NONZERO'
 []
 
 [Outputs]
