@@ -111,8 +111,8 @@ blockTemp=100       # degC
     ring_block_names = 'interlayer_tri interlayer'
     background_block_names = monoblock
     interface_boundary_id_shift = 1000
-    interface_boundary_names = interlayer_boundary
     external_boundary_name = monoblock_boundary
+    generate_side_specific_boundaries = true
   []
 
   [mesh_armour]
