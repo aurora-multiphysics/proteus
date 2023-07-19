@@ -321,7 +321,76 @@ surfHeatFlux=10e6   # W/m^2
     format = columns
   []
 
+  [cucrzr_specific_heat_func_func]
+    type = PiecewiseLinear
+    data_file = ./data/cucrzr_cte.csv
+    format = columns
+  []
+  [copper_thermal_expansion_func]
+    type = PiecewiseLinear
+    data_file = ./data/copper_cte.csv
+    format = columns
+  []
+  [tungsten_thermal_expansion_func]
+    type = PiecewiseLinear
+    data_file = ./data/tungsten_cte.csv
+    format = columns
+  []
+
+  [cucrzr_thermal_conductivity_func]
+    type = PiecewiseLinear
+    data_file = ./data/cucrzr_conductivity.csv
+    format = columns
+  []
+  [copper_thermal_conductivity_func]
+    type = PiecewiseLinear
+    data_file = ./data/copper_conductivity.csv
+    format = columns
+  []
+  [tungsten_thermal_conductivity_func]
+    type = PiecewiseLinear
+    data_file = ./data/tungsten_conductivity.csv
+    format = columns
+  []
+
+  [cucrzr_density_func]
+    type = PiecewiseLinear
+    data_file = ./data/cucrzr_density.csv
+    format = columns
+  []
+  [copper_density_func]
+    type = PiecewiseLinear
+    data_file = ./data/copper_density.csv
+    format = columns
+  []
+  [tungsten_density_func]
+    type = PiecewiseLinear
+    data_file = ./data/tungsten_density.csv
+    format = columns
+  []
+
+  [cucrzr_elastic_modulus_func]
+    type = PiecewiseLinear
+    data_file = ./data/cucrzr_elastic_modulus.csv
+    format = columns
+  []
+  [copper_elastic_modulus_func]
+    type = PiecewiseLinear
+    data_file = ./data/copper_elastic_modulus.csv
+    format = columns
+  []
+  [tungsten_elastic_modulus_func]
+    type = PiecewiseLinear
+    data_file = ./data/tungsten_elastic_modulus.csv
+    format = columns
+  []
+
   [cucrzr_specific_heat_func]
+    type = PiecewiseLinear
+    data_file = ./data/cucrzr_specific_heat.csv
+    format = columns
+  []
+  [copper_specific_heat_func]
     type = PiecewiseLinear
     data_file = ./data/cucrzr_specific_heat.csv
     format = columns
@@ -344,6 +413,10 @@ surfHeatFlux=10e6   # W/m^2
     v = temperature
     prop_name = thermal_conductivity
     function = cucrzr_thermal_conductivity_func
+    type = CoupledValueFunctionMaterial
+    v = temperature
+    prop_name = thermal_conductivity
+    function = cucrzr_thermal_conductivity_func
     block = 'pipe'
   []
   [copper_thermal_conductivity]
@@ -351,9 +424,17 @@ surfHeatFlux=10e6   # W/m^2
     v = temperature
     prop_name = thermal_conductivity
     function = copper_thermal_conductivity_func
+    type = CoupledValueFunctionMaterial
+    v = temperature
+    prop_name = thermal_conductivity
+    function = copper_thermal_conductivity_func
     block = 'interlayer'
   []
   [tungsten_thermal_conductivity]
+    type = CoupledValueFunctionMaterial
+    v = temperature
+    prop_name = thermal_conductivity
+    function = tungsten_thermal_conductivity_func
     type = CoupledValueFunctionMaterial
     v = temperature
     prop_name = thermal_conductivity
@@ -366,6 +447,10 @@ surfHeatFlux=10e6   # W/m^2
     v = temperature
     prop_name = density
     function = cucrzr_density_func
+    type = CoupledValueFunctionMaterial
+    v = temperature
+    prop_name = density
+    function = cucrzr_density_func
     block = 'pipe'
   []
   [copper_density]
@@ -373,9 +458,17 @@ surfHeatFlux=10e6   # W/m^2
     v = temperature
     prop_name = density
     function = copper_density_func
+    type = CoupledValueFunctionMaterial
+    v = temperature
+    prop_name = density
+    function = copper_density_func
     block = 'interlayer'
   []
   [tungsten_density]
+    type = CoupledValueFunctionMaterial
+    v = temperature
+    prop_name = density
+    function = tungsten_density_func
     type = CoupledValueFunctionMaterial
     v = temperature
     prop_name = density
@@ -388,6 +481,10 @@ surfHeatFlux=10e6   # W/m^2
     v = temperature
     prop_name = elastic_modulus
     function = cucrzr_elastic_modulus_func
+    type = CoupledValueFunctionMaterial
+    v = temperature
+    prop_name = elastic_modulus
+    function = cucrzr_elastic_modulus_func
     block = 'pipe'
   []
   [copper_elastic_modulus]
@@ -395,9 +492,17 @@ surfHeatFlux=10e6   # W/m^2
     v = temperature
     prop_name = elastic_modulus
     function = copper_elastic_modulus_func
+    type = CoupledValueFunctionMaterial
+    v = temperature
+    prop_name = elastic_modulus
+    function = copper_elastic_modulus_func
     block = 'interlayer'
   []
   [tungsten_elastic_modulus]
+    type = CoupledValueFunctionMaterial
+    v = temperature
+    prop_name = elastic_modulus
+    function = tungsten_elastic_modulus_func
     type = CoupledValueFunctionMaterial
     v = temperature
     prop_name = elastic_modulus
@@ -410,6 +515,10 @@ surfHeatFlux=10e6   # W/m^2
     v = temperature
     prop_name = specific_heat
     function = cucrzr_specific_heat_func
+    type = CoupledValueFunctionMaterial
+    v = temperature
+    prop_name = specific_heat
+    function = cucrzr_specific_heat_func
     block = 'pipe'
   []
   [copper_specific_heat]
@@ -417,9 +526,17 @@ surfHeatFlux=10e6   # W/m^2
     v = temperature
     prop_name = specific_heat
     function = copper_specific_heat_func
+    type = CoupledValueFunctionMaterial
+    v = temperature
+    prop_name = specific_heat
+    function = copper_specific_heat_func
     block = 'interlayer'
   []
   [tungsten_specific_heat]
+    type = CoupledValueFunctionMaterial
+    v = temperature
+    prop_name = specific_heat
+    function = tungsten_specific_heat_func
     type = CoupledValueFunctionMaterial
     v = temperature
     prop_name = specific_heat
@@ -454,6 +571,7 @@ surfHeatFlux=10e6   # W/m^2
     temperature = temperature
     stress_free_temperature = ${stressFreeTemp}
     thermal_expansion_function = cucrzr_thermal_expansion_func
+    thermal_expansion_function = cucrzr_thermal_expansion_func
     eigenstrain_name = thermal_expansion_eigenstrain
     block = 'pipe'
   []
@@ -462,6 +580,7 @@ surfHeatFlux=10e6   # W/m^2
     temperature = temperature
     stress_free_temperature = ${stressFreeTemp}
     thermal_expansion_function = copper_thermal_expansion_func
+    thermal_expansion_function = copper_thermal_expansion_func
     eigenstrain_name = thermal_expansion_eigenstrain
     block = 'interlayer'
   []
@@ -469,6 +588,7 @@ surfHeatFlux=10e6   # W/m^2
     type = ComputeInstantaneousThermalExpansionFunctionEigenstrain
     temperature = temperature
     stress_free_temperature = ${stressFreeTemp}
+    thermal_expansion_function = tungsten_thermal_expansion_func
     thermal_expansion_function = tungsten_thermal_expansion_func
     eigenstrain_name = thermal_expansion_eigenstrain
     block = 'armour'
