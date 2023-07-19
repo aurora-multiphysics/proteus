@@ -124,12 +124,8 @@ surfHeatFlux=10e6   # W/m^2
     ring_block_names = 'void pipe interlayer'
     background_block_names = monoblock
     interface_boundary_id_shift = 1000
-    interface_boundary_names = '
-      internal_boundary
-      pipe_boundary
-      interlayer_boundary
-    '
     external_boundary_name = monoblock_boundary
+    generate_side_specific_boundaries = true
   []
 
   [mesh_armour]
