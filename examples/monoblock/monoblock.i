@@ -336,11 +336,6 @@ surfHeatFlux=10e6   # W/m^2
     data_file = ./data/tungsten_specific_heat.csv
     format = columns
   []
-  [water_heat_transfer_coefficient_func]
-    type = PiecewiseLinear
-    data_file = ./data/water_htc.csv
-    format = columns
-  []
 []
 
 [Materials]
@@ -484,10 +479,17 @@ surfHeatFlux=10e6   # W/m^2
   []
 
   [coolant_heat_transfer_coefficient]
-    type = CoupledValueFunctionMaterial
-    v = temperature
-    prop_name = heat_transfer_coefficient
-    function = water_heat_transfer_coefficient_func
+    type = PiecewiseLinearInterpolationMaterial
+    xy_data = '
+      1 4
+      100 109.1e3
+      150 115.9e3
+      200 121.01e3
+      250 128.8e3
+      295 208.2e3
+    '
+    variable = temperature
+    property = heat_transfer_coefficient
     boundary = 'internal_boundary'
   []
 []
