@@ -621,3 +621,33 @@ with open(f"{DATA_DIR}/tungsten_cte.csv", "w") as file:
     for temp, cte in zip(tungsten_temperature_cte, tungsten_cte):
         data = [temp, cte]
         writer.writerow(data)
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# Heat transfer coefficient data for Water
+# Temperature
+water_temperature = [
+    1,
+    100,
+    150,
+    200,
+    250,
+    295,
+]
+water_htc = [
+    4,
+    109.1e3,
+    115.9e3,
+    121.01e3,
+    128.8e3,
+    208.2e3,
+]
+
+with open(f"{DATA_DIR}/water_htc.csv", "w") as file:
+    file.write("# Heat transfer coefficient data for water\n")
+    file.write("# Temp. (C), HTC (W.m^-2.K^-1)\n")
+
+    writer = csv.writer(file)
+    for temp, htc in zip(water_temperature, water_htc):
+        data = [temp, htc]
+        writer.writerow(data)
