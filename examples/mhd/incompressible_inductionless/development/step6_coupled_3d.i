@@ -88,7 +88,6 @@ U_AVG = 1
     inputs = 'meshTop meshBottom'
     clear_stitched_boundary_ids = true
     stitch_boundaries_pairs = 'bottom top'
-    show_info = true
   []
 []
 

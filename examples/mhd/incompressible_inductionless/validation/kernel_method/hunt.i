@@ -95,7 +95,6 @@ RATIO_Z_INV = ${fparse 1/RATIO_Z_FWD}
     inputs = 'meshTop meshBottom'
     clear_stitched_boundary_ids = true
     stitch_boundaries_pairs = 'bottom top'
-    show_info = true
   []
 []
 

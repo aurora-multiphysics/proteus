@@ -97,7 +97,6 @@ nodetol = 1e-12
     inputs = 'meshTop meshBottom'
     clear_stitched_boundary_ids = true
     stitch_boundaries_pairs = 'bottom top'
-    show_info = true
   []
   [centre_node]
     type = BoundingBoxNodeSetGenerator
