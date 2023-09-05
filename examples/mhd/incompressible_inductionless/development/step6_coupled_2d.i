@@ -171,15 +171,15 @@ U_AVG = 1
 [Functions]
   [velocityFunction]
     type = ParsedVectorFunction
-    vars = 'y_max'
-    vals = '1'
-    value_x = '(3/2) * ${U_AVG} * (1 - (y * y) / (y_max * y_max))'
-    value_y = '0'
+    symbol_names = 'y_max'
+    symbol_values = '1'
+    expression_x = '(3/2) * ${U_AVG} * (1 - (y * y) / (y_max * y_max))'
+    expression_y = '0'
   []
   [magneticFieldFunction]
     type = ParsedVectorFunction
-    value_x = '0'
-    value_y = '20'
+    expression_x = '0'
+    expression_y = '20'
   []
 []
 

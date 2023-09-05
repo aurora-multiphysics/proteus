@@ -195,15 +195,15 @@ scaled_u_avg = ${fparse Re / (scaled_diameter * scaled_dens / scaled_dyn_visc)}
 [Functions]
   [velocityFunction]
     type = ParsedVectorFunction
-    value_x = '0'
-    value_y = '${scaled_u_avg}'
-    value_z = '0'
+    expression_x = '0'
+    expression_y = '${scaled_u_avg}'
+    expression_z = '0'
   []
   [magneticFieldFunction]
     type = ParsedVectorFunction
-    value_x = '0'
-    value_y = '0'
-    value_z = '${scaled_B_max}*pow((1.0 + exp(${exp_factor}*y*${length_scaling_factor})), ${power_exp})'
+    expression_x = '0'
+    expression_y = '0'
+    expression_z = '${scaled_B_max}*pow((1.0 + exp(${exp_factor}*y*${length_scaling_factor})), ${power_exp})'
   []
 []
 

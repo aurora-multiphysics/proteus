@@ -180,11 +180,11 @@ U_AVG = 1
 [Functions]
   [velocityFunction]
     type = ParsedVectorFunction
-    vars = 'y_max z_max'
-    vals = '1     1'
-    value_x = '(9/4) * ${U_AVG} * (1 - (y * y) / (y_max * y_max)) * (1 - (z * z) / (z_max * z_max))'
-    value_y = '0'
-    value_z = '0'
+    symbol_names = 'y_max z_max'
+    symbol_values = '1     1'
+    expression_x = '(9/4) * ${U_AVG} * (1 - (y * y) / (y_max * y_max)) * (1 - (z * z) / (z_max * z_max))'
+    expression_y = '0'
+    expression_z = '0'
   []
 []
 
