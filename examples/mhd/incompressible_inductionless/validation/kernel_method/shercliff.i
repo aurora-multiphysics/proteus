@@ -95,7 +95,6 @@ RATIO_Z_INV = ${fparse 1/RATIO_Z_FWD}
     inputs = 'meshTop meshBottom'
     clear_stitched_boundary_ids = true
     stitch_boundaries_pairs = 'bottom top'
-    show_info = true
   []
 []
 
@@ -234,17 +233,17 @@ RATIO_Z_INV = ${fparse 1/RATIO_Z_FWD}
 [Functions]
   [velocityFunction]
     type = ParsedVectorFunction
-    vars = 'y_max z_max'
-    vals = '1     1'
-    value_x = '(9/4) * ${U_AVG} * (1 - (y * y) / (y_max * y_max)) * (1 - (z * z) / (z_max * z_max))'
-    value_y = '0'
-    value_z = '0'
+    symbol_names = 'y_max z_max'
+    symbol_values = '1     1'
+    expression_x = '(9/4) * ${U_AVG} * (1 - (y * y) / (y_max * y_max)) * (1 - (z * z) / (z_max * z_max))'
+    expression_y = '0'
+    expression_z = '0'
   []
   [magneticFieldFunction]
     type = ParsedVectorFunction
-    value_x = '0'
-    value_y = '20'
-    value_z = '0'
+    expression_x = '0'
+    expression_y = '20'
+    expression_z = '0'
   []
 []
 
