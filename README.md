@@ -49,8 +49,24 @@ as follows:
 ./proteus-opt -i <input-file>.i
 ```
 
+Building Using Multiple Cores
+-----------------------------
+
+The install process above can be sped up
+by using multiple cores during the build process.
+Note that this will also need more memory
+and to ensure the build goes smoothly,
+we recommend having at least 4GB per core.
+Multiple cores are enabled
+by setting the MOOSE JOBS environment variable
+before running the install script:
+```
+export MOOSE_JOBS=4
+```
+Where the number 4 in the example above corresponds to using four cores.
+
 Docker
------
+------
 
 Proteus can be run in a container to make installation easier.
 
