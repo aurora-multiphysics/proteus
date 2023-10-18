@@ -48,6 +48,10 @@ CC=$CC CXX=$CXX F90=$F90 F77=$F77 FC=$FC \
 
 METHODS="opt" ./scripts/update_and_rebuild_libmesh.sh --with-mpi
 
+# Build WASP
+
+./scripts/update_and_rebuild_wasp.sh
+
 # Configure AD
 # Derivative size should be the total of
 # 8 for each first order variable
