@@ -23,6 +23,7 @@ echo "export F77=mpif77" >> $HOME/.moose_profile
 echo "export FC=mpif90" >> $HOME/.moose_profile
 echo "export MOOSE_DIR="$HOME"/moose" >> $HOME/.moose_profile
 echo "export PATH=\$PATH:"$PROTEUS_DIR >> $HOME/.moose_profile
+echo "export PATH=/home/ir-eard1/moose/petsc/arch-moose/bin/:\$PATH" >> $HOME/.moose_profile
 echo "export OMPI_MCA_mca_base_component_show_load_errors=0" >> $HOME/.moose_profile
 source $HOME/.moose_profile
 
