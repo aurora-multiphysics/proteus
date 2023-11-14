@@ -14,7 +14,7 @@ export PROTEUS_DIR=`pwd`
 # Make MOOSE profile
 
 echo "module purge" > $HOME/.moose_profile
-echo "module load dot slurm cmake/latest rhel7/global" >> $HOME/.moose_profile
+echo "module load dot slurm rhel7/global" >> $HOME/.moose_profile
 echo "module load git-2.31.0-gcc-5.4.0-ec3ji34 python/3.8 gcc/9 openmpi/gcc/9.3/4.0.4" >> $HOME/.moose_profile
 echo "export CC=mpicc" >> $HOME/.moose_profile
 echo "export CXX=mpicxx" >> $HOME/.moose_profile
@@ -43,7 +43,8 @@ CC=$CC CXX=$CXX F90=$F90 F77=$F77 FC=$FC \
 --CXXOPTFLAGS="-O3 -march=cascadelake -mtune=cascadelake" \
 --COPTFLAGS="-O3 -march=cascadelake -mtune=cascadelake" \
 --FOPTFLAGS="-O3 -march=cascadelake -mtune=cascadelake" \
---download-mumps=0 --download-superlu_dist=0 --with-64-bit-indices=1
+--download-mumps=0 --download-superlu_dist=0 --with-64-bit-indices=1 \
+--download-cmake
 
 # Build libMesh
 
