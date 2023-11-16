@@ -200,8 +200,8 @@ U_AVG = 1
   automatic_scaling = true
   l_max_its = 100
   nl_max_its = 150
-  petsc_options_iname = '-pc_type -pc_hypre_type'
-  petsc_options_value = 'hypre    euclid'
+  petsc_options_iname = '-pc_type'
+  petsc_options_value = 'ilu'
 []
 
 [Outputs]
