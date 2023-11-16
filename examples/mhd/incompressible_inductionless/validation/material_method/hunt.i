@@ -30,7 +30,6 @@ RATIO_Z_INV = ${fparse 1/RATIO_Z_FWD}
     bias_z = ${RATIO_Z_FWD}
     elem_type = ${ELEMENT_TYPE}
     boundary_name_prefix = 'meshTopBack'
-    show_info = true
   []
   [meshTopFront]
     type = GeneratedMeshGenerator
@@ -48,7 +47,6 @@ RATIO_Z_INV = ${fparse 1/RATIO_Z_FWD}
     bias_z = ${RATIO_Z_INV}
     elem_type = ${ELEMENT_TYPE}
     boundary_name_prefix = 'meshTopFront'
-    show_info = true
   []
   [meshBottomBack]
     type = GeneratedMeshGenerator
@@ -66,7 +64,6 @@ RATIO_Z_INV = ${fparse 1/RATIO_Z_FWD}
     bias_z = ${RATIO_Z_FWD}
     elem_type = ${ELEMENT_TYPE}
     boundary_name_prefix = 'meshBottomBack'
-    show_info = true
   []
   [meshBottomFront]
     type = GeneratedMeshGenerator
@@ -84,14 +81,12 @@ RATIO_Z_INV = ${fparse 1/RATIO_Z_FWD}
     bias_z = ${RATIO_Z_INV}
     elem_type = ${ELEMENT_TYPE}
     boundary_name_prefix = 'meshBottomFront'
-    show_info = true
   []
   [meshTop]
     type = StitchedMeshGenerator
     inputs = 'meshTopBack meshTopFront'
     clear_stitched_boundary_ids = true
     stitch_boundaries_pairs = 'meshTopBack_front meshTopFront_back'
-    show_info = true
   []
   [renameMeshTop]
     type = RenameBoundaryGenerator
@@ -108,14 +103,12 @@ RATIO_Z_INV = ${fparse 1/RATIO_Z_FWD}
       meshTop_left meshTop_left
       meshTop_bottom meshTop_bottom
     '
-    show_info = true
   []
   [meshBottom]
     type = StitchedMeshGenerator
     inputs = 'meshBottomBack meshBottomFront'
     clear_stitched_boundary_ids = true
     stitch_boundaries_pairs = 'meshBottomBack_front meshBottomFront_back'
-    show_info = true
   []
   [renameMeshBottom]
     type = RenameBoundaryGenerator
@@ -132,14 +125,12 @@ RATIO_Z_INV = ${fparse 1/RATIO_Z_FWD}
       meshBottom_left meshBottom_left
       bottom bottom
     '
-    show_info = true
   []
   [mesh]
     type = StitchedMeshGenerator
     inputs = 'renameMeshTop renameMeshBottom'
     clear_stitched_boundary_ids = true
     stitch_boundaries_pairs = 'meshTop_bottom meshBottom_top'
-    show_info = true
   []
   [renameMesh]
     type = RenameBoundaryGenerator
@@ -156,7 +147,6 @@ RATIO_Z_INV = ${fparse 1/RATIO_Z_FWD}
       left left
       right right
     '
-    show_info = true
   []
 []
 
