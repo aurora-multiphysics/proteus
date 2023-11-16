@@ -13,6 +13,7 @@ U_AVG = 1
     ymin = 0
     ymax = 1
     bias_y = 0.8
+    boundary_name_prefix = 'meshTop'
   []
   [meshBottom]
     type = GeneratedMeshGenerator
@@ -24,12 +25,29 @@ U_AVG = 1
     ymin = -1
     ymax = 0
     bias_y = 1.25
+    boundary_name_prefix = 'meshBottom'
   []
   [meshComplete]
     type = StitchedMeshGenerator
     inputs = 'meshTop meshBottom'
     clear_stitched_boundary_ids = true
-    stitch_boundaries_pairs = 'bottom top'
+    stitch_boundaries_pairs = 'meshTop_bottom meshBottom_top'
+  []
+  [meshRename]
+    type = RenameBoundaryGenerator
+    input = meshComplete
+    old_boundary = '
+      meshTop_right meshBottom_right
+      meshTop_left meshBottom_left
+      meshTop_top
+      meshBottom_bottom
+    '
+    new_boundary = '
+      right right
+      left left
+      top
+      bottom
+    '
   []
 []
 
