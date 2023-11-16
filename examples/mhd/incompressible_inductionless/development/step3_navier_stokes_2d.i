@@ -144,8 +144,8 @@ U_AVG = 1
   solve_type = NEWTON
   l_max_its = 30
   nl_max_its = 150
-  petsc_options_iname = '-pc_type -pc_hypre_type'
-  petsc_options_value = 'hypre euclid'
+  petsc_options_iname = '-pc_type'
+  petsc_options_value = 'ilu'
 []
 
 [Outputs]
