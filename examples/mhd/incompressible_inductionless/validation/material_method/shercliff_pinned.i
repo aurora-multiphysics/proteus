@@ -339,7 +339,7 @@ nodetol = 1e-12
   l_max_its = 100
   nl_max_its = 1000
   petsc_options_iname = '-pc_type'
-  petsc_options_value = 'asm'
+  petsc_options_value = 'ilu'
 []
 
 [Outputs]

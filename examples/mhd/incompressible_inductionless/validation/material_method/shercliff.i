@@ -320,7 +320,7 @@ RATIO_Z_INV = ${fparse 1/RATIO_Z_FWD}
   l_max_its = 100
   nl_max_its = 1000
   petsc_options_iname = '-pc_type'
-  petsc_options_value = 'asm'
+  petsc_options_value = 'ilu'
 []
 
 [Outputs]
