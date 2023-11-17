@@ -22,6 +22,7 @@ U_AVG = 1
     bias_y = 0.8
     bias_z = 1.25
     elem_type = ${ELEMENT_TYPE}
+    boundary_name_prefix = 'meshTopBack'
   []
   [meshTopFront]
     type = GeneratedMeshGenerator
@@ -38,6 +39,7 @@ U_AVG = 1
     bias_y = 0.8
     bias_z = 0.8
     elem_type = ${ELEMENT_TYPE}
+    boundary_name_prefix = 'meshTopFront'
   []
   [meshBottomBack]
     type = GeneratedMeshGenerator
@@ -54,6 +56,7 @@ U_AVG = 1
     bias_y = 1.25
     bias_z = 1.25
     elem_type = ${ELEMENT_TYPE}
+    boundary_name_prefix = 'meshBottomBack'
   []
   [meshBottomFront]
     type = GeneratedMeshGenerator
@@ -70,24 +73,73 @@ U_AVG = 1
     bias_y = 1.25
     bias_z = 0.8
     elem_type = ${ELEMENT_TYPE}
+    boundary_name_prefix = 'meshBottomFront'
   []
   [meshTop]
     type = StitchedMeshGenerator
     inputs = 'meshTopBack meshTopFront'
     clear_stitched_boundary_ids = true
-    stitch_boundaries_pairs = 'front back'
+    stitch_boundaries_pairs = 'meshTopBack_front meshTopFront_back'
+  []
+  [renameMeshTop]
+    type = RenameBoundaryGenerator
+    input = meshTop
+    old_boundary = '
+      meshTopBack_top meshTopFront_top
+      meshTopBack_right meshTopFront_right
+      meshTopBack_left meshTopFront_left
+      meshTopBack_bottom meshTopFront_bottom
+    '
+    new_boundary = '
+      top top
+      meshTop_right meshTop_right
+      meshTop_left meshTop_left
+      meshTop_bottom meshTop_bottom
+    '
   []
   [meshBottom]
     type = StitchedMeshGenerator
     inputs = 'meshBottomBack meshBottomFront'
     clear_stitched_boundary_ids = true
-    stitch_boundaries_pairs = 'front back'
+    stitch_boundaries_pairs = 'meshBottomBack_front meshBottomFront_back'
+  []
+  [renameMeshBottom]
+    type = RenameBoundaryGenerator
+    input = meshBottom
+    old_boundary = '
+      meshBottomBack_top meshBottomFront_top
+      meshBottomBack_right meshBottomFront_right
+      meshBottomBack_left meshBottomFront_left
+      meshBottomBack_bottom meshBottomFront_bottom
+    '
+    new_boundary = '
+      meshBottom_top meshBottom_top
+      meshBottom_right meshBottom_right
+      meshBottom_left meshBottom_left
+      bottom bottom
+    '
   []
   [mesh]
     type = StitchedMeshGenerator
-    inputs = 'meshTop meshBottom'
+    inputs = 'renameMeshTop renameMeshBottom'
     clear_stitched_boundary_ids = true
-    stitch_boundaries_pairs = 'bottom top'
+    stitch_boundaries_pairs = 'meshTop_bottom meshBottom_top'
+  []
+  [renameMesh]
+    type = RenameBoundaryGenerator
+    input = mesh
+    old_boundary = '
+      meshBottomFront_front meshTopFront_front
+      meshBottomBack_back meshTopBack_back
+      meshBottom_left meshTop_left
+      meshBottom_right meshTop_right
+    '
+    new_boundary = '
+      front front
+      back back
+      left left
+      right right
+    '
   []
 []
 

@@ -224,8 +224,8 @@ scaled_u_avg = ${fparse Re / (scaled_diameter * scaled_dens / scaled_dyn_visc)}
   automatic_scaling = true
   l_max_its = 100
   nl_max_its = 1000
-  petsc_options_iname = '-pc_type -pc_hypre_type'
-  petsc_options_value = 'hypre    euclid'
+  petsc_options_iname = '-pc_type'
+  petsc_options_value = 'ilu'
 []
 
 [Outputs]

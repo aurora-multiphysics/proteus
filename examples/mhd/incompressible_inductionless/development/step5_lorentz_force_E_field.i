@@ -149,7 +149,7 @@ U_AVG = 1
   []
   [epotFunction]
     type = ParsedFunction
-    value = '20 * z'
+    expression = '20 * z'
   []
 []
 
