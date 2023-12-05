@@ -11,6 +11,11 @@
 
 export PROTEUS_DIR=`pwd`
 
+# If MOOSE_JOBS is unset, set to 1
+if [ -z $MOOSE_JOBS ]; then
+  export MOOSE_JOBS=1
+fi
+
 # Install pre-requisites
 
 sudo dnf install gcc gcc-c++ gcc-fortran cmake bison flex git
@@ -63,6 +68,6 @@ METHODS="opt" ./scripts/update_and_rebuild_libmesh.sh --with-mpi
 ./configure --with-derivative-size=81
 
 cd $PROTEUS_DIR
-make
+make -j $MOOSE_JOBS
 
 echo "Installation complete."
