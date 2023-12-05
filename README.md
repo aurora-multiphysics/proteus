@@ -81,7 +81,7 @@ Contributors
 Aleksander J. Dubas,
 UK Atomic Energy Authority
 
-Rupert W. Eardley,
+Rupert W. Eardley-Brunt,
 UK Atomic Energy Authority
 
 Luke Humphrey,
