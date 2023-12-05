@@ -3,29 +3,29 @@
 # This script installs Proteus on CSD3,
 # including a MOOSE framework build in the $HOME directory.
 # Optimised to the native system architecture on the cclake partition.
-# A .moose_profile script is added to the $HOME directory.
+# A .proteus_profile script is added to the $HOME directory.
 # This script is intended to be used from the proteus directory
 #   ./scripts/install_csd3.sh
 # Use the installation by typing:
-#   source $HOME/.moose_profile
+#   source $HOME/.proteus_profile
 
 export PROTEUS_DIR=`pwd`
 
-# Make MOOSE profile
+# Make Proteus profile
 
-echo "module purge" > $HOME/.moose_profile
-echo "module load dot slurm rhel7/global" >> $HOME/.moose_profile
-echo "module load git-2.31.0-gcc-5.4.0-ec3ji34 python/3.8 gcc/9 openmpi/gcc/9.3/4.0.4" >> $HOME/.moose_profile
-echo "export CC=mpicc" >> $HOME/.moose_profile
-echo "export CXX=mpicxx" >> $HOME/.moose_profile
-echo "export F90=mpif90" >> $HOME/.moose_profile
-echo "export F77=mpif77" >> $HOME/.moose_profile
-echo "export FC=mpif90" >> $HOME/.moose_profile
-echo "export MOOSE_DIR="$HOME"/moose" >> $HOME/.moose_profile
-echo "export PATH=\$PATH:"$PROTEUS_DIR >> $HOME/.moose_profile
-echo "export PATH=\$MOOSE_DIR/petsc/arch-moose/bin/:\$PATH" >> $HOME/.moose_profile
-echo "export OMPI_MCA_mca_base_component_show_load_errors=0" >> $HOME/.moose_profile
-source $HOME/.moose_profile
+echo "module purge" > $HOME/.proteus_profile
+echo "module load dot slurm rhel7/global" >> $HOME/.proteus_profile
+echo "module load git-2.31.0-gcc-5.4.0-ec3ji34 python/3.8 gcc/9 openmpi/gcc/9.3/4.0.4" >> $HOME/.proteus_profile
+echo "export CC=mpicc" >> $HOME/.proteus_profile
+echo "export CXX=mpicxx" >> $HOME/.proteus_profile
+echo "export F90=mpif90" >> $HOME/.proteus_profile
+echo "export F77=mpif77" >> $HOME/.proteus_profile
+echo "export FC=mpif90" >> $HOME/.proteus_profile
+echo "export MOOSE_DIR="$HOME"/moose" >> $HOME/.proteus_profile
+echo "export PATH=\$PATH:"$PROTEUS_DIR >> $HOME/.proteus_profile
+echo "export PATH=\$MOOSE_DIR/petsc/arch-moose/bin/:\$PATH" >> $HOME/.proteus_profile
+echo "export OMPI_MCA_mca_base_component_show_load_errors=0" >> $HOME/.proteus_profile
+source $HOME/.proteus_profile
 
 # Clone MOOSE from git
 

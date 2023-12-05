@@ -3,13 +3,18 @@
 # This script installs Proteus on Ubuntu,
 # including a MOOSE framework build in the $HOME directory.
 # Optimised to the native system architecture.
-# A .moose_profile script is added to the $HOME directory.
+# A .proteus_profile script is added to the $HOME directory.
 # This script is intended to be used from the proteus directory
 #   ./scripts/install_ubuntu.sh
 # Use the installation by typing:
-#   source $HOME/.moose_profile
+#   source $HOME/.proteus_profile
 
 export PROTEUS_DIR=`pwd`
+
+# If MOOSE_JOBS is unset, set to 1
+if [ -z $MOOSE_JOBS ]; then
+  export MOOSE_JOBS=1
+fi
 
 # Install pre-requisites
 
@@ -17,16 +22,16 @@ sudo apt install -y gcc g++ gfortran cmake bison flex git
 sudo apt install -y python3 python3-dev python-is-python3 python3-packaging
 sudo apt install -y openmpi-bin libopenmpi-dev libboost-all-dev
 
-# Make MOOSE profile
+# Make Proteus profile
 
-echo "export CC=mpicc" > $HOME/.moose_profile
-echo "export CXX=mpicxx" >> $HOME/.moose_profile
-echo "export F90=mpif90" >> $HOME/.moose_profile
-echo "export F77=mpif77" >> $HOME/.moose_profile
-echo "export FC=mpif90" >> $HOME/.moose_profile
-echo "export MOOSE_DIR="$HOME"/moose" >> $HOME/.moose_profile
-echo "export PATH=\$PATH:"$PROTEUS_DIR >> $HOME/.moose_profile
-source $HOME/.moose_profile
+echo "export CC=mpicc" > $HOME/.proteus_profile
+echo "export CXX=mpicxx" >> $HOME/.proteus_profile
+echo "export F90=mpif90" >> $HOME/.proteus_profile
+echo "export F77=mpif77" >> $HOME/.proteus_profile
+echo "export FC=mpif90" >> $HOME/.proteus_profile
+echo "export MOOSE_DIR="$HOME"/moose" >> $HOME/.proteus_profile
+echo "export PATH=\$PATH:"$PROTEUS_DIR >> $HOME/.proteus_profile
+source $HOME/.proteus_profile
 
 # Clone MOOSE from git
 
@@ -60,6 +65,6 @@ METHODS="opt" ./scripts/update_and_rebuild_libmesh.sh --with-mpi
 ./configure --with-derivative-size=81
 
 cd $PROTEUS_DIR
-make
+make -j $MOOSE_JOBS
 
 echo "Installation complete."

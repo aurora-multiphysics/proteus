@@ -29,7 +29,7 @@ and are comfortable with what it is doing.
 Once Proteus is built using this script,
 you can use Proteus to run an input file as follows:
 ```
-source ~/.moose_profile
+source ~/.proteus_profile
 proteus-opt -i <input-file>.i
 ```
 
@@ -81,7 +81,7 @@ Contributors
 Aleksander J. Dubas,
 UK Atomic Energy Authority
 
-Rupert W. Eardley,
+Rupert W. Eardley-Brunt,
 UK Atomic Energy Authority
 
 Luke Humphrey,
