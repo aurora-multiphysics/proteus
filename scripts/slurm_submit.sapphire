@@ -1,0 +1,20 @@
+#!/bin/bash
+#SBATCH -J MOOSE
+#SBATCH -A <project>
+#SBATCH -p sapphire
+#SBATCH --nodes=2
+#! 112 cores per node
+#SBATCH --ntasks=224
+#SBATCH --time=36:00:00
+#SBATCH --mail-type=NONE
+
+cd $SLURM_SUBMIT_DIR
+
+echo -e "Changed directory to `pwd`.\n"
+echo -e "JobID: $SLURM_JOB_ID\n======"
+echo "Time: `date`"
+echo "Running on master node: `hostname`"
+echo "Current directory: `pwd`"
+
+source ~/.proteus_profile
+mpirun -np 224 proteus-opt --distributed-mesh -t -r 1 -i ~/proteus/examples/benchmark/diffusion_3D_32.i &> log.benchmark
