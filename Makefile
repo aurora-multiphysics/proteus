@@ -28,6 +28,7 @@ ALL_MODULES                 := no
 
 CHEMICAL_REACTIONS          := no
 CONTACT                     := yes
+ELECTROMAGNETICS            := no
 EXTERNAL_PETSC_SOLVER       := no
 FLUID_PROPERTIES            := yes
 FSI                         := no
@@ -37,6 +38,8 @@ HEAT_TRANSFER               := yes
 LEVEL_SET                   := yes
 MISC                        := no
 NAVIER_STOKES               := yes
+OPTIMIZATION                := no
+PERIDYNAMICS                := no
 PHASE_FIELD                 := no
 POROUS_FLOW                 := no
 RAY_TRACING                 := no
@@ -44,6 +47,7 @@ RDG                         := no
 REACTOR                     := yes
 RICHARDS                    := no
 STOCHASTIC_TOOLS            := no
+THERMAL_HYDRAULICS          := no
 TENSOR_MECHANICS            := yes
 XFEM                        := no
 
