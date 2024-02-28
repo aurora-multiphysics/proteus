@@ -14,8 +14,7 @@ export PROTEUS_DIR=`pwd`
 # Make Proteus profile
 
 echo "module purge" > $HOME/.proteus_profile
-echo "module load rhel8/default-sar" >> $HOME/.proteus_profile
-echo "module load python/3.8.11 cmake/3.21.3" >> $HOME/.proteus_profile
+echo "module load rhel8/default-sar python/3.11.0-icl" >> $HOME/.proteus_profile
 echo "export CC=mpicc" >> $HOME/.proteus_profile
 echo "export CXX=mpicxx" >> $HOME/.proteus_profile
 echo "export F90=mpif90" >> $HOME/.proteus_profile
@@ -32,7 +31,7 @@ cd $HOME
 git clone --depth=1 https://github.com/idaholab/moose.git
 
 # Set MOOSE jobs to 4 (max allowed on login node)
-export MOOSE_JOBS=4
+export MOOSE_JOBS=4 METHODS="opt"
 
 # Build PETSc
 
@@ -43,11 +42,12 @@ CC=$CC CXX=$CXX F90=$F90 F77=$F77 FC=$FC \
 --CXXOPTFLAGS="-O3" \
 --COPTFLAGS="-O3" \
 --FOPTFLAGS="-O3" \
---download-mumps=0 --download-superlu_dist=0 --with-64-bit-indices=1
+--download-mumps=0 --download-superlu_dist=0 --with-64-bit-indices=1 \
+--download-cmake=1
 
 # Build libMesh
 
-METHODS="opt" ./scripts/update_and_rebuild_libmesh.sh --with-mpi
+./scripts/update_and_rebuild_libmesh.sh --with-mpi
 
 # Build WASP
 
