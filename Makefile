@@ -46,9 +46,9 @@ RAY_TRACING                 := no
 RDG                         := no
 REACTOR                     := yes
 RICHARDS                    := no
+SOLID_MECHANICS             := yes
 STOCHASTIC_TOOLS            := no
 THERMAL_HYDRAULICS          := no
-TENSOR_MECHANICS            := yes
 XFEM                        := no
 
 include $(MOOSE_DIR)/modules/modules.mk
