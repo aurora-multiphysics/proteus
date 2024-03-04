@@ -22,7 +22,7 @@ echo "export F77=mpif77" >> $HOME/.proteus_profile
 echo "export FC=mpif90" >> $HOME/.proteus_profile
 echo "export MOOSE_DIR="$HOME"/moose" >> $HOME/.proteus_profile
 echo "export PATH=\$PATH:"$PROTEUS_DIR >> $HOME/.proteus_profile
-echo "export PATH=\$MOOSE_DIR/petsc/arch-moose/bin/:\$PATH" >> $HOME/.proteus_profile
+echo "unset I_MPI_PMI_LIBRARY" >> $HOME/.proteus_profile
 source $HOME/.proteus_profile
 
 # Clone MOOSE from git
@@ -37,13 +37,7 @@ export MOOSE_JOBS=4 METHODS="opt"
 
 cd $MOOSE_DIR
 unset PETSC_DIR PETSC_ARCH
-./scripts/update_and_rebuild_petsc.sh \
-CC=$CC CXX=$CXX F90=$F90 F77=$F77 FC=$FC \
---CXXOPTFLAGS="-O3" \
---COPTFLAGS="-O3" \
---FOPTFLAGS="-O3" \
---download-mumps=0 --download-superlu_dist=0 --with-64-bit-indices=1 \
---download-cmake=1
+./scripts/update_and_rebuild_petsc.sh --download-cmake
 
 # Build libMesh
 
@@ -59,6 +53,10 @@ CC=$CC CXX=$CXX F90=$F90 F77=$F77 FC=$FC \
 # 27 for each second order variable
 
 ./configure --with-derivative-size=81
+
+# Apply NSFV patch
+
+git apply $PROTEUS_DIR/scripts/NSFVBase.patch
 
 cd $PROTEUS_DIR
 make -j $MOOSE_JOBS

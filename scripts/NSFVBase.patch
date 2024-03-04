@@ -1,0 +1,22 @@
+diff --git a/modules/navier_stokes/include/base/NSFVBase.h b/modules/navier_stokes/include/base/NSFVBase.h
+index e90b4a85..7a9ac856 100644
+--- a/modules/navier_stokes/include/base/NSFVBase.h
++++ b/modules/navier_stokes/include/base/NSFVBase.h
+@@ -3537,12 +3537,13 @@ NSFVBase<BaseType>::checkBlockwiseConsistency(const std::string block_param_name
+                        "Block '" + block +
+                            "' is not present in the block restriction of the fluid flow action!");
+ 
+-    for (const auto & param_name : parameter_names)
++    for (unsigned int param_i = 0; param_i < parameter_names.size(); ++param_i)
+     {
+-      const std::vector<T> & param_vector = parameters().template get<std::vector<T>>(param_name);
++      const std::vector<T> & param_vector =
++          parameters().template get<std::vector<T>>(parameter_names[param_i]);
+       if (block_names.size() != param_vector.size())
+-        paramError(param_name,
+-                   "The number of entries in '" + param_name + "' (" +
++        paramError(parameter_names[param_i],
++                   "The number of entries in '" + parameter_names[param_i] + "' (" +
+                        std::to_string(param_vector.size()) +
+                        ") is not the same as the number of blocks"
+                        " (" +
