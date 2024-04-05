@@ -15,6 +15,7 @@ export PROTEUS_DIR=`pwd`
 if [ -z $MOOSE_JOBS ]; then
   export MOOSE_JOBS=1
 fi
+export METHODS="opt"
 
 # Install pre-requisites
 
@@ -43,15 +44,13 @@ git clone https://github.com/idaholab/moose.git
 cd $MOOSE_DIR
 unset PETSC_DIR PETSC_ARCH
 ./scripts/update_and_rebuild_petsc.sh \
-CC=$CC CXX=$CXX F90=$F90 F77=$F77 FC=$FC \
 --CXXOPTFLAGS="-O3 -march=native" \
 --COPTFLAGS="-O3 -march=native" \
---FOPTFLAGS="-O3 -march=native" \
---download-mumps=0 --download-superlu_dist=0
+--FOPTFLAGS="-O3 -march=native"
 
 # Build libMesh
 
-METHODS="opt" ./scripts/update_and_rebuild_libmesh.sh --with-mpi
+./scripts/update_and_rebuild_libmesh.sh --with-mpi
 
 # Build WASP
 
