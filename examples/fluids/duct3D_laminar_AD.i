@@ -13,8 +13,10 @@
   [velocity]
     order = FIRST
     family = LAGRANGE_VEC
+    scaling = 20
   []
   [p]
+    scaling = 0.3
   []
 []
 
@@ -106,7 +108,6 @@
   petsc_options_iname = '-pc_type'
   petsc_options_value = 'ilu'
   l_max_its = 30
-  automatic_scaling = true
 []
 
 [Outputs]

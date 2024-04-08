@@ -119,7 +119,7 @@ IRMINSADMaterial::subdomainSetup()
     addMooseVariableDependency(&disp_x);
     _disp_x_dot = &disp_x.adUDot();
     _disp_x_sys_num = disp_x.sys().number();
-    _disp_x_num = (disp_x.kind() == Moose::VarKindType::VAR_NONLINEAR) &&
+    _disp_x_num = (disp_x.kind() == Moose::VarKindType::VAR_SOLVER) &&
                           (_disp_x_sys_num == _fe_problem.currentNonlinearSystem().number())
                       ? disp_x.number()
                       : libMesh::invalid_uint;
@@ -131,7 +131,7 @@ IRMINSADMaterial::subdomainSetup()
       _disp_y_dot = &disp_y.adUDot();
       _disp_y_sys_num = disp_y.sys().number();
       _disp_y_num =
-          disp_y.kind() == (Moose::VarKindType::VAR_NONLINEAR &&
+          disp_y.kind() == (Moose::VarKindType::VAR_SOLVER &&
                             (_disp_y_sys_num == _fe_problem.currentNonlinearSystem().number()))
               ? disp_y.number()
               : libMesh::invalid_uint;
@@ -150,7 +150,7 @@ IRMINSADMaterial::subdomainSetup()
       _disp_z_dot = &disp_z.adUDot();
       _disp_z_sys_num = disp_z.sys().number();
       _disp_z_num =
-          disp_z.kind() == (Moose::VarKindType::VAR_NONLINEAR &&
+          disp_z.kind() == (Moose::VarKindType::VAR_SOLVER &&
                             (_disp_z_sys_num == _fe_problem.currentNonlinearSystem().number()))
               ? disp_z.number()
               : libMesh::invalid_uint;

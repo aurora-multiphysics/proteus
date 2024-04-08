@@ -185,8 +185,8 @@
 [Executioner]
   type = Steady
   solve_type = NEWTON
-  petsc_options_iname = '-pc_type'
-  petsc_options_value = 'ilu'
+  petsc_options_iname = '-pc_type -pc_factor_shift_type'
+  petsc_options_value = 'ilu      NONZERO'
   l_max_its = 30
 []
 

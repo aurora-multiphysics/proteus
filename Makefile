@@ -28,23 +28,27 @@ ALL_MODULES                 := no
 
 CHEMICAL_REACTIONS          := no
 CONTACT                     := yes
+ELECTROMAGNETICS            := no
 EXTERNAL_PETSC_SOLVER       := no
 FLUID_PROPERTIES            := yes
 FSI                         := no
 FUNCTIONAL_EXPANSION_TOOLS  := no
 GEOCHEMISTRY                := no
-HEAT_CONDUCTION             := yes
+HEAT_TRANSFER               := yes
 LEVEL_SET                   := yes
 MISC                        := no
 NAVIER_STOKES               := yes
+OPTIMIZATION                := no
+PERIDYNAMICS                := no
 PHASE_FIELD                 := no
 POROUS_FLOW                 := no
 RAY_TRACING                 := no
 RDG                         := no
 REACTOR                     := yes
 RICHARDS                    := no
+SOLID_MECHANICS             := yes
 STOCHASTIC_TOOLS            := no
-TENSOR_MECHANICS            := yes
+THERMAL_HYDRAULICS          := no
 XFEM                        := no
 
 include $(MOOSE_DIR)/modules/modules.mk
