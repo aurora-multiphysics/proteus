@@ -1,9 +1,9 @@
 U_AVG = 1
 
-N_X = 10
-N_Y_half = 4
-N_Z_half = 4
-ELEMENT_TYPE = HEX20
+N_X = 200
+N_Y_half = 10
+N_Z_half = 10
+ELEMENT_TYPE = HEX27
 
 GRADING_R_Y = 5
 GRADING_R_Z = 5
@@ -149,119 +149,43 @@ RATIO_Z_INV = ${fparse 1/RATIO_Z_FWD}
   []
 []
 
-# N_X = 200
-# N_Y_half = 10
-# U_AVG = 1
-# element_type = 'QUAD9'
-
-# [Mesh]
-#   [meshTop]
-#     type = GeneratedMeshGenerator
-#     dim = 2
-#     nx = ${N_X}
-#     ny = ${N_Y_half}
-#     xmin = 0
-#     xmax = 20
-#     ymin = 0
-#     ymax = 1
-#     bias_y = 0.8
-#     boundary_name_prefix = 'meshTop'
-#     elem_type = ${element_type}
-#   []
-#   [meshBottom]
-#     type = GeneratedMeshGenerator
-#     dim = 2
-#     nx = ${N_X}
-#     ny = ${N_Y_half}
-#     xmin = 0
-#     xmax = 20
-#     ymin = -1
-#     ymax = 0
-#     bias_y = 1.25
-#     boundary_name_prefix = 'meshBottom'
-#     elem_type = ${element_type}
-#   []
-#   [meshComplete]
-#     type = StitchedMeshGenerator
-#     inputs = 'meshTop meshBottom'
-#     clear_stitched_boundary_ids = true
-#     stitch_boundaries_pairs = 'meshTop_bottom meshBottom_top'
-#   []
-#   [meshRename]
-#     type = RenameBoundaryGenerator
-#     input = meshComplete
-#     old_boundary = '
-#       meshTop_right meshBottom_right
-#       meshTop_left meshBottom_left
-#       meshTop_top
-#       meshBottom_bottom
-#     '
-#     new_boundary = '
-#       right right
-#       left left
-#       top
-#       bottom
-#     '
-#   []
-# []
-
-# # N_X = 200
-# # N_Y_half = 10
-# U_AVG = 1
-# element_type = 'QUAD9'
-
-# [Mesh]
-#   [mesh]
-#     type = GeneratedMeshGenerator
-#     dim = 2
-#     nx = 200
-#     ny = 20
-#     # nz = 20
-#     xmin = 0
-#     xmax = 20
-#     ymin = -1
-#     ymax = 1
-#     # zmin = -1
-#     # zmax = 1
-#     elem_type = ${element_type}
-#   []
-# []
-
 [Variables]
   [velocity]
     family = LAGRANGE_VEC
     order = SECOND
   []
   [pressure]
-    family = L2_LAGRANGE
+    family = MONOMIAL
     order = FIRST
   []
 []
 
-# [ICs]
-#   [velocity]
-#     type = VectorFunctionIC
-#     variable = velocity
-#     function = velocityInlet
-#   []
-# []
+[ICs]
+  [velocity]
+    type = VectorFunctionIC
+    variable = velocity
+    function = velocityInlet
+  []
+  [pressure]
+    type = FunctionIC
+    variable = pressure
+    function = pressureGradient
+  []
+[]
 
 [Functions]
   [velocityInlet]
     type = ParsedVectorFunction
-    symbol_names = 'y_max'
-    symbol_values = '1'
-    expression_x = '(3/2) * ${U_AVG} * (1 - (y * y) / (y_max * y_max))'
+    symbol_names = 'y_max z_max'
+    symbol_values = '1     1'
+    expression_x = '(9/4) * ${U_AVG} * (1 - (y * y) / (y_max * y_max)) * (1 - (z * z) / (z_max * z_max))'
     expression_y = '0'
+    expression_z = '0'
   []
-  # [velocityInlet]
-  #   type = ParsedVectorFunction
-  #   symbol_names = 'y_max z_max'
-  #   symbol_values = '1     1'
-  #   expression_x = '(9/4) * ${U_AVG} * (1 - (y * y) / (y_max * y_max)) * (1 - (z * z) / (z_max * z_max))'
-  #   expression_y = '0'
-  #   expression_z = '0'
-  # []
+  [pressureGradient]
+    type = ParsedFunction
+    expression = '-0.01*x + 0.2'
+  []
 []
 
 [BCs]
@@ -274,7 +198,7 @@ RATIO_Z_INV = ${fparse 1/RATIO_Z_FWD}
   [no_slip]
     type = VectorDirichletBC
     variable = velocity
-    boundary = 'top bottom'
+    boundary = 'top bottom front back'
     values = '0 0 0'
   []
   [pressure_set]
@@ -343,12 +267,13 @@ RATIO_Z_INV = ${fparse 1/RATIO_Z_FWD}
 [Executioner]
   type = Steady
   solve_type = NEWTON
-  l_max_its = 100
+  l_max_its = 1000
   nl_max_its = 1000
   petsc_options_iname = '-pc_type'
-  petsc_options_value = 'ilu'
+  petsc_options_value = 'bjacobi'
 []
 
 [Outputs]
   exodus = true
+  execute_on = 'nonlinear'
 []
