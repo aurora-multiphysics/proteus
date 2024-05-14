@@ -70,6 +70,10 @@ element_type = 'QUAD9'
     family = LAGRANGE_VEC
     order = FIRST
   []
+  [currentDensity]
+    family = LAGRANGE_VEC
+    order = FIRST
+  []
 []
 
 [ICs]
@@ -92,6 +96,12 @@ element_type = 'QUAD9'
     type = ParsedVectorFunction
     expression_x = '0'
     expression_y = '20'
+  []
+  [currentDensityFunction]
+    type = ParsedVectorFunction
+    expression_x = '0'
+    expression_y = '0'
+    expression_z = '1'
   []
 []
 
@@ -158,6 +168,13 @@ element_type = 'QUAD9'
     pressure = pressure
     integrate_p_by_parts = true
   []
+
+  [momentum_lorentz]
+    type = IMHDADMomentumLorentz
+    variable = velocity
+    currentDensity = currentDensity
+    magneticField = magneticField
+  []
 []
 
 [AuxKernels]
@@ -165,6 +182,12 @@ element_type = 'QUAD9'
     type = VectorFunctionAux
     variable = magneticField
     function = magneticFieldFunction
+    execute_on = INITIAL
+  []
+  [currentDensityKernel]
+    type = VectorFunctionAux
+    variable = currentDensity
+    function = currentDensityFunction
     execute_on = INITIAL
   []
 []
