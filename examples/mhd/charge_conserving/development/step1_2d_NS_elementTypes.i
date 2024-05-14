@@ -95,7 +95,14 @@ element_type = 'QUAD9'
     variable = velocity
     boundary = 'top bottom'
     values = '0 0 0'
-    []
+  []
+  [pressure_set]
+    type = PenaltyDirichletBC
+    variable = pressure
+    value = 0
+    boundary = 'right'
+    penalty = 1e5
+  []
   # [pressure_set]
   #   type = DirichletBC
   #   variable = pressure
