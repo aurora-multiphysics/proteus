@@ -1,6 +1,6 @@
 U_AVG = 1
 
-N_X = 200
+N_X = 50
 N_Y_half = 10
 N_Z_half = 10
 ELEMENT_TYPE = HEX27
@@ -161,15 +161,12 @@ RATIO_Z_INV = ${fparse 1/RATIO_Z_FWD}
 []
 
 [ICs]
-  [velocity]
-    type = VectorFunctionIC
+  [velocityIC]
+    type = VectorConstantIC
+    x_value = ${U_AVG}
+    y_value = 1e-15
+    z_value = 1e-15
     variable = velocity
-    function = velocityInlet
-  []
-  [pressure]
-    type = FunctionIC
-    variable = pressure
-    function = pressureGradient
   []
 []
 
@@ -181,10 +178,6 @@ RATIO_Z_INV = ${fparse 1/RATIO_Z_FWD}
     expression_x = '(9/4) * ${U_AVG} * (1 - (y * y) / (y_max * y_max)) * (1 - (z * z) / (z_max * z_max))'
     expression_y = '0'
     expression_z = '0'
-  []
-  [pressureGradient]
-    type = ParsedFunction
-    expression = '-0.01*x + 0.2'
   []
 []
 
@@ -208,12 +201,6 @@ RATIO_Z_INV = ${fparse 1/RATIO_Z_FWD}
     boundary = 'right'
     penalty = 1e5
   []
-  # [pressure_set]
-  #   type = DirichletBC
-  #   variable = pressure
-  #   boundary = 'right'
-  #   value = 0
-  # []
 []
 
 [Materials]
@@ -267,6 +254,7 @@ RATIO_Z_INV = ${fparse 1/RATIO_Z_FWD}
 [Executioner]
   type = Steady
   solve_type = NEWTON
+  automatic_scaling = true
   l_max_its = 1000
   nl_max_its = 1000
   petsc_options_iname = '-pc_type'
