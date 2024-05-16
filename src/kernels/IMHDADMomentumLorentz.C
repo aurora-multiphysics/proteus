@@ -26,5 +26,5 @@ IMHDADMomentumLorentz::IMHDADMomentumLorentz(const InputParameters & parameters)
 ADRealVectorValue
 IMHDADMomentumLorentz::precomputeQpResidual()
 {
-  return _current_density[_qp].cross(_magnetic_field[_qp]);
+  return -_current_density[_qp].cross(_magnetic_field[_qp]);
 }
