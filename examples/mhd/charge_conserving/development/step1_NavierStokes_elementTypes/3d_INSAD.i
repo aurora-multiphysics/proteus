@@ -263,5 +263,4 @@ RATIO_Z_INV = ${fparse 1/RATIO_Z_FWD}
 
 [Outputs]
   exodus = true
-  execute_on = 'nonlinear'
 []
