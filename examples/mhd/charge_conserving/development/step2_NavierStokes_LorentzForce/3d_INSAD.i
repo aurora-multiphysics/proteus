@@ -253,6 +253,7 @@ RATIO_Z_INV = ${fparse 1/RATIO_Z_FWD}
   [momentum_viscous]
     type = INSADMomentumViscous
     variable = velocity
+    viscous_form = traction
   []
 
   [momentum_pressure]
