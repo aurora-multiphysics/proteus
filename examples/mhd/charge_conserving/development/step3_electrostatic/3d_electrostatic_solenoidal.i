@@ -52,6 +52,7 @@ sigma = 1
   [currentDensitySource]
     type = VectorBodyForce
     variable = currentDensity
+    function = solenoid
   []
 
   [divergenceFree]
