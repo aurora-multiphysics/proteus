@@ -196,10 +196,12 @@ RATIO_Z_INV = ${fparse 1/RATIO_Z_FWD}
 
 [ICs]
   [velocityIC]
-    type = VectorConstantIC
-    x_value = ${U_AVG}
-    y_value = 1e-15
-    z_value = 1e-15
+    # type = VectorConstantIC
+    # x_value = ${U_AVG}
+    # y_value = 1e-15
+    # z_value = 1e-15
+    type = VectorFunctionIC
+    function = velocityFunction
     variable = velocity
   []
 []
@@ -327,7 +329,7 @@ RATIO_Z_INV = ${fparse 1/RATIO_Z_FWD}
   l_max_its = 1000
   nl_max_its = 1000
   petsc_options_iname = '-pc_type'
-  petsc_options_value = ' bjacobi'
+  petsc_options_value = ' ksp'
 []
 
 [Outputs]
