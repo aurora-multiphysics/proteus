@@ -3,7 +3,7 @@ sigma = 1
 U_AVG = 1
 
 N_X = 50
-N_Y_half = 10
+N_Y_half = 20
 N_Z_half = 10
 ELEMENT_TYPE = HEX27
 
@@ -316,9 +316,41 @@ RATIO_Z_INV = ${fparse 1/RATIO_Z_FWD}
 []
 
 [Preconditioning]
+  active = 'SMP'
+  # active = 'FSP'
   [SMP]
     type = SMP
     full = true
+    petsc_options_iname = '-pc_type'
+    petsc_options_value = ' cholesky'
+  []
+  [FSP]
+    type = FSP
+    topsplit = 'splitting'
+    [splitting]
+      splitting = 'velocity pressure currentDensity electricPotential'
+      splitting_type = additive
+    []
+    [velocity]
+      vars = 'velocity'
+      petsc_options_iname = '-pc_type'
+      petsc_options_value = ' cholesky'
+    []
+    [pressure]
+      vars = 'pressure'
+      petsc_options_iname = '-pc_type'
+      petsc_options_value = ' cholesky'
+    []
+    [currentDensity]
+      vars = 'currentDensity'
+      petsc_options_iname = '-pc_type'
+      petsc_options_value = ' cholesky'
+    []
+    [electricPotential]
+      vars = 'electricPotential'
+      petsc_options_iname = '-pc_type'
+      petsc_options_value = ' cholesky'
+    []
   []
 []
 
@@ -328,8 +360,6 @@ RATIO_Z_INV = ${fparse 1/RATIO_Z_FWD}
   automatic_scaling = true
   l_max_its = 1000
   nl_max_its = 1000
-  petsc_options_iname = '-pc_type'
-  petsc_options_value = ' ksp'
 []
 
 [Outputs]
