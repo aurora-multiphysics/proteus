@@ -26,5 +26,5 @@ IMHDADCurrentUxB::IMHDADCurrentUxB(const InputParameters & parameters)
 ADRealVectorValue
 IMHDADCurrentUxB::precomputeQpResidual()
 {
-  return _velocity[_qp].cross(_magnetic_field[_qp]);
+  return -_velocity[_qp].cross(_magnetic_field[_qp]);
 }
