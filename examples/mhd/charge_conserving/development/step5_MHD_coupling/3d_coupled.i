@@ -232,11 +232,6 @@ RATIO_Z_INV = ${fparse 1/RATIO_Z_FWD}
     currentDensity = currentDensity
     magneticField = magneticField
   []
-  [momentum_augmented_lagrangian]
-    type = INSADMomentumGradDiv
-    variable = velocity
-    gamma = 1
-  []
 
   [currentDensityConductivity]
     type = IMHDADCurrentDensity
@@ -253,11 +248,6 @@ RATIO_Z_INV = ${fparse 1/RATIO_Z_FWD}
     variable = currentDensity
     velocity = velocity
     magneticField = magneticField
-  []
-  [current_augmented_lagrangian]
-    type = INSADMomentumGradDiv
-    variable = currentDensity
-    gamma = 1
   []
 
   [divergenceFree]
