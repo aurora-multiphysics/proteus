@@ -187,13 +187,6 @@ RATIO_Z_INV = ${fparse 1/RATIO_Z_FWD}
   []
 []
 
-[AuxVariables]
-  [magneticField]
-    family = LAGRANGE_VEC
-    order = FIRST
-  []
-[]
-
 [ICs]
   [velocityIC]
     # type = VectorConstantIC
@@ -230,7 +223,7 @@ RATIO_Z_INV = ${fparse 1/RATIO_Z_FWD}
     type = IMHDADMomentumLorentz
     variable = velocity
     currentDensity = currentDensity
-    magneticField = magneticField
+    magneticFieldFunction = magneticFieldFunction
   []
 
   [currentDensityConductivity]
@@ -254,15 +247,6 @@ RATIO_Z_INV = ${fparse 1/RATIO_Z_FWD}
     type = DivField
     variable = electricPotential
     coupled_vector_variable = currentDensity
-  []
-[]
-
-[AuxKernels]
-  [magneticFieldKernel]
-    type = VectorFunctionAux
-    variable = magneticField
-    function = magneticFieldFunction
-    execute_on = INITIAL
   []
 []
 
