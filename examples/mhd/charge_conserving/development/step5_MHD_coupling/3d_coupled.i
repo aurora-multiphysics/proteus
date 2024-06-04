@@ -240,7 +240,7 @@ RATIO_Z_INV = ${fparse 1/RATIO_Z_FWD}
     type = IMHDADCurrentUxB
     variable = currentDensity
     velocity = velocity
-    magneticField = magneticField
+    magneticFieldFunction = magneticFieldFunction
   []
 
   [divergenceFree]
@@ -306,7 +306,7 @@ RATIO_Z_INV = ${fparse 1/RATIO_Z_FWD}
     type = SMP
     full = true
     petsc_options_iname = '-pc_type'
-    petsc_options_value = ' cholesky'
+    petsc_options_value = ' lu'
   []
   [FSP]
     type = FSP
