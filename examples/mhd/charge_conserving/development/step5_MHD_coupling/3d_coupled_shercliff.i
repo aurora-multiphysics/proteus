@@ -174,7 +174,7 @@ RATIO_Z_INV = ${fparse 1/RATIO_Z_FWD}
     order = SECOND
   []
   [pressure]
-    family = MONOMIAL
+    family = LAGRANGE
     order = FIRST
   []
   [currentDensity]
