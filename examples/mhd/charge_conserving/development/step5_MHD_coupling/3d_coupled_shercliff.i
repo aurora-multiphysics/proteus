@@ -271,11 +271,7 @@ RATIO_Z_INV = ${fparse 1/RATIO_Z_FWD}
     penalty = 1e5
   []
   [current_wall_normal]
-    # Trying to set J.n=0 on the walls.
-    # Not sure this is the correct BC to use;
-    # name suggests it is setting divJ=0 rather than J.n=0,
-    # but divJ=0 is enforced by the equations
-    # and having this BC gives a J field that looks right qualitatively
+    # Setting J.n=0 on the walls, inlet and outlet.
     type = VectorDivPenaltyDirichletBC
     variable = currentDensity
     function_x = 0
@@ -341,7 +337,7 @@ RATIO_Z_INV = ${fparse 1/RATIO_Z_FWD}
 [Executioner]
   type = Steady
   solve_type = NEWTON
-  automatic_scaling = true
+  automatic_scaling = false
   l_max_its = 1000
   nl_max_its = 1000
 []
