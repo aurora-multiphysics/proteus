@@ -5,10 +5,7 @@ FROM ubuntu:22.04
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PROTEUS_DIR=/proteus
 ENV MOOSE_DIR=/opt/moose
-ENV MOOSE_JOBS=1
-
-# Copy the build script into the container
-COPY install_ubuntu.sh /opt/proteus/scripts/install_ubuntu.sh
+ENV MOOSE_JOBS=4
 
 # Update and install dependencies
 RUN apt-get update && \
