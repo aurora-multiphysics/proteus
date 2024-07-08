@@ -1,3 +1,7 @@
+# To build the Docker container, run the following lines from your proteus root directory:
+# cd docker
+# docker build --rm -t proteus:latest .
+
 # Use Ubuntu as the base image
 FROM ubuntu:22.04
 
@@ -74,8 +78,11 @@ RUN cd $PROTEUS_DIR && \
     make -j $MOOSE_JOBS
 
 # Set working directory
-WORKDIR /opt/proteus
+WORKDIR /proteus
 
 # Set entrypoint
 ENTRYPOINT ["/bin/bash"]
 
+# Run tests
+RUN cd /proteus && \
+    ./run_tests
