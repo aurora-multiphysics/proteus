@@ -72,6 +72,13 @@ sigma = 1
     penalty = 1e3
     boundary = 'front back left right top bottom'
   []
+  [potential_wall_zero] # improves convergence but HDivSemiError increases?
+    type = PenaltyDirichletBC
+    variable = electricPotential
+    value = 0
+    penalty = 1e3
+    boundary = 'front back left right top bottom'
+  []
 []
 
 [Postprocessors]
