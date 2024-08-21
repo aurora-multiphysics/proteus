@@ -166,6 +166,10 @@ RATIO_Z_INV = ${fparse 1/RATIO_Z_FWD}
     expression_y = '20'
     expression_z = '0'
   []
+  [divergenceFreeCheck]
+    type = ParsedVectorFunction
+    div = '0'
+  []
 []
 
 [Variables]
@@ -331,6 +335,15 @@ RATIO_Z_INV = ${fparse 1/RATIO_Z_FWD}
       petsc_options_iname = '-pc_type'
       petsc_options_value = ' cholesky'
     []
+  []
+[]
+
+[Postprocessors]
+  [currentDivergenceFreeError]
+    type = ElementHDivSemiError
+    variable = currentDensity
+    function = divergenceFreeCheck
+    execute_on = 'NONLINEAR'
   []
 []
 
