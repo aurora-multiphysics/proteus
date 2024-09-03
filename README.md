@@ -21,6 +21,7 @@ which can be run using the following commands:
 ```
 git clone https://github.com/aurora-multiphysics/proteus
 cd proteus
+./scripts/install_ubuntu_prerequisites.sh
 ./scripts/install_ubuntu.sh
 ```
 

@@ -135,19 +135,19 @@
     type = INSFVInletVelocityBC
     variable = u_x
     boundary = 'left'
-    function = '0.05'
+    functor = '0.05'
   []
   [inlet_bc_y]
     type = INSFVInletVelocityBC
     variable = u_y
     boundary = 'left'
-    function = '0.0'
+    functor = '0.0'
   []
   [inlet_bc_z]
     type = INSFVInletVelocityBC
     variable = u_z
     boundary = 'left'
-    function = '0.0'
+    functor = '0.0'
   []
   [outlet_bc]
     type = INSFVOutletPressureBC
