@@ -52,7 +52,7 @@ unset PETSC_DIR PETSC_ARCH
 # 8 for each first order variable
 # 27 for each second order variable
 
-./configure --with-derivative-size=81
+./configure --with-derivative-size=89
 
 # Apply NSFV patch
 
