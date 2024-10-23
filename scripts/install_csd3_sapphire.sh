@@ -54,10 +54,6 @@ unset PETSC_DIR PETSC_ARCH
 
 ./configure --with-derivative-size=89
 
-# Apply NSFV patch
-
-git apply $PROTEUS_DIR/scripts/NSFVBase.patch
-
 cd $PROTEUS_DIR
 make -j $MOOSE_JOBS
 
