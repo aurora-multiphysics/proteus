@@ -41,7 +41,7 @@ unset PETSC_DIR PETSC_ARCH
 
 # Build libMesh
 
-./scripts/update_and_rebuild_libmesh.sh --with-mpi
+./scripts/update_and_rebuild_libmesh.sh --with-mpi --disable-netgen
 
 # Build WASP
 
