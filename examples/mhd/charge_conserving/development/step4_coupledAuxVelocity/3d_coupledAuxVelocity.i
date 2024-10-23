@@ -184,10 +184,6 @@ RATIO_Z_INV = ${fparse 1/RATIO_Z_FWD}
     family = LAGRANGE_VEC
     order =  FIRST
   []
-  [magneticField]
-    family = LAGRANGE_VEC
-    order = FIRST
-  []
 []
 
 [Kernels]
@@ -205,7 +201,7 @@ RATIO_Z_INV = ${fparse 1/RATIO_Z_FWD}
     type = IMHDADCurrentUxB
     variable = currentDensity
     velocity = velocity
-    magneticField = magneticField
+    magneticFieldFunction = magneticFieldFunction
   []
 
   [divergenceFree]
@@ -216,12 +212,6 @@ RATIO_Z_INV = ${fparse 1/RATIO_Z_FWD}
 []
 
 [AuxKernels]
-  [magneticFieldKernel]
-    type = VectorFunctionAux
-    variable = magneticField
-    function = magneticFieldFunction
-    execute_on = INITIAL
-  []
   [velocityKernel]
     type = VectorFunctionAux
     variable = velocity
