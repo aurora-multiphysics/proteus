@@ -1,3 +1,6 @@
+# Note: if this is run on 1 core only, ILU is not used
+# And instead a method requiring more iterations is applied.
+
 N_X = 200
 N_Y_half = 10
 U_AVG = 1

@@ -1,3 +1,7 @@
+# Note: this case gives approximately the expected results,
+# but there is a jump in electric potential from the boundary elements
+# into the bulk.
+
 sigma = 1
 
 [Mesh]
