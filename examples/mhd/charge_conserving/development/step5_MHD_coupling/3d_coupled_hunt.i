@@ -303,41 +303,11 @@ RATIO_Z_INV = ${fparse 1/RATIO_Z_FWD}
 []
 
 [Preconditioning]
-  active = 'SMP'
-  # active = 'FSP'
   [SMP]
     type = SMP
     full = true
     petsc_options_iname = '-pc_type'
     petsc_options_value = ' lu'
-  []
-  [FSP]
-    type = FSP
-    topsplit = 'splitting'
-    [splitting]
-      splitting = 'velocity pressure currentDensity electricPotential'
-      splitting_type = additive
-    []
-    [velocity]
-      vars = 'velocity'
-      petsc_options_iname = '-pc_type'
-      petsc_options_value = ' cholesky'
-    []
-    [pressure]
-      vars = 'pressure'
-      petsc_options_iname = '-pc_type'
-      petsc_options_value = ' cholesky'
-    []
-    [currentDensity]
-      vars = 'currentDensity'
-      petsc_options_iname = '-pc_type'
-      petsc_options_value = ' cholesky'
-    []
-    [electricPotential]
-      vars = 'electricPotential'
-      petsc_options_iname = '-pc_type'
-      petsc_options_value = ' cholesky'
-    []
   []
 []
 
