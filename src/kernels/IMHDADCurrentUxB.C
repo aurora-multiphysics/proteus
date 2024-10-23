@@ -12,8 +12,7 @@ IMHDADCurrentUxB::validParams()
       "The Jacobian is computed using automatic differentiation.");
   params.addRequiredCoupledVar("velocity", "The variable representing the velocity");
   params.addParam<FunctionName>("magneticFieldFunction",
-                                "A function for the imposed magnetic field that defines a vectorValue method. "
-                                "This cannot be supplied with the component parameters.");
+                                "A function defining a vectorValue method that describes the imposed magnetic field");
   params.addParam<FunctionName>(
       "magneticFieldFunction_x", "0", "A function that describes the x-component of the imposed magnetic field");
   params.addParam<FunctionName>(
