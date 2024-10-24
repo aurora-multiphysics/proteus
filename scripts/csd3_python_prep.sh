@@ -6,3 +6,4 @@
 module load python/3.11.0-icl
 pip3.11 install --user --upgrade packaging
 pip3.11 install --user --upgrade pyyaml
+pip3.11 install --user --upgrade jinja2
