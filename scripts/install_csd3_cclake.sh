@@ -60,7 +60,7 @@ METHODS="opt" ./scripts/update_and_rebuild_libmesh.sh --with-mpi
 # 8 for each first order variable
 # 27 for each second order variable
 
-./configure --with-derivative-size=81
+./configure --with-derivative-size=89
 
 cd $PROTEUS_DIR
 make -j $MOOSE_JOBS

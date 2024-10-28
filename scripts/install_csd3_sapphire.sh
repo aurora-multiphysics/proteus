@@ -41,7 +41,7 @@ unset PETSC_DIR PETSC_ARCH
 
 # Build libMesh
 
-./scripts/update_and_rebuild_libmesh.sh --with-mpi
+./scripts/update_and_rebuild_libmesh.sh --with-mpi --disable-netgen
 
 # Build WASP
 
@@ -52,11 +52,7 @@ unset PETSC_DIR PETSC_ARCH
 # 8 for each first order variable
 # 27 for each second order variable
 
-./configure --with-derivative-size=81
-
-# Apply NSFV patch
-
-git apply $PROTEUS_DIR/scripts/NSFVBase.patch
+./configure --with-derivative-size=89
 
 cd $PROTEUS_DIR
 make -j $MOOSE_JOBS
