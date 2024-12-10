@@ -67,7 +67,7 @@ RBEConstraint::computeQpResidual(Moose::ConstraintType type)
 /*
 Secondary residual is u_secondary - weights[1]*u_primary[1]
                       - weights[2]*u_primary[2] - u_primary[n]*weights[n]
-However, computeQPresidual is calculated for only a combination of one
+However, computeQpResidual is calculated for only a combination of one
 primary and one secondary node at a time.  To get around this, the residual is
 split up such that the final secondary residual resembles the above expression.
 */
