@@ -8,11 +8,12 @@ RBEConstraint::validParams()
 {
   InputParameters params = NodalConstraint::validParams();
   params.addClassDescription(
-    "Constrains secondary node to move as a linear combination of primary nodes.");
+    "Constrains secondary node to move as a linear combination of primary nodes. "
+    "Implementation of a Rigid Body Element Constraint");
   params.addRequiredParam<BoundaryName>("primary_node_set",
     "The boundary ID associated with the primary nodes.");
   params.addRequiredParam<BoundaryName>("secondary_node_set",
-    "The boundary ID associated with the secondary side.");
+    "The boundary ID associated with the secondary node.");
   params.addRequiredParam<Real>("penalty", "The penalty used for the boundary term.");
   params.addRequiredParam<Real>("primary_size", "The number of nodes in the primary node set.");
   return params;
