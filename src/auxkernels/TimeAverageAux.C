@@ -7,10 +7,10 @@ TimeAverageAux::validParams()
 {
   InputParameters params = AuxKernel::validParams();
 
-  params.addClassDescription("AuxKernel that performs time averaging of variables."
-                             "");
+  params.addClassDescription("AuxKernel that performs time averaging of variables.");
   params.addRequiredCoupledVar("scalars",
-                       "Scalar variables to be averaged");
+                       "Scalar variables to be averaged. If multiple scalars are "
+                       "given the average of their product is given");
   return params;
 }
 TimeAverageAux::TimeAverageAux(const InputParameters & parameters)

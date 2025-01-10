@@ -13,10 +13,12 @@ VectorTimeAverageAux::validParams()
   params.addRequiredCoupledVar("vectors",
                        "Vector variables to be time averaged."
                        "If multiple vectors are provided the average of their "
-                       "scalar multiplication is given. ");
+                       "component-wise multiplication is given. ");
 
   params.addCoupledVar("scalars",
-                       "Scalar variables to be included in the time average.");
+                       "Scalar variables to be included in the time average. "
+                       "If scalars are are given the average of their product with the vector "
+                       "averages is given");
   return params;
 }
 VectorTimeAverageAux::VectorTimeAverageAux(const InputParameters & parameters)
