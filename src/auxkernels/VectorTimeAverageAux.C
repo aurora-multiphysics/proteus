@@ -38,41 +38,28 @@ VectorTimeAverageAux::VectorTimeAverageAux(const InputParameters & parameters)
   }
 }
 
-void VectorTimeAverageAux::initialSetup()
-{
-  // size average arrays after initialisation
-  _average.resize(_vectors[0]->size());
-  _average_old.resize(_vectors_old[0]->size());
-}
-
-void VectorTimeAverageAux::timestepSetup()
-{
-  // set average old for the time step
-  _average_old = _average;
-}
-
 RealVectorValue VectorTimeAverageAux::computeValue()
 {
   const Real coeff =  _dt/_t;
-  RealVectorValue value ={1., 1., 1.}, value_old={1., 1., 1.};
+  RealVectorValue val ={1., 1., 1.}, val_old={1., 1., 1.};
 
   // Multiply  value and value_old values by the scalars first
   for (auto& v: _scalars){
-    value *= (*v)[_qp];
+    val *= (*v)[_qp];
   }
   for (auto& v: _scalars_old){
-    value_old*= (*v)[_qp];
+    val_old *= (*v)[_qp];
   }
 
   // Multiply  value and value_old values by the vectors component-wise
   for (auto& v: _vectors){
     for (int i=0; i< LIBMESH_DIM; ++i){
-      value(i) *= (*v)[_qp](i);
+      val(i) *= (*v)[_qp](i);
     }
   }
   for (auto& v: _vectors_old){
     for (int i=0; i< LIBMESH_DIM; ++i){
-      value_old(i) *= (*v)[_qp](i);
+      val_old(i) *= (*v)[_qp](i);
     }
   }
 
@@ -80,7 +67,5 @@ RealVectorValue VectorTimeAverageAux::computeValue()
   // \frac{1}{T}\int_{0}^{T} f(t) dt
   // approximated using Trapezoid rule. For each step
   // \Delta t(f_2 + f_1)/2
-  _average[_qp] = (1. - coeff)*_average_old[_qp] + 0.5*coeff*(value + value_old);
-
-  return _average[_qp];
+  return (1. - coeff)*value()[_qp] + 0.5*coeff*(val + val_old);
 }

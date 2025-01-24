@@ -13,15 +13,10 @@ public:
 
 protected:
   RealVectorValue computeValue() override;
-  void initialSetup() override;
-  void timestepSetup() override;
 
   std::vector<const VariableValue*> _scalars;
   std::vector<const VariableValue*> _scalars_old;
 
   std::vector<const VectorVariableValue*> _vectors;
   std::vector<const VectorVariableValue*> _vectors_old;
-
-  VectorVariableValue _average;
-  VectorVariableValue _average_old;
 };
