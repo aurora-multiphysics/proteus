@@ -10,7 +10,7 @@ TimeAverageAux::validParams()
   params.addClassDescription("AuxKernel that performs time averaging of variables.");
   params.addRequiredCoupledVar("scalars",
                        "Scalar variables to be averaged. If multiple scalars are "
-                       "given the average of their product is given");
+                       "given the average of their product is given.");
   return params;
 }
 TimeAverageAux::TimeAverageAux(const InputParameters & parameters)
@@ -24,14 +24,14 @@ TimeAverageAux::TimeAverageAux(const InputParameters & parameters)
 Real TimeAverageAux::computeValue()
 {
   const Real coeff =  _dt/_t;
-  Real val =1., val_old=1.;
+  Real val = 1., val_old = 1.;
 
   // compute value and old value using product of input scalars
   for (auto& v: _scalars){
     val *= (*v)[_qp];
   }
   for (auto& v: _scalars_old){
-    val_old*= (*v)[_qp];
+    val_old *= (*v)[_qp];
   }
 
   // Add weighted contribution of current step. Average contribution

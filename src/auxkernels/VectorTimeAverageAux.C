@@ -18,7 +18,7 @@ VectorTimeAverageAux::validParams()
   params.addCoupledVar("scalars",
                        "Scalar variables to be included in the time average. "
                        "If scalars are are given the average of their product with the vector "
-                       "averages is given");
+                       "averages is given.");
   return params;
 }
 VectorTimeAverageAux::VectorTimeAverageAux(const InputParameters & parameters)
@@ -33,7 +33,7 @@ VectorTimeAverageAux::VectorTimeAverageAux(const InputParameters & parameters)
 {
 
   // setting vectors old
-  for (int i =0; i<_vectors.size(); ++i){
+  for (int i=0; i<_vectors.size(); ++i){
     _vectors_old[i] = &coupledVectorValueOld("vectors", i);
   }
 }
@@ -43,7 +43,7 @@ RealVectorValue VectorTimeAverageAux::computeValue()
   const Real coeff =  _dt/_t;
   RealVectorValue val ={1., 1., 1.}, val_old={1., 1., 1.};
 
-  // Multiply  value and value_old values by the scalars first
+  // Multiply value and value_old values by the scalars first
   for (auto& v: _scalars){
     val *= (*v)[_qp];
   }
@@ -51,14 +51,14 @@ RealVectorValue VectorTimeAverageAux::computeValue()
     val_old *= (*v)[_qp];
   }
 
-  // Multiply  value and value_old values by the vectors component-wise
+  // Multiply value and value_old values by the vectors component-wise
   for (auto& v: _vectors){
-    for (int i=0; i< LIBMESH_DIM; ++i){
+    for (int i=0; i<LIBMESH_DIM; ++i){
       val(i) *= (*v)[_qp](i);
     }
   }
   for (auto& v: _vectors_old){
-    for (int i=0; i< LIBMESH_DIM; ++i){
+    for (int i=0; i<LIBMESH_DIM; ++i){
       val_old(i) *= (*v)[_qp](i);
     }
   }
