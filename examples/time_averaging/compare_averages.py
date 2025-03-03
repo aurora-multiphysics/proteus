@@ -1,6 +1,4 @@
-"""compare_averages.py
-Python script to verify the time averaging in the TimeAverageAux
-class.
+r"""Script to verify the time averaging in the TimeAverageAux class.
 
 Equation being solved
    df/dt = -1
@@ -11,7 +9,7 @@ Analytical solution
 Analytical mean
   \bar{f} = \frac{1}{T}\int_0^T f(0) - t dt = f(0) - T/2
 Analytical variance
-  \overline{f^2} = \frac{1}{T}\int_0^T (f(0) - t)^2 dt = f(0)^2 - f(0)T  + T^2/3
+  \overline{f^2} = \frac{1}{T}\int_0^T (f(0) - t)^2 dt = f(0)^2 - f(0)T + T^2/3
 """
 
 # requires vtk
@@ -20,6 +18,7 @@ from vtkmodules.numpy_interface.dataset_adapter import VTKArray
 
 
 def main():
+    """Test the outputs of the TimeAverageAux class."""
     # read data using the vtkExodusIIReader
     reader = vtk.vtkExodusIIReader()
     reader.SetFileName("scalar_time_averaging_out.e")
