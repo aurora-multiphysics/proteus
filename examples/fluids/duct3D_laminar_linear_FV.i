@@ -125,19 +125,19 @@ advected_interp_method = 'average'
     type = LinearFVAdvectionDiffusionFunctorDirichletBC
     variable = u_x
     boundary = 'top bottom front back'
-    function = '0.0'
+    functor = '0.0'
   []
   [y_walls]
     type = LinearFVAdvectionDiffusionFunctorDirichletBC
     variable = u_y
     boundary = 'top bottom front back'
-    function = '0.0'
+    functor = '0.0'
   []
   [z_walls]
     type = LinearFVAdvectionDiffusionFunctorDirichletBC
     variable = u_z
     boundary = 'top bottom front back'
-    function = '0.0'
+    functor = '0.0'
   []
   [inlet_bc_x]
     type = LinearFVAdvectionDiffusionFunctorDirichletBC
