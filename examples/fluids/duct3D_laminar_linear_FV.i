@@ -197,10 +197,10 @@ advected_interp_method = 'average'
   num_iterations = 100
   pressure_absolute_tolerance = 1e-8
   momentum_absolute_tolerance = 1e-8
-  momentum_petsc_options_iname = '-pc_type -pc_hypre_type -pc_hypre_boomeramg_agg_nl -pc_hypre_boomeramg_agg_num_paths -pc_hypre_boomeramg_truncfactor -pc_hypre_boomeramg_strong_threshold -pc_hypre_boomeramg_coarsen_type -pc_hypre_boomeramg_interp_type'
-  momentum_petsc_options_value = 'hypre boomeramg 4 1 0.1 0.6 HMIS ext+i'
-  pressure_petsc_options_iname = '-pc_type -pc_hypre_type -pc_hypre_boomeramg_agg_nl -pc_hypre_boomeramg_agg_num_paths -pc_hypre_boomeramg_truncfactor -pc_hypre_boomeramg_strong_threshold -pc_hypre_boomeramg_coarsen_type -pc_hypre_boomeramg_interp_type'
-  pressure_petsc_options_value = 'hypre boomeramg 2 1 0.1 0.6 HMIS ext+i'
+  momentum_petsc_options_iname = '-pc_type -pc_hypre_type'
+  momentum_petsc_options_value = 'hypre boomeramg'
+  pressure_petsc_options_iname = '-pc_type -pc_hypre_type'
+  pressure_petsc_options_value = 'hypre boomeramg'
   print_fields = false
 []
 
