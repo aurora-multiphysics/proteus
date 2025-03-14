@@ -1,5 +1,5 @@
-mu = 2.6
-rho = 1.0
+mu = 0.001
+rho = 1000
 advected_interp_method = 'average'
 
 [Mesh]
