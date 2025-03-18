@@ -161,7 +161,7 @@ advected_interp_method = 'average'
     type = LinearFVAdvectionDiffusionFunctorDirichletBC
     boundary = 'right'
     variable = pressure
-    functor = 1.4 # previously had function='0.0' in old INSFVOutletPressureBC
+    functor = '0.0'
   []
   [outlet_u]
     type = LinearFVAdvectionDiffusionOutflowBC
