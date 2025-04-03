@@ -54,6 +54,10 @@ unset PETSC_DIR PETSC_ARCH
 
 ./configure --with-derivative-size=89
 
+# Apply patch for Intel compilers
+
+git apply $PROTEUS_DIR/scripts/intel.patch
+
 cd $PROTEUS_DIR
 make -j $MOOSE_JOBS
 
