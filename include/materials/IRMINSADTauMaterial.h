@@ -109,6 +109,8 @@ protected:
   using T::_has_coupled_force;
   using T::_has_gravity;
   using T::_has_transient;
+  using T::_lorentz_electrostatic_strong_residual;
+  using T::_lorentz_flow_strong_residual;
   using T::_mesh;
   using T::_mu;
   using T::_object_tracker;
@@ -124,8 +126,6 @@ protected:
   using T::_velocity;
   using T::_viscous_form;
   using T::getVectorVar;
-  using T::_lorentz_electrostatic_strong_residual;
-  using T::_lorentz_flow_strong_residual;
 };
 
 typedef IRMINSADTauMaterialTempl<IRMINSADMaterial> IRMINSADTauMaterial;
@@ -340,7 +340,7 @@ IRMINSADTauMaterialTempl<T>::computeQpProperties()
   _momentum_strong_residual[_qp] =
       _advective_strong_residual[_qp] + _viscous_strong_residual[_qp] + _grad_p[_qp];
 
-  _momentum_strong_residual[_qp] += 
+  _momentum_strong_residual[_qp] +=
       _lorentz_electrostatic_strong_residual[_qp] + _lorentz_flow_strong_residual[_qp]; // IRM
 
   if (_has_transient)

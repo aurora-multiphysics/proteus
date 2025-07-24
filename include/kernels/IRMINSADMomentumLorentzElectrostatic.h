@@ -3,8 +3,8 @@
 #include "ADKernelValue.h"
 
 /**
- * This class computes the residual and Jacobian contributions for the 
- * velocity part of the Lorentz force term of the inductionless 
+ * This class computes the residual and Jacobian contributions for the
+ * velocity part of the Lorentz force term of the inductionless
  * resistive MHD incompressible Navier-Stokes momentum equation.
  */
 class IRMINSADMomentumLorentzElectrostatic : public ADVectorKernelValue

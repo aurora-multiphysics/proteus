@@ -10,8 +10,8 @@ public:
   static InputParameters validParams();
 
   INSADEpsilonDissipation(const InputParameters & parameters);
-  
- protected:
+
+protected:
   virtual ADReal precomputeQpResidual() override;
 
   const ADVariableValue & _k;

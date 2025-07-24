@@ -6,7 +6,7 @@
 class Function;
 
 /**
- * This class computes the residual and Jacobian contributions for the 
+ * This class computes the residual and Jacobian contributions for the
  * Lorentz force term of the incompressible inductionless MHD momentum equation
  * using a coupled current density variable and an imposed magnetic field function.
  */

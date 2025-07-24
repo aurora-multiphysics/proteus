@@ -12,12 +12,12 @@
  */
 class PointForcingFunction3DEquivalent : public NodalKernel
 {
- public:
+public:
   static InputParameters validParams();
 
   PointForcingFunction3DEquivalent(const InputParameters & parameters);
 
- protected:
+protected:
   virtual Real computeQpResidual() override;
 
   const Function & _func;

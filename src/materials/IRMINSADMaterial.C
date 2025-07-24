@@ -16,11 +16,14 @@ IRMINSADMaterial::validParams()
                              "residuals for the INS equations.");
   params.addRequiredCoupledVar("velocity", "The velocity");
   params.addRequiredCoupledVar(NS::pressure, "The pressure");
-  params.addRequiredCoupledVar("electricPotential", "The variable representing the electric potential"); // IRM
-  params.addRequiredCoupledVar("magneticField", "The variable representing the magnetic field");         // IRM
+  params.addRequiredCoupledVar("electricPotential",
+                               "The variable representing the electric potential"); // IRM
+  params.addRequiredCoupledVar("magneticField",
+                               "The variable representing the magnetic field"); // IRM
   params.addParam<MaterialPropertyName>("mu_name", "mu", "The name of the dynamic viscosity");
   params.addParam<MaterialPropertyName>("rho_name", "rho", "The name of the density");
-  params.addParam<MaterialPropertyName>("conductivity", "conductivity", "The name of the conductivity");  // IRM
+  params.addParam<MaterialPropertyName>(
+      "conductivity", "conductivity", "The name of the conductivity"); // IRM
   return params;
 }
 
@@ -29,7 +32,7 @@ IRMINSADMaterial::IRMINSADMaterial(const InputParameters & parameters)
     _velocity(adCoupledVectorValue("velocity")),
     _grad_velocity(adCoupledVectorGradient("velocity")),
     _grad_p(adCoupledGradient(NS::pressure)),
-    _grad_epot(adCoupledGradient("electricPotential")), // IRM
+    _grad_epot(adCoupledGradient("electricPotential")),     // IRM
     _magnetic_field(adCoupledVectorValue("magneticField")), // IRM
     _mu(getADMaterialProperty<Real>("mu_name")),
     _rho(getADMaterialProperty<Real>("rho_name")),
@@ -37,8 +40,10 @@ IRMINSADMaterial::IRMINSADMaterial(const InputParameters & parameters)
     _velocity_dot(nullptr),
     _mass_strong_residual(declareADProperty<Real>("mass_strong_residual")),
     _advective_strong_residual(declareADProperty<RealVectorValue>("advective_strong_residual")),
-    _lorentz_electrostatic_strong_residual(declareADProperty<RealVectorValue>("lorentz_electrostatic_strong_residual")), // IRM
-    _lorentz_flow_strong_residual(declareADProperty<RealVectorValue>("lorentz_flow_strong_residual")), // IRM
+    _lorentz_electrostatic_strong_residual(
+        declareADProperty<RealVectorValue>("lorentz_electrostatic_strong_residual")), // IRM
+    _lorentz_flow_strong_residual(
+        declareADProperty<RealVectorValue>("lorentz_flow_strong_residual")), // IRM
     // We have to declare the below strong residuals for integrity check purposes even though we may
     // not compute them. This may incur some unnecessary cost for a non-sparse derivative container
     // since when the properties are resized the entire non-sparse derivative containers will be
@@ -203,10 +208,11 @@ IRMINSADMaterial::computeQpProperties()
 
   _advective_strong_residual[_qp] = _rho[_qp] * _grad_velocity[_qp] * _velocity[_qp];
 
-  _lorentz_electrostatic_strong_residual[_qp] = _conductivity[_qp] * _grad_epot[_qp].cross(_magnetic_field[_qp]); // IRM
-  auto UxB = _velocity[_qp].cross(_magnetic_field[_qp]);  // IRM
+  _lorentz_electrostatic_strong_residual[_qp] =
+      _conductivity[_qp] * _grad_epot[_qp].cross(_magnetic_field[_qp]);                       // IRM
+  auto UxB = _velocity[_qp].cross(_magnetic_field[_qp]);                                      // IRM
   _lorentz_flow_strong_residual[_qp] = -_conductivity[_qp] * UxB.cross(_magnetic_field[_qp]); // IRM
-  
+
   if (_has_transient)
     _td_strong_residual[_qp] = _rho[_qp] * (*_velocity_dot)[_qp];
   if (_has_gravity)

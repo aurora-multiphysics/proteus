@@ -14,7 +14,6 @@ public:
 protected:
   Real computeValue() override;
 
-  std::vector<const VariableValue*> _scalars;
-  std::vector<const VariableValue*> _scalars_old;
-
+  std::vector<const VariableValue *> _scalars;
+  std::vector<const VariableValue *> _scalars_old;
 };

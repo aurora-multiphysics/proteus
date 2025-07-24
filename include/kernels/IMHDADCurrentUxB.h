@@ -6,7 +6,7 @@
 class Function;
 
 /**
- * This class computes the residual and Jacobian contributions for the 
+ * This class computes the residual and Jacobian contributions for the
  * U cross B term of the electric current density equation
  * using a coupled velocity variable and an imposed magnetic field function.
  */
@@ -21,7 +21,7 @@ protected:
   virtual ADRealVectorValue precomputeQpResidual() override;
 
   const ADVectorVariableValue & _velocity;
-  
+
   /// Optional vectorValue function
   const Function * const _magnetic_field;
 

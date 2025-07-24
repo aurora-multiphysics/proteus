@@ -11,7 +11,7 @@ public:
 
   INSADKProduction(const InputParameters & parameters);
 
- protected:
+protected:
   virtual ADReal precomputeQpResidual() override;
 
   const ADVectorVariableGradient & _grad_velocity;

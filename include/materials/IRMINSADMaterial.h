@@ -31,10 +31,10 @@ protected:
   const ADVariableGradient & _grad_p;
 
   /// gradient of the electric potential
-  const ADVariableGradient & _grad_epot;  // IRM
+  const ADVariableGradient & _grad_epot; // IRM
 
   /// magnetic field
-  const ADVectorVariableValue & _magnetic_field;  // IRM
+  const ADVectorVariableValue & _magnetic_field; // IRM
 
   /// viscosity
   const ADMaterialProperty<Real> & _mu;
@@ -58,7 +58,7 @@ protected:
   ADMaterialProperty<RealVectorValue> & _lorentz_electrostatic_strong_residual; // IRM
 
   /// Strong residual corresponding to the momentum flow Lorentz force term
-  ADMaterialProperty<RealVectorValue> & _lorentz_flow_strong_residual;  // IRM
+  ADMaterialProperty<RealVectorValue> & _lorentz_flow_strong_residual; // IRM
 
   /// Strong residual corresponding to the momentum transient term
   ADMaterialProperty<RealVectorValue> & _td_strong_residual;

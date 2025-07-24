@@ -11,7 +11,7 @@ public:
 
   INSADScalarAdvection(const InputParameters & parameters);
 
- protected:
+protected:
   virtual ADReal precomputeQpResidual() override;
 
   const ADVectorVariableValue & _velocity;

@@ -8,12 +8,12 @@ RBEConstraint::validParams()
 {
   InputParameters params = NodalConstraint::validParams();
   params.addClassDescription(
-    "Constrains secondary node to move as a linear combination of primary nodes. "
-    "Implementation of a Rigid Body Element Constraint");
+      "Constrains secondary node to move as a linear combination of primary nodes. "
+      "Implementation of a Rigid Body Element Constraint");
   params.addRequiredParam<BoundaryName>("primary_node_set",
-    "The boundary ID associated with the primary nodes.");
+                                        "The boundary ID associated with the primary nodes.");
   params.addRequiredParam<BoundaryName>("secondary_node_set",
-    "The boundary ID associated with the secondary node.");
+                                        "The boundary ID associated with the secondary node.");
   params.addRequiredParam<Real>("penalty", "The penalty used for the boundary term.");
   params.addRequiredParam<Real>("primary_size", "The number of nodes in the primary node set.");
   return params;
@@ -30,7 +30,7 @@ RBEConstraint::RBEConstraint(const InputParameters & parameters)
 
   // Get secondary nodes
   std::vector<dof_id_type> nodelist =
-    _mesh.getNodeList(_mesh.getBoundaryID(_secondary_node_set_id));
+      _mesh.getNodeList(_mesh.getBoundaryID(_secondary_node_set_id));
   std::vector<dof_id_type>::iterator in;
 
   for (in = nodelist.begin(); in != nodelist.end(); ++in)
@@ -42,7 +42,7 @@ RBEConstraint::RBEConstraint(const InputParameters & parameters)
 
   // Get primary nodes
   std::vector<dof_id_type> primary_nodelist =
-    _mesh.getNodeList(_mesh.getBoundaryID(_primary_node_set_id));
+      _mesh.getNodeList(_mesh.getBoundaryID(_primary_node_set_id));
 
   const auto & node_to_elem_map = _mesh.nodeToElemMap();
 
@@ -59,29 +59,27 @@ RBEConstraint::RBEConstraint(const InputParameters & parameters)
       _subproblem.addGhostedElem(elem_id);
     }
   }
-  _weights = std::vector<Real>(_primary_size, 1.0/_primary_size);
+  _weights = std::vector<Real>(_primary_size, 1.0 / _primary_size);
 }
 
 Real
 RBEConstraint::computeQpResidual(Moose::ConstraintType type)
 {
-/*
-Secondary residual is u_secondary - weights[1]*u_primary[1]
-                      - weights[2]*u_primary[2] - u_primary[n]*weights[n]
-However, computeQpResidual is calculated for only a combination of one
-primary and one secondary node at a time.  To get around this, the residual is
-split up such that the final secondary residual resembles the above expression.
-*/
+  /*
+  Secondary residual is u_secondary - weights[1]*u_primary[1]
+                        - weights[2]*u_primary[2] - u_primary[n]*weights[n]
+  However, computeQpResidual is calculated for only a combination of one
+  primary and one secondary node at a time.  To get around this, the residual is
+  split up such that the final secondary residual resembles the above expression.
+  */
   unsigned int primary_size = _primary_size;
 
   switch (type)
   {
     case Moose::Primary:
-      return (_u_primary[_j] * _weights[_j] - _u_secondary[_i] / primary_size)
-             * _penalty;
+      return (_u_primary[_j] * _weights[_j] - _u_secondary[_i] / primary_size) * _penalty;
     case Moose::Secondary:
-      return (_u_secondary[_i] / primary_size - _u_primary[_j] * _weights[_j])
-             * _penalty;
+      return (_u_secondary[_i] / primary_size - _u_primary[_j] * _weights[_j]) * _penalty;
   }
   return 0;
 }

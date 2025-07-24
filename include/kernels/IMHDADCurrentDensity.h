@@ -3,7 +3,7 @@
 #include "ADKernelValue.h"
 
 /**
- * This class computes the residual and Jacobian contributions for the 
+ * This class computes the residual and Jacobian contributions for the
  * left-hand-side of the explicit calculation of the electric current density equation.
  */
 class IMHDADCurrentDensity : public ADVectorKernelValue

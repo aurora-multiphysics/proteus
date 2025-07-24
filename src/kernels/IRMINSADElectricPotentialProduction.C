@@ -16,10 +16,11 @@ IRMINSADElectricPotentialProduction::validParams()
   return params;
 }
 
-IRMINSADElectricPotentialProduction::IRMINSADElectricPotentialProduction(const InputParameters & parameters)
+IRMINSADElectricPotentialProduction::IRMINSADElectricPotentialProduction(
+    const InputParameters & parameters)
   : ADKernelGrad(parameters),
-  _velocity(adCoupledVectorValue("velocity")),
-  _magnetic_field(adCoupledVectorValue("magneticField"))
+    _velocity(adCoupledVectorValue("velocity")),
+    _magnetic_field(adCoupledVectorValue("magneticField"))
 {
 }
 

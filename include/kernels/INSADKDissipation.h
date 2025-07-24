@@ -11,7 +11,7 @@ public:
 
   INSADKDissipation(const InputParameters & parameters);
 
- protected:
+protected:
   virtual ADReal precomputeQpResidual() override;
 
   const ADVariableValue & _epsilon;

@@ -11,7 +11,7 @@ public:
 
   INSADScalarDiffusion(const InputParameters & parameters);
 
- protected:
+protected:
   virtual ADRealVectorValue precomputeQpResidual() override;
 
   const ADMaterialProperty<Real> & _mu_lam;

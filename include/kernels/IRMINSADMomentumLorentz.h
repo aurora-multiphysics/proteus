@@ -4,7 +4,7 @@
 
 /**
  * This class computes the momentum equation residual and Jacobian
- * contributions for the Lorentz force term of the inductionless resistive MHD 
+ * contributions for the Lorentz force term of the inductionless resistive MHD
  * incompressible Navier-Stokes momentum equation.
  */
 class IRMINSADMomentumLorentz : public ADVectorKernelValue

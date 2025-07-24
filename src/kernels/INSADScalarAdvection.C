@@ -7,7 +7,7 @@ INSADScalarAdvection::validParams()
 {
   InputParameters params = ADKernelValue::validParams();
   params.addClassDescription("This class computes the residual and Jacobian contributions for "
-			     "scalar advection for a divergence free velocity field.");
+                             "scalar advection for a divergence free velocity field.");
   params.addRequiredCoupledVar("velocity", "The velocity");
   params.addParam<MaterialPropertyName>("rho_name", "rho", "The name of the density");
   return params;
