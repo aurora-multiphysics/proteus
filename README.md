@@ -1,5 +1,10 @@
 Proteus
 =======
+[![Documentation](https://github.com/aurora-multiphysics/proteus/actions/workflows/pages.yml/badge.svg?branch=main)](https://aurora-multiphysics.github.io/proteus/)
+![lint](https://github.com/aurora-multiphysics/proteus/actions/workflows/lint.yml/badge.svg?branch=main)
+![build](https://github.com/aurora-multiphysics/proteus/actions/workflows/main.yml/badge.svg?branch=main)
+[![codecov](https://codecov.io/gh/aurora-multiphysics/proteus/graph/badge.svg?token=WV2DE9DT53)](https://codecov.io/gh/aurora-multiphysics/proteus)
+[![GitHub License](https://img.shields.io/github/license/aurora-multiphysics/proteus)](https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html)
 
 Proteus is a MOOSE based application for multiphysics simulation.
 It is focussed on fluid dynamics and its commonly coupled domains.
