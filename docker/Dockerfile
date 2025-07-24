@@ -5,6 +5,12 @@
 # Use Ubuntu as the base image
 FROM ubuntu:22.04
 
+# By default, build without code coverage flags
+ARG coverage=false
+# By default checkout main branch from aurora-multiphysics/proteus
+ARG build_git_sha=main
+ARG build_git_repo=aurora-multiphysics/proteus
+
 # Set environment variables
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PROTEUS_DIR=/proteus
@@ -18,9 +24,12 @@ RUN apt-get update && \
         g++ \
         gfortran \
         cmake \
+        clang-format \
+        clang-tidy \        
         bison \
         flex \
         git \
+        pre-commit \        
         python3 \
         python3-dev \
         python-is-python3 \
@@ -72,17 +81,34 @@ RUN cd $MOOSE_DIR && \
 
 # Copy Proteus source code
 RUN git clone https://github.com/aurora-multiphysics/proteus.git
+RUN git clone https://github.com/$build_git_repo
+WORKDIR /$PROTEUS_DIR
+RUN git checkout $build_git_sha
 
 # Build Proteus
-RUN cd $PROTEUS_DIR && \
-    make -j $MOOSE_JOBS
+WORKDIR /$PROTEUS_DIR
+RUN make -j$MOOSE_JOBS coverage=$coverage
+
+# Build Proteus docs
+WORKDIR /$PROTEUS_DIR
+RUN doxygen doc/content/doxygen/Doxyfile
+WORKDIR /$PROTEUS_DIR/doc
+RUN ./moosedocs.py build
+
+# Test Proteus regression tests
+WORKDIR /$PROTEUS_DIR
+RUN make test
+
+# Build Proteus unit tests
+WORKDIR /$PROTEUS_DIR/unit
+RUN make -j$compile_cores
+
+# Test Proteus unit tests
+WORKDIR /$PROTEUS_DIR/unit
+RUN make test
 
 # Set working directory
 WORKDIR /proteus
 
 # Set entrypoint
 ENTRYPOINT ["/bin/bash"]
-
-# Run tests
-RUN cd /proteus && \
-    ./run_tests
