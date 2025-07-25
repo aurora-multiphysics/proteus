@@ -23,15 +23,17 @@ ENV MOOSE_JOBS=4
 # Update and install dependencies
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
+        build-essential \
+        bison \
+        flex \
+        clang-format \
+        clang-tidy \
+        cmake \
+        curl \        
+        doxygen \       
         gcc \
         g++ \
         gfortran \
-        cmake \
-        clang-format \
-        clang-tidy \
-        doxygen \       
-        bison \
-        flex \
         git \
         graphviz \        
         pre-commit \        
