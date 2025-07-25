@@ -86,6 +86,7 @@ WORKDIR /$MOOSE_DIR && \
     ./configure --with-derivative-size=81
 
 # Copy Proteus source code
+WORKDIR /$PROTEUS_DIR
 RUN git clone https://github.com/$build_git_repo
 WORKDIR /$PROTEUS_DIR
 RUN git checkout $build_git_sha
