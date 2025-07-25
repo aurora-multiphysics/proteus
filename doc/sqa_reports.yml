@@ -1,0 +1,27 @@
+Applications:
+    proteus:
+        app_types:
+            - proteus
+        content_directory: ${ROOT_DIR}/doc/content
+        remove:
+            - ${MOOSE_DIR}/framework/doc/remove.yml
+        log_default: WARNING
+        show_warning: false
+
+Documents:
+    software_requirements_specification: sqa/proteus_srs.md
+    software_design_description: sqa/proteus_sdd.md
+    software_test_plan: sqa/proteus_stp.md
+    requirements_traceability_matrix: sqa/proteus_rtm.md
+    verification_validation_report: sqa/proteus_vvr.md
+    failure_analysis_report: sqa/proteus_far.md
+    software_library_list: sqa/proteus_sll.md
+    log_default: WARNING
+    show_warning: false
+
+Requirements:
+    proteus:
+        directories:
+            - ${ROOT_DIR}/test
+        log_default: WARNING
+        show_warning: false

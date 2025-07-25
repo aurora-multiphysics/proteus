@@ -10,17 +10,16 @@
  * modelling approach is analogous with applying a concentrated force to a
  * 1D beam element.
  */
-class PointForcingFunction3DEquivalent : public NodalKernel
-{
- public:
+class PointForcingFunction3DEquivalent : public NodalKernel {
+public:
   static InputParameters validParams();
 
-  PointForcingFunction3DEquivalent(const InputParameters & parameters);
+  PointForcingFunction3DEquivalent(const InputParameters &parameters);
 
- protected:
+protected:
   virtual Real computeQpResidual() override;
 
-  const Function & _func;
-  const VariableValue & _nodal_area;
-  const PostprocessorValue & _total_area;
+  const Function &_func;
+  const VariableValue &_nodal_area;
+  const PostprocessorValue &_total_area;
 };
