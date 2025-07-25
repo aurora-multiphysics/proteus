@@ -1,3 +1,6 @@
+# Ignore warnings for not pinning versions in pip, apt-get install.
+# hadolint global ignore=DL3008,DL3013
+
 # To build the Docker container, run the following lines from your proteus root directory:
 # cd docker
 # docker build --rm -t proteus:latest .
@@ -19,7 +22,7 @@ ENV MOOSE_JOBS=4
 
 # Update and install dependencies
 RUN apt-get update && \
-    apt-get install -y \
+    apt-get install -y --no-install-recommends \
         gcc \
         g++ \
         gfortran \
@@ -42,8 +45,9 @@ RUN apt-get update && \
         libtirpc-dev \
         autoconf \
         automake \
-	python3-yaml	\
+	    python3-yaml	\
         libtool && \
+    rm -rf /var/lib/apt/lists/* && \
     # Set up the Proteus profile
     echo "export CC=mpicc" > /root/.proteus_profile && \
     echo "export CXX=mpicxx" >> /root/.proteus_profile && \
@@ -62,23 +66,23 @@ RUN git config --global http.postBuffer 524288000 && \
     { echo "Retrying..."; sleep 5; git clone --depth 1 https://github.com/idaholab/moose.git $MOOSE_DIR; }
 
 # Build PETSc
-RUN cd $MOOSE_DIR && \
-    unset PETSC_DIR PETSC_ARCH && \
-    ./scripts/update_and_rebuild_petsc.sh \
-        --CXXOPTFLAGS="-O3 -march=native" \
-        --COPTFLAGS="-O3 -march=native" \
-        --FOPTFLAGS="-O3 -march=native"
+WORKDIR /$MOOSE_DIR && \
+        unset PETSC_DIR PETSC_ARCH && \
+        ./scripts/update_and_rebuild_petsc.sh \
+            --CXXOPTFLAGS="-O3 -march=native" \
+            --COPTFLAGS="-O3 -march=native" \
+            --FOPTFLAGS="-O3 -march=native"
 
 # Build libMesh
-RUN cd $MOOSE_DIR && \
+WORKDIR /$MOOSE_DIR && \
     ./scripts/update_and_rebuild_libmesh.sh --with-mpi
 
 # Build WASP
-RUN cd $MOOSE_DIR && \
+WORKDIR /$MOOSE_DIR && \
     ./scripts/update_and_rebuild_wasp.sh
 
 # Configure AD
-RUN cd $MOOSE_DIR && \
+WORKDIR /$MOOSE_DIR && \
     ./configure --with-derivative-size=81
 
 # Copy Proteus source code

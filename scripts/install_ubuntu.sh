@@ -13,7 +13,7 @@ export PROTEUS_DIR=`pwd`
 
 # If MOOSE_JOBS is unset, set to 1
 if [ -z $MOOSE_JOBS ]; then
-  export MOOSE_JOBS=1
+    export MOOSE_JOBS=1
 fi
 export METHODS="opt"
 
