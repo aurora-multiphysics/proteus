@@ -33,10 +33,14 @@ jobs:
       - name: Super-linter
         uses: super-linter/super-linter/slim@v6.7.0
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # External doxygen style files, the MOOSE Doxygen header, and the CodeCov upload script 
-          # do not meet proteus linting requirements; exclude them from lint checks:
-          FILTER_REGEX_EXCLUDE: ((^|/)doxygen-awesome|moose_doxy_header.html|doxygen.css|tabs.css|codecov.sh)
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}   
+          # Currently, the following files do not meet linting requirements: 
+          # - External doxygen style files, 
+          # - MOOSE Doxygen header
+          # - CodeCov upload script 
+          # - Proteus build scripts
+          # so we currently explicitly exclude them from lint checks:
+          FILTER_REGEX_EXCLUDE: ((^|/)doxygen-awesome|moose_doxy_header.html|doxygen.css|tabs.css|codecov.sh|install_ubuntu.sh|install_csd3_cclake.sh|slurm_submit.cclake|install_csd3_sapphire.sh|slurm_submit.sapphire)
           VALIDATE_ANSIBLE: false
           VALIDATE_CHECKOV: false
           VALIDATE_CPP: false
