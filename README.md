@@ -19,7 +19,7 @@ Proteus can be run on Windows by using the Windows Subsystem for Linux (WSL)
 and following the instructions for Ubuntu or Linux below.
 
 ### Ubuntu
-------
+-------
 
 There is an automated build and install process for Ubuntu,
 which can be run using the following commands:
@@ -40,7 +40,7 @@ proteus-opt -i <input-file>.i
 ```
 
 ### Other Linux
------------
+-------
 
 Install MOOSE by following the instructions
 on the [MOOSE homepage](https://www.mooseframework.org/).
@@ -56,7 +56,7 @@ as follows:
 ```
 
 ## Building Using Multiple Cores
------------------------------
+-------
 
 The install process above can be sped up
 by using multiple cores during the build process.
@@ -72,7 +72,7 @@ export MOOSE_JOBS=4
 Where the number 4 in the example above corresponds to using four cores.
 
 ## Docker
-------
+-------
 
 Proteus can be run in a container to make installation easier.
 
@@ -81,7 +81,7 @@ Run this command in the /docker directory to build the image.
 docker build --rm -t proteus:latest .
 ```
 
-# Contributors
+## Contributors
 ============
 
 Aleksander J. Dubas,
