@@ -25,10 +25,12 @@ RUN apt-get update && \
         gfortran \
         cmake \
         clang-format \
-        clang-tidy \        
+        clang-tidy \
+        doxygen \       
         bison \
         flex \
         git \
+        graphviz \        
         pre-commit \        
         python3 \
         python3-dev \
