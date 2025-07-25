@@ -16,6 +16,7 @@ ARG build_git_repo=aurora-multiphysics/proteus
 
 # Set environment variables
 ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=Etc/UTC
 ENV PROTEUS_DIR=/opt/proteus
 ENV MOOSE_DIR=/opt/moose
 ENV MOOSE_JOBS=4
@@ -72,24 +73,24 @@ RUN git config --global http.postBuffer 524288000 && \
     { echo "Retrying..."; sleep 5; git clone --depth 1 https://github.com/idaholab/moose.git $MOOSE_DIR; }
 
 # Build PETSc
-WORKDIR /$MOOSE_DIR && \
-        unset PETSC_DIR PETSC_ARCH && \
+WORKDIR /$MOOSE_DIR
+RUN unset PETSC_DIR PETSC_ARCH && \
         ./scripts/update_and_rebuild_petsc.sh \
-            --CXXOPTFLAGS="-O3 -march=native" \
-            --COPTFLAGS="-O3 -march=native" \
-            --FOPTFLAGS="-O3 -march=native"
+        --CXXOPTFLAGS="-O3 -march=native" \
+        --COPTFLAGS="-O3 -march=native" \
+        --FOPTFLAGS="-O3 -march=native"
 
 # Build libMesh
-WORKDIR /$MOOSE_DIR && \
-    ./scripts/update_and_rebuild_libmesh.sh --with-mpi
+WORKDIR /$MOOSE_DIR
+RUN ./scripts/update_and_rebuild_libmesh.sh --with-mpi
 
 # Build WASP
-WORKDIR /$MOOSE_DIR && \
-    ./scripts/update_and_rebuild_wasp.sh
+WORKDIR /$MOOSE_DIR
+RUN ./scripts/update_and_rebuild_wasp.sh
 
 # Configure AD
-WORKDIR /$MOOSE_DIR && \
-    ./configure --with-derivative-size=81
+WORKDIR /$MOOSE_DIR
+RUN ./configure --with-derivative-size=81
 
 # Copy Proteus source code
 WORKDIR /$PROTEUS_DIR/../
