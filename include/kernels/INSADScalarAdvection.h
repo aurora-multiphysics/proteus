@@ -4,17 +4,16 @@
 
 class INSADScalarAdvection;
 
-class INSADScalarAdvection : public ADKernelValue
-{
+class INSADScalarAdvection : public ADKernelValue {
 public:
   static InputParameters validParams();
 
-  INSADScalarAdvection(const InputParameters & parameters);
+  INSADScalarAdvection(const InputParameters &parameters);
 
 protected:
   virtual ADReal precomputeQpResidual() override;
 
-  const ADVectorVariableValue & _velocity;
+  const ADVectorVariableValue &_velocity;
 
-  const ADMaterialProperty<Real> & _rho;
+  const ADMaterialProperty<Real> &_rho;
 };

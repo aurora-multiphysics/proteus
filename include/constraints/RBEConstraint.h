@@ -1,11 +1,10 @@
 #pragma once
 #include "NodalConstraint.h"
 
-class RBEConstraint : public NodalConstraint
-{
+class RBEConstraint : public NodalConstraint {
 public:
   static InputParameters validParams();
-  RBEConstraint(const InputParameters & parameters);
+  RBEConstraint(const InputParameters &parameters);
 
 protected:
   virtual Real computeQpResidual(Moose::ConstraintType type) override;

@@ -2,9 +2,7 @@
 
 registerMooseObject("ProteusApp", INSADKEpsilonMaterial);
 
-InputParameters
-INSADKEpsilonMaterial::validParams()
-{
+InputParameters INSADKEpsilonMaterial::validParams() {
   InputParameters params = Material::validParams();
 
   params.addClassDescription("Material class for INS turbulence modeling.");
@@ -16,25 +14,20 @@ INSADKEpsilonMaterial::validParams()
   return params;
 }
 
-INSADKEpsilonMaterial::INSADKEpsilonMaterial(const InputParameters & parameters)
-  : Material(parameters),
-    _k(adCoupledValue("k")),
-    _epsilon(adCoupledValue("epsilon")),
-    _user_mu(getParam<Real>("mu")),
-    _user_rho(getParam<Real>("rho")),
-    _Cmu(getParam<Real>("C_mu")),
-    _mu_lam(declareADProperty<Real>("mu_lam")),
-    _rho(declareADProperty<Real>("rho")),
-    _mu_turb(declareADProperty<Real>("mu_turb")),
-    _mu(declareADProperty<Real>("mu"))
-{
-}
+INSADKEpsilonMaterial::INSADKEpsilonMaterial(const InputParameters &parameters)
+    : Material(parameters), _k(adCoupledValue("k")),
+      _epsilon(adCoupledValue("epsilon")), _user_mu(getParam<Real>("mu")),
+      _user_rho(getParam<Real>("rho")), _Cmu(getParam<Real>("C_mu")),
+      _mu_lam(declareADProperty<Real>("mu_lam")),
+      _rho(declareADProperty<Real>("rho")),
+      _mu_turb(declareADProperty<Real>("mu_turb")),
+      _mu(declareADProperty<Real>("mu")) {}
 
-void
-INSADKEpsilonMaterial::computeQpProperties()
-{
+void INSADKEpsilonMaterial::computeQpProperties() {
   _mu_lam[_qp] = _user_mu;
   _rho[_qp] = _user_rho;
-  _mu_turb[_qp] = _epsilon[_qp] > 0 ? _user_rho * _Cmu * _k[_qp] * _k[_qp] / _epsilon[_qp] : 0;
+  _mu_turb[_qp] = _epsilon[_qp] > 0
+                      ? _user_rho * _Cmu * _k[_qp] * _k[_qp] / _epsilon[_qp]
+                      : 0;
   _mu[_qp] = _user_mu + _mu_turb[_qp];
 }

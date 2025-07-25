@@ -4,12 +4,11 @@
 #include "MooseArray.h"
 #include "MooseTypes.h"
 
-class VectorTimeAverageAux : public VectorAuxKernel
-{
+class VectorTimeAverageAux : public VectorAuxKernel {
 public:
   static InputParameters validParams();
 
-  VectorTimeAverageAux(const InputParameters & parameters);
+  VectorTimeAverageAux(const InputParameters &parameters);
 
 protected:
   RealVectorValue computeValue() override;

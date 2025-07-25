@@ -4,12 +4,11 @@
 
 registerMooseObject("ProteusApp", PointForcingFunction3DEquivalent);
 
-InputParameters
-PointForcingFunction3DEquivalent::validParams()
-{
+InputParameters PointForcingFunction3DEquivalent::validParams() {
   InputParameters params = NodalKernel::validParams();
   params.addRequiredParam<FunctionName>("function", "The forcing function");
-  params.addRequiredCoupledVar("nodal_area", "AuxVariable containing the nodal area");
+  params.addRequiredCoupledVar("nodal_area",
+                               "AuxVariable containing the nodal area");
   params.addRequiredParam<PostprocessorName>(
       "total_area_postprocessor",
       "The name of the postprocessor that is going to be computing the "
@@ -23,16 +22,11 @@ PointForcingFunction3DEquivalent::validParams()
 }
 
 PointForcingFunction3DEquivalent::PointForcingFunction3DEquivalent(
-    const InputParameters & parameters)
-  : NodalKernel(parameters),
-    _func(getFunction("function")),
-    _nodal_area(coupledValue("nodal_area")),
-    _total_area(getPostprocessorValue("total_area_postprocessor"))
-{
-}
+    const InputParameters &parameters)
+    : NodalKernel(parameters), _func(getFunction("function")),
+      _nodal_area(coupledValue("nodal_area")),
+      _total_area(getPostprocessorValue("total_area_postprocessor")) {}
 
-Real
-PointForcingFunction3DEquivalent::computeQpResidual()
-{
+Real PointForcingFunction3DEquivalent::computeQpResidual() {
   return -_func.value(_t, (*_current_node)) * _nodal_area[_qp] / _total_area;
 }

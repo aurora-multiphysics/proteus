@@ -4,19 +4,18 @@
 
 class INSADScalarDiffusion;
 
-class INSADScalarDiffusion : public ADKernelGrad
-{
+class INSADScalarDiffusion : public ADKernelGrad {
 public:
   static InputParameters validParams();
 
-  INSADScalarDiffusion(const InputParameters & parameters);
+  INSADScalarDiffusion(const InputParameters &parameters);
 
 protected:
   virtual ADRealVectorValue precomputeQpResidual() override;
 
-  const ADMaterialProperty<Real> & _mu_lam;
+  const ADMaterialProperty<Real> &_mu_lam;
 
-  const ADMaterialProperty<Real> & _mu_turb;
+  const ADMaterialProperty<Real> &_mu_turb;
 
   const Real _sigma;
 };

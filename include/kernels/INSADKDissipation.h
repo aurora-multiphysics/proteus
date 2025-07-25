@@ -4,17 +4,16 @@
 
 class INSADKDissipation;
 
-class INSADKDissipation : public ADKernelValue
-{
+class INSADKDissipation : public ADKernelValue {
 public:
   static InputParameters validParams();
 
-  INSADKDissipation(const InputParameters & parameters);
+  INSADKDissipation(const InputParameters &parameters);
 
 protected:
   virtual ADReal precomputeQpResidual() override;
 
-  const ADVariableValue & _epsilon;
+  const ADVariableValue &_epsilon;
 
-  const ADMaterialProperty<Real> & _rho;
+  const ADMaterialProperty<Real> &_rho;
 };

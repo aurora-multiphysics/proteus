@@ -11,8 +11,7 @@
 
 #include "MooseApp.h"
 
-class ProteusApp : public MooseApp
-{
+class ProteusApp : public MooseApp {
 public:
   static InputParameters validParams();
 
@@ -20,5 +19,5 @@ public:
   virtual ~ProteusApp();
 
   static void registerApps();
-  static void registerAll(Factory & f, ActionFactory & af, Syntax & s);
+  static void registerAll(Factory &f, ActionFactory &af, Syntax &s);
 };
