@@ -22,33 +22,37 @@ ENV MOOSE_JOBS=4
 
 # Update and install dependencies
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
+        apt-get install -y --no-install-recommends \
         build-essential \
         bison \
         flex \
         clang-format \
         clang-tidy \
         cmake \
-        curl \        
-        doxygen \       
-        gcc \
-        g++ \
+        curl \
+        doxygen \
         gfortran \
         git \
-        graphviz \        
-        pre-commit \        
-        python3 \
-        python3-dev \
+        graphviz \
+        ninja-build \
+        pre-commit \
+        python3-deepdiff \
+        python3-jinja2 \
+        python3-livereload \
+        python3-pybtex \
+        python3-pylatexenc \
+        python3-xmltodict \
         python-is-python3 \
-        python3-packaging \
-        openmpi-bin \
-        libopenmpi-dev \
         libboost-all-dev \
+        libfontconfig1-dev \
+        libglew-dev \
+        libglm-dev \
+        libhdf5-openmpi-dev \
+        libnetcdf-dev \
+        libsdl2-dev \
         libtirpc-dev \
-        autoconf \
-        automake \
-	    python3-yaml	\
-        libtool && \
+        rsync \
+        xxd && \
     rm -rf /var/lib/apt/lists/* && \
     # Set up the Proteus profile
     echo "export CC=mpicc" > /root/.proteus_profile && \
