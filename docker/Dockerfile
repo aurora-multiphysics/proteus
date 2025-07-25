@@ -6,7 +6,7 @@
 # docker build --rm -t proteus:latest .
 
 # Use Ubuntu as the base image
-FROM ubuntu:22.04
+FROM ubuntu:24.04
 
 # By default, build without code coverage flags
 ARG coverage=false
@@ -16,7 +16,7 @@ ARG build_git_repo=aurora-multiphysics/proteus
 
 # Set environment variables
 ENV DEBIAN_FRONTEND=noninteractive
-ENV PROTEUS_DIR=/proteus
+ENV PROTEUS_DIR=/opt/proteus
 ENV MOOSE_DIR=/opt/moose
 ENV MOOSE_JOBS=4
 
@@ -116,7 +116,7 @@ WORKDIR /$PROTEUS_DIR/unit
 RUN make test
 
 # Set working directory
-WORKDIR /proteus
+WORKDIR /$PROTEUS_DIR
 
 # Set entrypoint
 ENTRYPOINT ["/bin/bash"]
