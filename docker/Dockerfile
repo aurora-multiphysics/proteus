@@ -40,6 +40,7 @@ RUN apt-get update && \
         python3-deepdiff \
         python3-jinja2 \
         python3-livereload \
+        python3-pandas \
         python3-pybtex \
         python3-pylatexenc \
         python3-xmltodict \
