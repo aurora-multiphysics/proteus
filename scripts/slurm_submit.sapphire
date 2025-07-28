@@ -10,11 +10,11 @@
 
 cd $SLURM_SUBMIT_DIR
 
-echo -e "Changed directory to `pwd`.\n"
+echo -e "Changed directory to $(pwd).\n"
 echo -e "JobID: $SLURM_JOB_ID\n======"
-echo "Time: `date`"
-echo "Running on master node: `hostname`"
-echo "Current directory: `pwd`"
+echo "Time: $(date)"
+echo "Running on master node: $(hostname)"
+echo "Current directory: $(pwd)"
 
 source ~/.proteus_profile
-mpirun -np 224 proteus-opt --distributed-mesh -t -r 1 -i ~/proteus/examples/benchmark/diffusion_3D_32.i &> log.benchmark
+mpirun -np 224 proteus-opt --distributed-mesh -t -r 1 -i ~/proteus/examples/benchmark/diffusion_3D_32.i &>log.benchmark

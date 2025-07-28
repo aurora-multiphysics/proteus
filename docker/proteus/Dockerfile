@@ -1,0 +1,128 @@
+# Ignore warnings for not pinning versions in pip, apt-get install.
+# hadolint global ignore=DL3008,DL3013
+
+# To build the Docker container, run the following lines from your proteus root directory:
+# cd docker
+# docker build --rm -t proteus:latest .
+
+# Use Ubuntu as the base image
+FROM ubuntu:24.04
+
+# By default, build without code coverage flags
+ARG coverage=false
+# By default checkout main branch from aurora-multiphysics/proteus
+ARG build_git_sha=main
+ARG build_git_repo=aurora-multiphysics/proteus
+
+# Set environment variables
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=Etc/UTC
+ENV PROTEUS_DIR=/opt/proteus
+ENV MOOSE_DIR=/opt/moose
+ENV MOOSE_JOBS=4
+
+# Update and install dependencies
+RUN apt-get update && \
+        apt-get install -y --no-install-recommends \
+        build-essential \
+        bison \
+        flex \
+        clang-format \
+        clang-tidy \
+        cmake \
+        curl \
+        doxygen \
+        gfortran \
+        git \
+        graphviz \
+        ninja-build \
+        pre-commit \
+        python3-deepdiff \
+        python3-jinja2 \
+        python3-livereload \
+        python3-pandas \
+        python3-pybtex \
+        python3-pylatexenc \
+        python3-xmltodict \
+        python-is-python3 \
+        libboost-all-dev \
+        libfontconfig1-dev \
+        libglew-dev \
+        libglm-dev \
+        libhdf5-openmpi-dev \
+        libnetcdf-dev \
+        libsdl2-dev \
+        libtirpc-dev \
+        rsync \
+        xxd && \
+    rm -rf /var/lib/apt/lists/* && \
+    # Set up the Proteus profile
+    echo "export CC=mpicc" > /root/.proteus_profile && \
+    echo "export CXX=mpicxx" >> /root/.proteus_profile && \
+    echo "export F90=mpif90" >> /root/.proteus_profile && \
+    echo "export F77=mpif77" >> /root/.proteus_profile && \
+    echo "export FC=mpif90" >> /root/.proteus_profile && \
+    echo "export MOOSE_DIR=$MOOSE_DIR" >> /root/.proteus_profile && \
+    echo "export PATH=\$PATH:$PROTEUS_DIR" >> /root/.proteus_profile && \
+    . /root/.proteus_profile
+
+# Increase git buffer size and clone MOOSE repository
+RUN git config --global http.postBuffer 524288000 && \
+    git config --global http.lowSpeedLimit 0 && \
+    git config --global http.lowSpeedTime 999999 && \
+    git clone --depth 1 https://github.com/idaholab/moose.git $MOOSE_DIR || \
+    { echo "Retrying..."; sleep 5; git clone --depth 1 https://github.com/idaholab/moose.git $MOOSE_DIR; }
+
+# Build PETSc
+WORKDIR /$MOOSE_DIR
+RUN unset PETSC_DIR PETSC_ARCH && \
+        ./scripts/update_and_rebuild_petsc.sh \
+        --CXXOPTFLAGS="-O3 -march=native" \
+        --COPTFLAGS="-O3 -march=native" \
+        --FOPTFLAGS="-O3 -march=native"
+
+# Build libMesh
+WORKDIR /$MOOSE_DIR
+RUN ./scripts/update_and_rebuild_libmesh.sh --with-mpi
+
+# Build WASP
+WORKDIR /$MOOSE_DIR
+RUN ./scripts/update_and_rebuild_wasp.sh
+
+# Configure AD
+WORKDIR /$MOOSE_DIR
+RUN ./configure --with-derivative-size=81
+
+# Copy Proteus source code
+WORKDIR /$PROTEUS_DIR/../
+RUN git clone https://github.com/$build_git_repo
+WORKDIR /$PROTEUS_DIR
+RUN git checkout $build_git_sha
+
+# Build Proteus
+WORKDIR /$PROTEUS_DIR
+RUN make -j$MOOSE_JOBS coverage=$coverage
+
+# Build Proteus docs
+WORKDIR /$PROTEUS_DIR
+RUN doxygen doc/content/doxygen/Doxyfile
+WORKDIR /$PROTEUS_DIR/doc
+RUN ./moosedocs.py build
+
+# Test Proteus regression tests
+WORKDIR /$PROTEUS_DIR
+RUN make test
+
+# Build Proteus unit tests
+WORKDIR /$PROTEUS_DIR/unit
+RUN make -j$MOOSE_JOBS
+
+# Test Proteus unit tests
+WORKDIR /$PROTEUS_DIR/unit
+RUN make test
+
+# Set working directory
+WORKDIR /$PROTEUS_DIR
+
+# Set entrypoint
+ENTRYPOINT ["/bin/bash"]

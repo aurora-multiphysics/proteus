@@ -20,4 +20,4 @@ jobs:
     - name: Ubuntu based build
       run: ./scripts/install_ubuntu.sh
     - name: Source Proteus profile and run tests
-      run: source $HOME/.proteus_profile; ./run_tests
+      run: source "$HOME/.proteus_profile"; ./run_tests

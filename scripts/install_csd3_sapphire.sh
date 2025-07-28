@@ -9,7 +9,7 @@
 # Use the installation by typing:
 #   source $HOME/.proteus_profile
 
-export PROTEUS_DIR=`pwd`
+export PROTEUS_DIR=$(pwd)
 
 # Make Proteus profile
 
