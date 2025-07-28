@@ -115,7 +115,7 @@ RUN make test
 
 # Build Proteus unit tests
 WORKDIR /$PROTEUS_DIR/unit
-RUN make -j$compile_cores
+RUN make -j$MOOSE_JOBS
 
 # Test Proteus unit tests
 WORKDIR /$PROTEUS_DIR/unit
