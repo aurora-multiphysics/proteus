@@ -29,7 +29,7 @@ jobs:
                           --build-arg build_git_sha="${PRCOMMITSHA:-$GITHUB_SHA}" \
                           --build-arg build_git_repo="${PRREPOSITORY:-$GITHUB_REPOSITORY}" \
                           --build-arg coverage=true \
-                          docker/
+                          docker/proteus
       - name: UploadCoverage
         run: |
           ci_env=$(bash <(curl -s https://codecov.io/env))

@@ -3,16 +3,10 @@
 
 # To build the Docker container, run the following lines from your proteus root directory:
 # cd docker
-# docker build --rm -t proteus:latest .
+# docker build --rm -t proteus-deps:latest .
 
 # Use Ubuntu as the base image
 FROM ubuntu:24.04
-
-# By default, build without code coverage flags
-ARG coverage=false
-# By default checkout main branch from aurora-multiphysics/proteus
-ARG build_git_sha=main
-ARG build_git_repo=aurora-multiphysics/proteus
 
 # Set environment variables
 ENV DEBIAN_FRONTEND=noninteractive
@@ -93,36 +87,38 @@ RUN ./scripts/update_and_rebuild_wasp.sh
 WORKDIR /$MOOSE_DIR
 RUN ./configure --with-derivative-size=81
 
-# Copy Proteus source code
-WORKDIR /$PROTEUS_DIR/../
-RUN git clone https://github.com/$build_git_repo
-WORKDIR /$PROTEUS_DIR
-RUN git checkout $build_git_sha
+# Build MOOSE
+WORKDIR /$MOOSE_DIR/framework
+RUN METHOD=opt make -j$MOOSE_JOBS
 
-# Build Proteus
-WORKDIR /$PROTEUS_DIR
-RUN make -j$MOOSE_JOBS coverage=$coverage
+# Build MOOSE tests 
+WORKDIR /$MOOSE_DIR/test
+RUN METHOD=opt make -j$MOOSE_JOBS
 
-# Build Proteus docs
-WORKDIR /$PROTEUS_DIR
-RUN doxygen doc/content/doxygen/Doxyfile
-WORKDIR /$PROTEUS_DIR/doc
-RUN ./moosedocs.py build
+# Build HEAT_TRANSFER module 
+WORKDIR /$MOOSE_DIR/modules/heat_transfer
+RUN METHOD=opt make -j$MOOSE_JOBS
 
-# Test Proteus regression tests
-WORKDIR /$PROTEUS_DIR
-RUN make test
+# Build SOLID_MECHANICS module 
+WORKDIR /$MOOSE_DIR/modules/solid_mechanics
+RUN METHOD=opt make -j$MOOSE_JOBS
 
-# Build Proteus unit tests
-WORKDIR /$PROTEUS_DIR/unit
-RUN make -j$compile_cores
+# Build CONTACT module 
+WORKDIR /$MOOSE_DIR/modules/contact
+RUN METHOD=opt make -j$MOOSE_JOBS
 
-# Test Proteus unit tests
-WORKDIR /$PROTEUS_DIR/unit
-RUN make test
+# Build FLUID_PROPERTIES module 
+WORKDIR /$MOOSE_DIR/modules/fluid_properties
+RUN METHOD=opt make -j$MOOSE_JOBS
 
-# Set working directory
-WORKDIR /$PROTEUS_DIR
+# Build LEVEL_SET module 
+WORKDIR /$MOOSE_DIR/modules/level_set
+RUN METHOD=opt make -j$MOOSE_JOBS
 
-# Set entrypoint
-ENTRYPOINT ["/bin/bash"]
+# Build NAVIER_STOKES module 
+WORKDIR /$MOOSE_DIR/modules/navier_stokes
+RUN METHOD=opt make -j$MOOSE_JOBS
+
+# Build REACTOR module 
+WORKDIR /$MOOSE_DIR/modules/reactor
+RUN METHOD=opt make -j$MOOSE_JOBS

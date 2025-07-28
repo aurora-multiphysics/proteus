@@ -1,5 +1,4 @@
 # Proteus
-=======
 [![Documentation](https://github.com/aurora-multiphysics/proteus/actions/workflows/pages.yml/badge.svg?branch=main)](https://aurora-multiphysics.github.io/proteus/)
 ![lint](https://github.com/aurora-multiphysics/proteus/actions/workflows/lint.yml/badge.svg?branch=main)
 ![build](https://github.com/aurora-multiphysics/proteus/actions/workflows/main.yml/badge.svg?branch=main)
@@ -10,7 +9,6 @@ Proteus is a MOOSE based application for multiphysics simulation.
 It is focussed on fluid dynamics and its commonly coupled domains.
 
 ## Installation
-============
 
 ### Windows
 -------
@@ -82,7 +80,6 @@ docker build --rm -t proteus:latest .
 ```
 
 ## Contributors
-============
 
 Aleksander J. Dubas,
 UK Atomic Energy Authority

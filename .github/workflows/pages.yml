@@ -51,7 +51,7 @@ jobs:
              docker build -t ci-docs-ubuntu \
                           --build-arg build_git_sha="${PRCOMMITSHA:-$GITHUB_SHA}" \
                           --build-arg build_git_repo="${PRREPOSITORY:-$GITHUB_REPOSITORY}" \
-                          docker/
+                          docker/proteus
       - name: CopyStaticDocs
         run: |
              docker run --name doccontainer -d ci-docs-ubuntu 
