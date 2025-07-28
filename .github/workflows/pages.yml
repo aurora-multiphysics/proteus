@@ -38,7 +38,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: alexanderianblair/proteus:main          
+          images: ${{ secrets.DOCKER_USERNAME }}/proteus:main          
       # First check out the repository to get the docker file
       - name: Checkout
         uses: actions/checkout@v4
