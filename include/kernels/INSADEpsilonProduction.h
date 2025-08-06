@@ -22,5 +22,5 @@ public:
 
   const ADMaterialProperty<Real> & _mu_turb;
 
-  const ADReal & _C_eps1;
+  const Real & _C_eps1;
 };

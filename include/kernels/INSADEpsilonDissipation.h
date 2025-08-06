@@ -18,5 +18,5 @@ public:
 
   const ADMaterialProperty<Real> & _rho;
 
-  const ADReal & _C_eps2;
+  const Real & _C_eps2;
 };
