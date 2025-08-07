@@ -36,16 +36,22 @@ git clone https://github.com/idaholab/moose.git
 # Build PETSc
 
 cd $MOOSE_DIR
+git submodule update --init --recursive petsc
+cd petsc
+git checkout 95934b0d3930a39ae37491dd05d108b6eb525436
+git fetch
+git cherry-pick f2f920b56d7fa89d9d8b983964ab906256c400d9
+git cherry-pick d2d2d1ac090ea262ad2aa7184201b8dfcef2e718
+git cherry-pick 6cde835db1a70eda20dd10f907d8f17e178de56a
+git cherry-pick 45dc274169a9b1757f9ad531048926c0ae150c8c
+git cherry-pick 008f48a8bb105f7eabcdd8fe2609412f5c6c1729
+cd ..
 unset PETSC_DIR PETSC_ARCH
 ./scripts/update_and_rebuild_petsc.sh \
+--skip-submodule-update \
 --CXXOPTFLAGS="-O3 -march=native" \
 --COPTFLAGS="-O3 -march=native" \
---FOPTFLAGS="-O3 -march=native" \
---without-ptscotch --download-ptscotch=0 \
---without-scalapack --download-scalapack=0 \
---without-strumpack --download-strumpack=0 \
---without-mumps --download-mumps=0 \
---without-superlu_dist --download-super_dist=0 | tee $PROTEUS_DIR/log.petsc_build
+--FOPTFLAGS="-O3 -march=native" | tee $PROTEUS_DIR/log.petsc_build
 
 # Build libMesh
 
