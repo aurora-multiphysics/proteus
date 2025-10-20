@@ -2,29 +2,25 @@
 
 registerMooseObject("ProteusApp", INSADEpsilonDissipation);
 
-InputParameters
-INSADEpsilonDissipation::validParams()
-{
+InputParameters INSADEpsilonDissipation::validParams() {
   InputParameters params = ADKernelValue::validParams();
-  params.addClassDescription("This class computes the residual and Jacobian contributions for "
-			     "turbulent dissipation rate dissipation.");
+  params.addClassDescription(
+      "This class computes the residual and Jacobian contributions for "
+      "turbulent dissipation rate dissipation.");
   params.addRequiredCoupledVar("k", "Turbulent kinetic energy variable");
-  params.addParam<MaterialPropertyName>("rho_name", "rho", "The name of the density");
+  params.addParam<MaterialPropertyName>("rho_name", "rho",
+                                        "The name of the density");
   params.addParam<Real>("C_eps2", 1.92, "C_epsilon2");
   return params;
 }
 
-INSADEpsilonDissipation::INSADEpsilonDissipation(const InputParameters & parameters)
-  : ADKernelValue(parameters),
-    _k(adCoupledValue("k")),
-    _rho(getADMaterialProperty<Real>("rho_name")),
-    _C_eps2(getParam<Real>("C_eps2"))
-{
-}
+INSADEpsilonDissipation::INSADEpsilonDissipation(
+    const InputParameters &parameters)
+    : ADKernelValue(parameters), _k(adCoupledValue("k")),
+      _rho(getADMaterialProperty<Real>("rho_name")),
+      _C_eps2(getParam<Real>("C_eps2")) {}
 
-ADReal
-INSADEpsilonDissipation::precomputeQpResidual()
-{
+ADReal INSADEpsilonDissipation::precomputeQpResidual() {
   if (_k[_qp] <= 0) {
     return 0;
   }

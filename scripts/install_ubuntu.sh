@@ -9,11 +9,11 @@
 # Use the installation by typing:
 #   source $HOME/.proteus_profile
 
-export PROTEUS_DIR=`pwd`
+export PROTEUS_DIR=$(pwd)
 
 # If MOOSE_JOBS is unset, set to 1
 if [ -z $MOOSE_JOBS ]; then
-  export MOOSE_JOBS=1
+    export MOOSE_JOBS=1
 fi
 export METHODS="opt"
 
@@ -38,9 +38,9 @@ git clone https://github.com/idaholab/moose.git
 cd $MOOSE_DIR
 unset PETSC_DIR PETSC_ARCH
 ./scripts/update_and_rebuild_petsc.sh \
---CXXOPTFLAGS="-O3 -march=native" \
---COPTFLAGS="-O3 -march=native" \
---FOPTFLAGS="-O3 -march=native" | tee $PROTEUS_DIR/log.petsc_build
+    --CXXOPTFLAGS="-O3 -march=native" \
+    --COPTFLAGS="-O3 -march=native" \
+    --FOPTFLAGS="-O3 -march=native"
 
 # Build libMesh
 

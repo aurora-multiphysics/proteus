@@ -1,5 +1,5 @@
-#include "IRMINSADTauMaterial.h"
 #include "IRMINSADMaterial.h"
+#include "IRMINSADTauMaterial.h"
 
 registerMooseObject("ProteusApp", IRMINSADTauMaterial);
 

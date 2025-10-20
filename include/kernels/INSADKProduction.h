@@ -4,19 +4,18 @@
 
 class INSADKProduction;
 
-class INSADKProduction : public ADKernelValue
-{
+class INSADKProduction : public ADKernelValue {
 public:
   static InputParameters validParams();
 
-  INSADKProduction(const InputParameters & parameters);
+  INSADKProduction(const InputParameters &parameters);
 
- protected:
+protected:
   virtual ADReal precomputeQpResidual() override;
 
-  const ADVectorVariableGradient & _grad_velocity;
+  const ADVectorVariableGradient &_grad_velocity;
 
-  const ADMaterialProperty<Real> & _rho;
+  const ADMaterialProperty<Real> &_rho;
 
-  const ADMaterialProperty<Real> & _mu_turb;
+  const ADMaterialProperty<Real> &_mu_turb;
 };

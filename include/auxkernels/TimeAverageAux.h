@@ -4,17 +4,15 @@
 #include "MooseArray.h"
 #include "MooseTypes.h"
 
-class TimeAverageAux : public AuxKernel
-{
+class TimeAverageAux : public AuxKernel {
 public:
   static InputParameters validParams();
 
-  TimeAverageAux(const InputParameters & parameters);
+  TimeAverageAux(const InputParameters &parameters);
 
 protected:
   Real computeValue() override;
 
-  std::vector<const VariableValue*> _scalars;
-  std::vector<const VariableValue*> _scalars_old;
-
+  std::vector<const VariableValue *> _scalars;
+  std::vector<const VariableValue *> _scalars_old;
 };

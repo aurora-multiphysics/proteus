@@ -4,23 +4,22 @@
 
 class INSADEpsilonProduction;
 
-class INSADEpsilonProduction : public ADKernelValue
-{
+class INSADEpsilonProduction : public ADKernelValue {
 public:
   static InputParameters validParams();
 
-  INSADEpsilonProduction(const InputParameters & parameters);
+  INSADEpsilonProduction(const InputParameters &parameters);
 
- protected:
+protected:
   virtual ADReal precomputeQpResidual() override;
 
-  const ADVectorVariableGradient & _grad_velocity;
+  const ADVectorVariableGradient &_grad_velocity;
 
-  const ADVariableValue & _k;
+  const ADVariableValue &_k;
 
-  const ADMaterialProperty<Real> & _rho;
+  const ADMaterialProperty<Real> &_rho;
 
-  const ADMaterialProperty<Real> & _mu_turb;
+  const ADMaterialProperty<Real> &_mu_turb;
 
-  const Real & _C_eps1;
+  const ADReal &_C_eps1;
 };

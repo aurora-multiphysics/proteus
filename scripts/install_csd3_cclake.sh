@@ -9,7 +9,7 @@
 # Use the installation by typing:
 #   source $HOME/.proteus_profile
 
-export PROTEUS_DIR=`pwd`
+export PROTEUS_DIR=$(pwd)
 
 # Make Proteus profile
 
@@ -40,12 +40,12 @@ export MOOSE_JOBS=4
 cd $MOOSE_DIR
 unset PETSC_DIR PETSC_ARCH
 ./scripts/update_and_rebuild_petsc.sh \
-CC=$CC CXX=$CXX F90=$F90 F77=$F77 FC=$FC \
---CXXOPTFLAGS="-O3 -march=cascadelake -mtune=cascadelake" \
---COPTFLAGS="-O3 -march=cascadelake -mtune=cascadelake" \
---FOPTFLAGS="-O3 -march=cascadelake -mtune=cascadelake" \
---download-mumps=0 --download-superlu_dist=0 --with-64-bit-indices=1 \
---download-cmake
+    CC=$CC CXX=$CXX F90=$F90 F77=$F77 FC=$FC \
+    --CXXOPTFLAGS="-O3 -march=cascadelake -mtune=cascadelake" \
+    --COPTFLAGS="-O3 -march=cascadelake -mtune=cascadelake" \
+    --FOPTFLAGS="-O3 -march=cascadelake -mtune=cascadelake" \
+    --download-mumps=0 --download-superlu_dist=0 --with-64-bit-indices=1 \
+    --download-cmake
 
 # Build libMesh
 
