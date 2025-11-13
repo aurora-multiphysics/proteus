@@ -38,7 +38,8 @@ export MOOSE_JOBS=4 METHODS="opt"
 cd $MOOSE_DIR
 unset PETSC_DIR PETSC_ARCH
 ./scripts/update_and_rebuild_petsc.sh --download-cmake \
---download-kokkos=0 --download-kokkos-kernels=0 | tee $PROTEUS_DIR/log.petsc_build
+--download-kokkos=0 --download-kokkos-kernels=0 \
+--download-libceed=0 | tee $PROTEUS_DIR/log.petsc_build
 
 # Build libMesh
 
