@@ -1,39 +1,39 @@
 diff --git a/framework/src/variables/MooseVariableData.C b/framework/src/variables/MooseVariableData.C
-index 48d74988..8f8a76a2 100644
+index cc78d8d4..3032145c 100644
 --- a/framework/src/variables/MooseVariableData.C
 +++ b/framework/src/variables/MooseVariableData.C
-@@ -515,10 +515,10 @@ MooseVariableData<OutputType>::computeValuesInternal()
-         else if constexpr (is_second)
-           dest[qp].setZero(this->_count, LIBMESH_DIM * LIBMESH_DIM);
-         else
--          static_assert(Moose::always_false<OutputType, dest_array_type>, "Unsupported type");
-+          ;
+@@ -464,10 +464,10 @@ MooseVariableData<OutputType>::fill(DestinationType & dest,
+       else if constexpr (is_second)
+         dest[qp].setZero(this->_count, LIBMESH_DIM * LIBMESH_DIM);
+       else
+-        static_assert(Moose::always_false<OutputType, dest_array_type>, "Unsupported type");
++        ;
+     }
+     else
+-      static_assert(Moose::always_false<OutputType, dest_array_type>, "Unsupported type");
++      ;
+   };
+ 
+   // Accumulates a value
+@@ -480,7 +480,7 @@ MooseVariableData<OutputType>::fill(DestinationType & dest,
+       else if constexpr (is_gradient || is_second)
+         dest[qp].add_scaled(phi[i][qp], dof_values[i]);
+       else
+-        static_assert(Moose::always_false<OutputType, dest_array_type>, "Unsupported type");
++        ;
+     }
+     else if constexpr (is_eigen)
+     {
+@@ -496,10 +496,10 @@ MooseVariableData<OutputType>::fill(DestinationType & dest,
+             dest[qp].col(d++) += phi[i][qp](d1, d2) * dof_values[i];
        }
        else
 -        static_assert(Moose::always_false<OutputType, dest_array_type>, "Unsupported type");
 +        ;
-     };
+     }
+     else
+-      static_assert(Moose::always_false<OutputType, dest_array_type>, "Unsupported type");
++      ;
+   };
  
-     // Accumulates a value
-@@ -531,7 +531,7 @@ MooseVariableData<OutputType>::computeValuesInternal()
-         else if constexpr (is_gradient || is_second)
-           dest[qp].add_scaled(phi[i][qp], dof_values[i]);
-         else
--          static_assert(Moose::always_false<OutputType, dest_array_type>, "Unsupported type");
-+          ;
-       }
-       else if constexpr (is_eigen)
-       {
-@@ -547,10 +547,10 @@ MooseVariableData<OutputType>::computeValuesInternal()
-               dest[qp].col(d++) += phi[i][qp](d1, d2) * dof_values[i];
-         }
-         else
--          static_assert(Moose::always_false<OutputType, dest_array_type>, "Unsupported type");
-+          ;
-       }
-       else
--        static_assert(Moose::always_false<OutputType, dest_array_type>, "Unsupported type");
-+        ;
-     };
- 
-     dest.resize(nqp);
+   dest.resize(nqp);
