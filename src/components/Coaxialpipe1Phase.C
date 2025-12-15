@@ -1,0 +1,252 @@
+#include "CoaxialPipe1Phase.h"
+#include "Component1D.h"
+#include "FEProblemBase.h"
+#include "Factory.h"
+#include "InputParameters.h"
+#include "MooseError.h"
+#include "MooseTypes.h"
+#include "Registry.h"
+#include "THMProblem.h"
+#include <numeric>
+
+registerMooseObject("ProteusApp", CoaxialPipe1Phase);
+
+namespace
+{
+template<typename T>
+inline void
+copyParamFromParamWithGlobal(const std::string dst_name,
+                   const std::string src_name,
+                   const std::string global_src_name,
+                   InputParameters & dst_params,
+                   const InputParameters & src_params)
+{
+  if (!src_params.isParamSetByUser(src_name) && !src_params.isParamSetByUser(global_src_name))
+    mooseError("Either", src_name, " or ", global_src_name, " must be set.");
+
+  dst_params.set<T>(dst_name) = (src_params.isParamSetByUser(src_name))
+                                                    ? src_params.get<T>(src_name)
+                                                    : src_params.get<T>(global_src_name);
+}
+}
+
+InputParameters
+CoaxialPipe1Phase::validParams()
+{
+  InputParameters params = Component1D::validParams();
+
+  params.addParam<UserObjectName>("inner_fp", "Fluid property for inner pipe.");
+  params.addParam<std::vector<std::string>>("inner_closures", "Fluid property for inner pipe.");
+  params.addParam<FunctionName>("inner_initial_T", "Initial inner pipe temperature.");
+  params.addParam<FunctionName>("inner_initial_p", "Initial inner pipe pressure.");
+  params.addParam<FunctionName>("inner_initial_vel", "Initial inner pipe velocity.");
+
+  params.addParamNamesToGroup("inner_fp inner_closures inner_initial_T inner_initial_p "
+                              "inner_initial_vel", "inner");
+
+  params.addParam<UserObjectName>("outer_fp", "Fluid property for outer annulus.");
+  params.addParam<std::vector<std::string>>("outer_closures", "Fluid property for outer annulus.");
+  params.addParam<FunctionName>("outer_initial_T", "Initial inner pipe temperature.");
+  params.addParam<FunctionName>("outer_initial_p", "Initial inner pipe pressure.");
+  params.addParam<FunctionName>("outer_initial_vel", "Initial inner pipe velocity.");
+  params.addParamNamesToGroup("outer_fp outer_closures outer_initial_T outer_initial_p "
+                              "outer_initial_vel", "outer");
+
+  params.addRequiredParam<std::vector<std::string>>("tube_names", "Name of radial parts of solid tube.");
+  params.addRequiredParam<std::vector<Real>>("tube_widths", "Name of radial parts of solid tube.");
+  params.addRequiredParam<std::vector<UserObjectName>>("tube_materials", "Name of radial parts of solid tube.");
+  params.addRequiredParam<std::vector<unsigned int>>("tube_n_elems", "Name of radial parts of solid tube.");
+  params.addRequiredParam<std::vector<Real>>("tube_T_ref", "Reference temperature for tube materials.");
+  params.addParam<FunctionName>("tube_initial_T", "Initial tube temperature.");
+  params.addParamNamesToGroup("tube_names tube_widths tube_materials tube_n_elems tube_T_ref tube_initial_T", "tube");
+
+  params.addRequiredParam<std::vector<std::string>>("shell_names", "Name of radial parts of solid tube.");
+  params.addRequiredParam<std::vector<Real>>("shell_widths", "widths of radial parts of solid tube.");
+  params.addRequiredParam<std::vector<UserObjectName>>("shell_materials", "Materials in radial parts of solid tube.");
+  params.addRequiredParam<std::vector<unsigned int>>("shell_n_elems", "Number of radial elements in each part of solid tube.");
+  params.addRequiredParam<std::vector<Real>>("shell_T_ref", "Reference temperature for shell materials.");
+  params.addParam<FunctionName>("shell_initial_T", "Initial shell temperature.");
+  params.addParamNamesToGroup("shell_names shell_widths shell_materials shell_n_elems shell_T_ref shell_initial_T", "shell");
+
+  params.addRequiredParam<Real>("tube_inner_radius", "inner radius of tube");
+  params.addRequiredParam<Real>("shell_inner_radius", "inner radius of shell");
+
+  params.addParam<UserObjectName>("fp", "Global fluid properties. Overriden by inner_fp and outer_fp.");
+  params.addParam<std::vector<std::string>>("closures", "Global fluid closures. Overriden by inner_closure and outer_closure.");
+  params.addParam<FunctionName>("initial_T", "Global temperature initialisation");
+  params.addParam<FunctionName>("initial_p", "Global temperature initialisation");
+  params.addParam<FunctionName>("initial_vel", "Global temperature initialisation");
+
+  return params;
+}
+
+CoaxialPipe1Phase::CoaxialPipe1Phase(const InputParameters & params)
+ : Component(params)
+{
+  AddInnerPipe(params);
+  AddOuterAnnulus(params);
+  AddSolidTube(params);
+  AddSolidShell(params);
+  AddHeatTransferConnections(params);
+}
+
+void
+CoaxialPipe1Phase::AddInnerPipe(const InputParameters & params)
+{
+  const std::string class_name = "FlowChannel1Phase";
+  auto pipe_params = _factory.getValidParams(class_name);
+  pipe_params.set<THMProblem*>("_thm_problem") = &getTHMProblem();
+
+  copyParamFromParamWithGlobal<UserObjectName>("fp", "inner_fp", "fp", pipe_params, params);
+
+  copyParamFromParamWithGlobal<std::vector<std::string>>("closures", "inner_closures", "closures", pipe_params, params);
+
+  pipe_params.set<std::vector<unsigned int>>("n_elems") = params.get<std::vector<unsigned int>>("n_elems");
+  pipe_params.set<Point>("position") = params.get<Point>("position");
+  pipe_params.set<RealVectorValue>("orientation") = params.get<RealVectorValue>("orientation");
+  pipe_params.set<std::vector<Real>>("length") = params.get<std::vector<Real>>("length");
+
+  Real radius = params.get<Real>("tube_inner_radius");
+
+  auto area = pi*radius*radius;
+  pipe_params.set<FunctionName>("A") = CreateFunctionFromValue("inner_area", area);
+
+  auto d_h = 2*radius;
+  pipe_params.set<FunctionName>("D_h") = CreateFunctionFromValue("inner_dh", d_h);
+
+  copyParamFromParamWithGlobal<FunctionName>("initial_T", "inner_initial_T", "initial_T", pipe_params, params);
+  copyParamFromParamWithGlobal<FunctionName>("initial_p", "inner_initial_p", "initial_p", pipe_params, params);
+  copyParamFromParamWithGlobal<FunctionName>("initial_vel", "inner_initial_vel", "initial_vel", pipe_params, params);
+
+  getTHMProblem().addComponent(class_name, name() + "/inner", pipe_params);
+}
+
+void
+CoaxialPipe1Phase::AddOuterAnnulus(const InputParameters & params)
+{
+  const std::string class_name = "FlowChannel1Phase";
+  auto pipe_params = _factory.getValidParams(class_name);
+  pipe_params.set<THMProblem*>("_thm_problem") = &getTHMProblem();
+
+  copyParamFromParamWithGlobal<UserObjectName>("fp", "outer_fp", "fp", pipe_params, params);
+
+  copyParamFromParamWithGlobal<std::vector<std::string>>("closures", "outer_closures", "closures", pipe_params, params);
+
+  pipe_params.set<std::vector<unsigned int>>("n_elems") = params.get<std::vector<unsigned int>>("n_elems");
+  pipe_params.set<Point>("position") = params.get<Point>("position");
+  pipe_params.set<RealVectorValue>("orientation") = params.get<RealVectorValue>("orientation");
+  pipe_params.set<std::vector<Real>>("length") = params.get<std::vector<Real>>("length");
+
+  Real tube_radius = params.get<Real>("tube_inner_radius");
+  auto tube_widths = params.get<std::vector<Real>>("tube_widths");
+  Real inner_radius = tube_radius + std::accumulate(tube_widths.begin(), tube_widths.end(), 0.);
+  Real outer_radius = params.get<Real>("shell_inner_radius");
+
+  auto area = pi*(outer_radius*outer_radius - inner_radius*inner_radius);
+  pipe_params.set<FunctionName>("A") = CreateFunctionFromValue("outer_area", area);
+
+  auto d_h = 2*(outer_radius - inner_radius);
+  pipe_params.set<FunctionName>("D_h") = CreateFunctionFromValue("outer_dh", d_h);
+
+  copyParamFromParamWithGlobal<FunctionName>("initial_T", "outer_initial_T", "initial_T", pipe_params, params);
+  copyParamFromParamWithGlobal<FunctionName>("initial_p", "outer_initial_p", "initial_p", pipe_params, params);
+  copyParamFromParamWithGlobal<FunctionName>("initial_vel", "outer_initial_vel", "initial_vel", pipe_params, params);
+
+  getTHMProblem().addComponent(class_name, name() + "/outer", pipe_params);
+}
+
+void
+CoaxialPipe1Phase::AddSolidTube(const InputParameters & params)
+{
+  const std::string class_name = "HeatStructureCylindrical";
+  auto tube_params = _factory.getValidParams(class_name);
+  tube_params.set<THMProblem*>("_thm_problem") = &getTHMProblem();
+
+  tube_params.set<std::vector<std::string>>("names") = params.get<std::vector<std::string>>("tube_names");
+  tube_params.set<std::vector<Real>>("widths") = params.get<std::vector<Real>>("tube_widths");
+  tube_params.set<std::vector<UserObjectName>>("solid_properties") = params.get<std::vector<UserObjectName>>("tube_materials");
+  tube_params.set<std::vector<unsigned int>>("n_part_elems") = params.get<std::vector<unsigned int>>("tube_n_elems");
+  tube_params.set<std::vector<Real>>("solid_properties_T_ref") = params.get<std::vector<Real>>("tube_T_ref");
+
+  tube_params.set<Real>("inner_radius") = params.get<Real>("tube_inner_radius");
+
+  tube_params.set<std::vector<unsigned int>>("n_elems") = params.get<std::vector<unsigned int>>("n_elems");
+  tube_params.set<Point>("position") = params.get<Point>("position");
+  tube_params.set<RealVectorValue>("orientation") = params.get<RealVectorValue>("orientation");
+  tube_params.set<std::vector<Real>>("length") = params.get<std::vector<Real>>("length");
+
+  copyParamFromParamWithGlobal<FunctionName>("initial_T", "tube_initial_T", "initial_T", tube_params, params);
+
+  getTHMProblem().addComponent(class_name, name() + "/tube", tube_params);
+
+}
+
+void
+CoaxialPipe1Phase::AddSolidShell(const InputParameters & params)
+{
+  const std::string class_name = "HeatStructureCylindrical";
+  auto tube_params = _factory.getValidParams(class_name);
+  tube_params.set<THMProblem*>("_thm_problem") = &getTHMProblem();
+
+  tube_params.set<std::vector<std::string>>("names") = params.get<std::vector<std::string>>("shell_names");
+  tube_params.set<std::vector<Real>>("widths") = params.get<std::vector<Real>>("shell_widths");
+  tube_params.set<std::vector<UserObjectName>>("solid_properties") = params.get<std::vector<UserObjectName>>("shell_materials");
+  tube_params.set<std::vector<unsigned int>>("n_part_elems") = params.get<std::vector<unsigned int>>("shell_n_elems");
+  tube_params.set<std::vector<Real>>("solid_properties_T_ref") = params.get<std::vector<Real>>("shell_T_ref");
+
+  tube_params.set<Real>("inner_radius") = params.get<Real>("shell_inner_radius");
+
+  tube_params.set<std::vector<unsigned int>>("n_elems") = params.get<std::vector<unsigned int>>("n_elems");
+  tube_params.set<Point>("position") = params.get<Point>("position");
+  tube_params.set<RealVectorValue>("orientation") = params.get<RealVectorValue>("orientation");
+  tube_params.set<std::vector<Real>>("length") = params.get<std::vector<Real>>("length");
+
+  copyParamFromParamWithGlobal<FunctionName>("initial_T", "shell_initial_T", "initial_T", tube_params, params);
+
+  getTHMProblem().addComponent(class_name, name() + "/shell", tube_params);
+
+}
+
+void CoaxialPipe1Phase::AddHeatTransferConnections(const InputParameters & params)
+{
+  const std::string class_name = "HeatTransferFromHeatStructure1Phase";
+
+  auto ht_params_inner = _factory.getValidParams(class_name);
+  ht_params_inner.set<THMProblem*>("_thm_problem") = &getTHMProblem();
+
+  ht_params_inner.set<std::string>("flow_channel") = name() + "/inner";
+  ht_params_inner.set<std::string>("hs") = name() + "/tube";
+  ht_params_inner.set<MooseEnum>("hs_side") = "INNER";
+
+  auto func_params = _factory.getValidParams("ConstantFunction");
+  func_params.set<Real>("value") = 2.*pi*params.get<Real>("tube_inner_radius");
+  getTHMProblem().addFunction("ConstantFunction", name()+"_inner_P_hf", func_params);
+
+  ht_params_inner.set<FunctionName>("P_hf") = CreateFunctionFromValue("inner_p_hf", 2.*pi*params.get<Real>("tube_inner_radius"));
+
+  getTHMProblem().addComponent(class_name, name() + "inner_hs", ht_params_inner);
+
+  auto ht_params_outer = _factory.getValidParams(class_name);
+  ht_params_outer.set<THMProblem*>("_thm_problem") = &getTHMProblem();
+
+  ht_params_outer.set<std::string>("flow_channel") = name() + "/outer";
+  ht_params_outer.set<std::string>("hs") = name() + "/tube";
+  ht_params_outer.set<MooseEnum>("hs_side") = "OUTER";
+
+  auto tube_widths = params.get<std::vector<Real>>("tube_widths");
+  Real outer_radius = params.get<Real>("tube_inner_radius")
+                      + std::accumulate(tube_widths.begin(), tube_widths.end(), 0.);
+
+  ht_params_outer.set<FunctionName>("P_hf") = CreateFunctionFromValue("outer_p_hf", 2.*pi*outer_radius);
+  getTHMProblem().addComponent(class_name, name() + "outer_hs", ht_params_outer);
+}
+
+FunctionName CoaxialPipe1Phase::CreateFunctionFromValue(const std::string & suffix, const Real value)
+{
+  auto func_params = _factory.getValidParams("ConstantFunction");
+  func_params.set<Real>("value") = value;
+
+  auto func_name = name() + "_" + suffix;
+  getTHMProblem().addFunction("ConstantFunction", func_name, func_params);
+  return func_name;
+}
