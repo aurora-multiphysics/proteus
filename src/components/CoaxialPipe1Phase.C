@@ -13,6 +13,8 @@ registerMooseObject("ProteusApp", CoaxialPipe1Phase);
 
 namespace
 {
+// Function that copies parameters depending on whether the
+// local parameter or global parameter is specified
 template<typename T>
 inline void
 copyParamFromParamWithGlobal(const std::string dst_name,
@@ -33,8 +35,10 @@ copyParamFromParamWithGlobal(const std::string dst_name,
 InputParameters
 CoaxialPipe1Phase::validParams()
 {
+  // add basic parameters such n_elems, position, etc.
   InputParameters params = Component1D::validParams();
 
+  // add paramters for the inner pipe
   params.addParam<UserObjectName>("inner_fp", "Fluid property for inner pipe.");
   params.addParam<std::vector<std::string>>("inner_closures", "Fluid property for inner pipe.");
   params.addParam<FunctionName>("inner_initial_T", "Initial inner pipe temperature.");
@@ -44,6 +48,7 @@ CoaxialPipe1Phase::validParams()
   params.addParamNamesToGroup("inner_fp inner_closures inner_initial_T inner_initial_p "
                               "inner_initial_vel", "inner");
 
+  // add parameters for the outer annulus
   params.addParam<UserObjectName>("outer_fp", "Fluid property for outer annulus.");
   params.addParam<std::vector<std::string>>("outer_closures", "Fluid property for outer annulus.");
   params.addParam<FunctionName>("outer_initial_T", "Initial inner pipe temperature.");
@@ -52,30 +57,33 @@ CoaxialPipe1Phase::validParams()
   params.addParamNamesToGroup("outer_fp outer_closures outer_initial_T outer_initial_p "
                               "outer_initial_vel", "outer");
 
+  // Add parameters for the solid tube
   params.addRequiredParam<std::vector<std::string>>("tube_names", "Name of radial parts of solid tube.");
   params.addRequiredParam<std::vector<Real>>("tube_widths", "Name of radial parts of solid tube.");
   params.addRequiredParam<std::vector<UserObjectName>>("tube_materials", "Name of radial parts of solid tube.");
   params.addRequiredParam<std::vector<unsigned int>>("tube_n_elems", "Name of radial parts of solid tube.");
   params.addRequiredParam<std::vector<Real>>("tube_T_ref", "Reference temperature for tube materials.");
   params.addParam<FunctionName>("tube_initial_T", "Initial tube temperature.");
-  params.addParamNamesToGroup("tube_names tube_widths tube_materials tube_n_elems tube_T_ref tube_initial_T", "tube");
+  params.addRequiredParam<Real>("tube_inner_radius", "inner radius of tube");
+  params.addParamNamesToGroup("tube_names tube_widths tube_materials tube_n_elems tube_T_ref tube_initial_T tube_inner_radius", "tube");
 
+  // Add parameters for the solid shell
   params.addRequiredParam<std::vector<std::string>>("shell_names", "Name of radial parts of solid tube.");
   params.addRequiredParam<std::vector<Real>>("shell_widths", "widths of radial parts of solid tube.");
   params.addRequiredParam<std::vector<UserObjectName>>("shell_materials", "Materials in radial parts of solid tube.");
   params.addRequiredParam<std::vector<unsigned int>>("shell_n_elems", "Number of radial elements in each part of solid tube.");
   params.addRequiredParam<std::vector<Real>>("shell_T_ref", "Reference temperature for shell materials.");
   params.addParam<FunctionName>("shell_initial_T", "Initial shell temperature.");
-  params.addParamNamesToGroup("shell_names shell_widths shell_materials shell_n_elems shell_T_ref shell_initial_T", "shell");
-
-  params.addRequiredParam<Real>("tube_inner_radius", "inner radius of tube");
   params.addRequiredParam<Real>("shell_inner_radius", "inner radius of shell");
+  params.addParamNamesToGroup("shell_names shell_widths shell_materials shell_n_elems shell_T_ref shell_initial_T shell_inner_radius", "shell");
+
 
   params.addParam<UserObjectName>("fp", "Global fluid properties. Overriden by inner_fp and outer_fp.");
   params.addParam<std::vector<std::string>>("closures", "Global fluid closures. Overriden by inner_closure and outer_closure.");
   params.addParam<FunctionName>("initial_T", "Global temperature initialisation");
-  params.addParam<FunctionName>("initial_p", "Global temperature initialisation");
-  params.addParam<FunctionName>("initial_vel", "Global temperature initialisation");
+  params.addParam<FunctionName>("initial_p", "Global pressure initialisation");
+  params.addParam<FunctionName>("initial_vel", "Global velocity initialisation");
+  params.addParamNamesToGroup("fp closures initial_T initial_p initial_vel", "global");
 
   return params;
 }
