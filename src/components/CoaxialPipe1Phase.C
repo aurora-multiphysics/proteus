@@ -77,7 +77,7 @@ CoaxialPipe1Phase::validParams()
   params.addRequiredParam<Real>("shell_inner_radius", "inner radius of shell");
   params.addParamNamesToGroup("shell_names shell_widths shell_materials shell_n_elems shell_T_ref shell_initial_T shell_inner_radius", "shell");
 
-
+    // Add global parameter options
   params.addParam<UserObjectName>("fp", "Global fluid properties. Overriden by inner_fp and outer_fp.");
   params.addParam<std::vector<std::string>>("closures", "Global fluid closures. Overriden by inner_closure and outer_closure.");
   params.addParam<FunctionName>("initial_T", "Global temperature initialisation");
@@ -91,11 +91,13 @@ CoaxialPipe1Phase::validParams()
 CoaxialPipe1Phase::CoaxialPipe1Phase(const InputParameters & params)
  : Component(params)
 {
+  // Add components
   AddInnerPipe(params);
   AddOuterAnnulus(params);
   AddSolidTube(params);
   AddSolidShell(params);
 
+  // Add connections between fluid and solid
   AddHeatTransferConnection(params, "inner", "tube", "INNER", params.get<Real>("tube_inner_radius"));
 
   auto tube_widths = params.get<std::vector<Real>>("tube_widths");
@@ -242,7 +244,8 @@ CoaxialPipe1Phase::AddHeatTransferConnection(const InputParameters & params,
   getTHMProblem().addComponent(class_name, name() + "_" + flow_channel + "_" + hs, ht_params);
 }
 
-FunctionName CoaxialPipe1Phase::CreateFunctionFromValue(const std::string & suffix, const Real value)
+FunctionName
+CoaxialPipe1Phase::CreateFunctionFromValue(const std::string & suffix, const Real value)
 {
   auto func_params = _factory.getValidParams("ConstantFunction");
   func_params.set<Real>("value") = value;
