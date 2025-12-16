@@ -8,7 +8,7 @@ class TestCoaxialPipe(unittest.TestCase):
     def test_energy_balance(self):
         """Compares energy increase in pipes to heat flux input on shell exterior."""
 
-        _, t_inner, t_outer, _, q = np.loadtxt("energy_balance_out.csv",
+        _, t_inner, t_outer, q = np.loadtxt("energy_balance_out.csv",
                                                skiprows=2,
                                                delimiter=',',
                                                unpack=True)[:,-1]

@@ -1,77 +1,56 @@
-T_c = ${fparse 50 + 273.15} # Cold inlet temperature in annulus
+# Energy balance test
+# ===================
+#
+# Apply 10 kW/m^2 to outer surface of the
+# shell and check the increase in temperature at the fluid outlets
 
+T_in = ${fparse 50 + 273.15} # Cold inlet temperature in annulus
 mdot = 0.1 # nominal mass flow rate for primary
 press = 1e5 # operating pressure
 
 L = 1. # length of pipe
 
+qw = 1e4
 
 
 [GlobalParams]
   initial_p = ${press}
-  initial_vel = 2
   closures = thm_closures
-  verbose = true
+  initial_T = ${T_in}
+  fp = fluid
 []
 
-# properties come from https://www-pub.iaea.org/MTCD/Publications/PDF/IAEA-THPH_web.pdf
-# Taking average of properties at 6MPa and 8MPa
 [FluidProperties]
-  [he]
+  [fluid] # mimic of water
     type = SimpleFluidProperties
   []
 []
 
 [SolidProperties]
-  [steel]
+  [adamantium] # fake solid material that ensures solid heats quickly
     type = ThermalFunctionSolidProperties
     cp = 40
     k = 50
     rho = 100
   []
 []
+
 [Closures] # defines friction factors and heat transfer coefficients
   [thm_closures]
     type = Closures1PhaseTHM # default Churchill friction factor, DB HTC
   []
 []
 
-[Functions]
-  [k_eff_tube]
-    type = PiecewiseLinear
-    x = '273.15 ${fparse 273.15+150} ${fparse 273.15+250} ${fparse 273.15+350} ${fparse 273.15+450} ${fparse 273.15+550} ${fparse 273.15+650} ${fparse 273.15+1000}'
-    y = '0.32 0.32 0.36 0.41 0.45 0.50 0.54 0.54'
-    extrap = false # We could get this to extrapolate
-  []
-  [k_fiberfrax]
-    type = PiecewiseLinear
-    x = '273.15 ${fparse 273.15+600} ${fparse 273.15+800} ${fparse 273.15+1000}'
-    y = '0.11 0.11 0.16 0.21'
-    extrap = false # We could get this to extrapolate
-  []
-  [k_prorox]
-    type = PiecewiseLinear
-    x = '273.15 ${fparse 273.15+50} ${fparse 273.15+200} ${fparse 273.15+400} ${fparse 273.15+640}'
-    y = '0.039 0.039 0.062 0.112 0.213'
-  []
-[]
-
 [Components]
   [inlet_inner]
       type = InletMassFlowRateTemperature1Phase
-      T = ${T_c}
+      T = ${T_in}
       m_dot = ${mdot}
       input = coaxial/inner:in
   []
-
-  [outlet_inner]
-      type =Outlet1Phase
-      input = coaxial/inner:out
-      p = ${press}
-  []
   [inlet_outer]
       type = InletMassFlowRateTemperature1Phase
-      T = ${T_c}
+      T = ${T_in}
       m_dot = ${mdot}
       input = coaxial/outer:in
   []
@@ -82,45 +61,40 @@ L = 1. # length of pipe
     orientation = '1 0 0'
     position = '0 0 0'
     shell_inner_radius = 0.075
-    shell_materials = 'steel'
+    shell_materials = 'adamantium'
     shell_n_elems = '10'
     shell_names = 'shell'
     shell_widths = '0.025'
-    shell_T_ref = '${T_c}'
-    tube_T_ref = ${T_c}
+    shell_T_ref = '${T_in}'
+    tube_T_ref = ${T_in}
     tube_inner_radius = 0.025
-    tube_materials = 'steel'
+    tube_materials = 'adamantium'
     tube_n_elems = '10'
     tube_names = 'tube'
     tube_widths = '0.025'
-    inner_fp = he
-    outer_fp = he
-    shell_initial_T = ${T_c}
-    tube_initial_T = ${T_c}
-    inner_initial_T = ${T_c}
-    outer_initial_T = ${T_c}
+    inner_initial_vel = 0.02
+    outer_initial_vel = 0.05
   []
   [outlet_outer]
     type =Outlet1Phase
     input = coaxial/outer:out
     p = ${press}
   []
-  [convection]
+  [outlet_inner]
+      type =Outlet1Phase
+      input = coaxial/inner:out
+      p = ${press}
+  []
+  [heat_flux]
     type = HSBoundaryHeatFlux
     boundary = coaxial/shell:outer
     hs = coaxial/shell
-    q = 1e4
+    q = ${qw}
   []
 []
 
 
 [Postprocessors]
-  [T_wall]
-    type = NodalExtremeValue
-    variable = 'T_solid'
-    block = 'coaxial/shell:shell'
-    value_type = min
-  []
   [T_outlet_outer]
     type = SideAverageValue
     boundary = coaxial/outer:out
@@ -162,11 +136,12 @@ L = 1. # length of pipe
 []
 
 [Outputs]
-  exodus = true
+  exodus = false
   csv = true
   [console]
     type = Console
     max_rows = 1
+    execute_postprocessors_on = final
     outlier_variable_norms = false
   []
   print_linear_residuals = false
