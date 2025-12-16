@@ -1,0 +1,16 @@
+[coaxial_pipe]
+  [energy_balance]
+    [run]
+      type = RunApp
+      input = energy_balance.i
+      min_parallel = 4
+      max_parallel = 4
+      requirement = "Checks energy balance for the coaxial pipe"
+    []
+    [test]
+      type= PythonUnitTest
+      input = test.py
+      test_case = TestCoaxialPipe.test_energy_balance
+    []
+  []
+[]
