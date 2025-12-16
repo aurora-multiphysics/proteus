@@ -87,7 +87,14 @@ CoaxialPipe1Phase::CoaxialPipe1Phase(const InputParameters & params)
   AddOuterAnnulus(params);
   AddSolidTube(params);
   AddSolidShell(params);
-  AddHeatTransferConnections(params);
+
+  AddHeatTransferConnection(params, "inner", "tube", "INNER", params.get<Real>("tube_inner_radius"));
+
+  auto tube_widths = params.get<std::vector<Real>>("tube_widths");
+  Real outer_radius = params.get<Real>("tube_inner_radius")
+                      + std::accumulate(tube_widths.begin(), tube_widths.end(), 0.);
+  AddHeatTransferConnection(params, "outer", "tube", "OUTER", outer_radius);
+  AddHeatTransferConnection(params, "outer", "shell", "INNER", params.get<Real>("shell_inner_radius"));
 }
 
 void
@@ -207,38 +214,24 @@ CoaxialPipe1Phase::AddSolidShell(const InputParameters & params)
 
 }
 
-void CoaxialPipe1Phase::AddHeatTransferConnections(const InputParameters & params)
+void
+CoaxialPipe1Phase::AddHeatTransferConnection(const InputParameters & params,
+                                            const std::string & flow_channel_suffix,
+                                            const std::string & hs_suffix,
+                                            const std::string & hs_side,
+                                            const Real radius)
 {
   const std::string class_name = "HeatTransferFromHeatStructure1Phase";
+  auto ht_params = _factory.getValidParams(class_name);
+  ht_params.set<THMProblem*>("_thm_problem") = &getTHMProblem();
 
-  auto ht_params_inner = _factory.getValidParams(class_name);
-  ht_params_inner.set<THMProblem*>("_thm_problem") = &getTHMProblem();
+  ht_params.set<std::string>("flow_channel") = name() + "/" + flow_channel_suffix;
+  ht_params.set<std::string>("hs") = name() + "/" + hs_suffix;
+  ht_params.set<MooseEnum>("hs_side") = hs_side;
 
-  ht_params_inner.set<std::string>("flow_channel") = name() + "/inner";
-  ht_params_inner.set<std::string>("hs") = name() + "/tube";
-  ht_params_inner.set<MooseEnum>("hs_side") = "INNER";
+  ht_params.set<FunctionName>("P_hf") = CreateFunctionFromValue(flow_channel_suffix + "_" + hs_suffix + "_p_hf", 2.*pi*radius);
 
-  auto func_params = _factory.getValidParams("ConstantFunction");
-  func_params.set<Real>("value") = 2.*pi*params.get<Real>("tube_inner_radius");
-  getTHMProblem().addFunction("ConstantFunction", name()+"_inner_P_hf", func_params);
-
-  ht_params_inner.set<FunctionName>("P_hf") = CreateFunctionFromValue("inner_p_hf", 2.*pi*params.get<Real>("tube_inner_radius"));
-
-  getTHMProblem().addComponent(class_name, name() + "inner_hs", ht_params_inner);
-
-  auto ht_params_outer = _factory.getValidParams(class_name);
-  ht_params_outer.set<THMProblem*>("_thm_problem") = &getTHMProblem();
-
-  ht_params_outer.set<std::string>("flow_channel") = name() + "/outer";
-  ht_params_outer.set<std::string>("hs") = name() + "/tube";
-  ht_params_outer.set<MooseEnum>("hs_side") = "OUTER";
-
-  auto tube_widths = params.get<std::vector<Real>>("tube_widths");
-  Real outer_radius = params.get<Real>("tube_inner_radius")
-                      + std::accumulate(tube_widths.begin(), tube_widths.end(), 0.);
-
-  ht_params_outer.set<FunctionName>("P_hf") = CreateFunctionFromValue("outer_p_hf", 2.*pi*outer_radius);
-  getTHMProblem().addComponent(class_name, name() + "outer_hs", ht_params_outer);
+  getTHMProblem().addComponent(class_name, name() + "_" + flow_channel_suffix + "_" + hs_suffix, ht_params);
 }
 
 FunctionName CoaxialPipe1Phase::CreateFunctionFromValue(const std::string & suffix, const Real value)

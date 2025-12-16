@@ -14,6 +14,10 @@ protected:
   void AddOuterAnnulus(const InputParameters & params);
   void AddSolidTube(const InputParameters & params);
   void AddSolidShell(const InputParameters & params);
-  void AddHeatTransferConnections(const InputParameters & params);
+  void AddHeatTransferConnection(const InputParameters & params,
+                                 const std::string & flow_channel_suffix,
+                                 const std::string & hs_suffix,
+                                 const std::string & hs_side,
+                                 const Real radius);
   FunctionName CreateFunctionFromValue(const std::string & suffix, const Real value);
 };
