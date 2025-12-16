@@ -17,12 +17,16 @@ qw = 1e4
   initial_p = ${press}
   closures = thm_closures
   initial_T = ${T_in}
-  fp = fluid
 []
 
 [FluidProperties]
   [fluid] # mimic of water
     type = SimpleFluidProperties
+    cv = 4000
+  []
+  [fluid2] # mimic of water
+    type = SimpleFluidProperties
+    cv = 2000
   []
 []
 

@@ -24,7 +24,7 @@ copyParamFromParamWithGlobal(const std::string dst_name,
                    const InputParameters & src_params)
 {
   if (!src_params.isParamSetByUser(src_name) && !src_params.isParamSetByUser(global_src_name))
-    mooseError("Either", src_name, " or ", global_src_name, " must be set.");
+    mooseError("Either ", src_name, " or ", global_src_name, " must be set.");
 
   dst_params.set<T>(dst_name) = (src_params.isParamSetByUser(src_name))
                                                     ? src_params.get<T>(src_name)

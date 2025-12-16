@@ -1,16 +1,40 @@
 [coaxial_pipe]
-  [energy_balance]
+  [fp_err]
+    type = RunException
+    input = energy_balance.i
+    min_parallel = 4
+    max_parallel = 4
+    requirement = "Checks that copyParamFromParamWithGlobal works properly"
+    expect_err = "Either inner_fp or fp must be set"
+  []
+  [energy_balance_global]
     [run]
       type = RunApp
       input = energy_balance.i
       min_parallel = 4
       max_parallel = 4
       requirement = "Checks energy balance for the coaxial pipe"
+      cli_args = "GlobalParams/fp=fluid"
     []
     [test]
       type= PythonUnitTest
       input = test.py
       test_case = TestCoaxialPipe.test_energy_balance
+    []
+  []
+  [energy_balance_local]
+    [run]
+      type = RunApp
+      input = energy_balance.i
+      min_parallel = 4
+      max_parallel = 4
+      requirement = "Checks that copyParamFromParamWithGlobal works properly"
+      cli_args = "GlobalParams/fp=fluid Components/coaxial/outer_fp=fluid2"
+    []
+    [test]
+      type= PythonUnitTest
+      input = test.py
+      test_case = TestCoaxialPipe.test_energy_balance_local
     []
   []
 []
