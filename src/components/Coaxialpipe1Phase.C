@@ -216,8 +216,8 @@ CoaxialPipe1Phase::AddSolidShell(const InputParameters & params)
 
 void
 CoaxialPipe1Phase::AddHeatTransferConnection(const InputParameters & params,
-                                            const std::string & flow_channel_suffix,
-                                            const std::string & hs_suffix,
+                                            const std::string & flow_channel,
+                                            const std::string & hs,
                                             const std::string & hs_side,
                                             const Real radius)
 {
@@ -225,13 +225,13 @@ CoaxialPipe1Phase::AddHeatTransferConnection(const InputParameters & params,
   auto ht_params = _factory.getValidParams(class_name);
   ht_params.set<THMProblem*>("_thm_problem") = &getTHMProblem();
 
-  ht_params.set<std::string>("flow_channel") = name() + "/" + flow_channel_suffix;
-  ht_params.set<std::string>("hs") = name() + "/" + hs_suffix;
+  ht_params.set<std::string>("flow_channel") = name() + "/" + flow_channel;
+  ht_params.set<std::string>("hs") = name() + "/" + hs;
   ht_params.set<MooseEnum>("hs_side") = hs_side;
 
-  ht_params.set<FunctionName>("P_hf") = CreateFunctionFromValue(flow_channel_suffix + "_" + hs_suffix + "_p_hf", 2.*pi*radius);
+  ht_params.set<FunctionName>("P_hf") = CreateFunctionFromValue(flow_channel + "_" + hs + "_p_hf", 2.*pi*radius);
 
-  getTHMProblem().addComponent(class_name, name() + "_" + flow_channel_suffix + "_" + hs_suffix, ht_params);
+  getTHMProblem().addComponent(class_name, name() + "_" + flow_channel + "_" + hs, ht_params);
 }
 
 FunctionName CoaxialPipe1Phase::CreateFunctionFromValue(const std::string & suffix, const Real value)

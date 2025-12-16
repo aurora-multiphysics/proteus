@@ -15,8 +15,8 @@ protected:
   void AddSolidTube(const InputParameters & params);
   void AddSolidShell(const InputParameters & params);
   void AddHeatTransferConnection(const InputParameters & params,
-                                 const std::string & flow_channel_suffix,
-                                 const std::string & hs_suffix,
+                                 const std::string & flow_channel,
+                                 const std::string & hs,
                                  const std::string & hs_side,
                                  const Real radius);
   FunctionName CreateFunctionFromValue(const std::string & suffix, const Real value);
