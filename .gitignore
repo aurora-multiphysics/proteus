@@ -91,6 +91,7 @@ temp_print_trace.*
 *.data
 *.processor.*
 .clang_complete
+.clangd
 .failed_tests
 failed-unittest
 compile_commands.json
