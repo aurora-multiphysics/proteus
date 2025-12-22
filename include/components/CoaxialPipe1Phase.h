@@ -22,8 +22,7 @@ protected:
   void AddSolidShell(const InputParameters &params);
 
   // Add solid-fluid connection based on component names
-  void AddHeatTransferConnection(const InputParameters &params,
-                                 const std::string &flow_channel,
+  void AddHeatTransferConnection(const std::string &flow_channel,
                                  const std::string &hs,
                                  const std::string &hs_side, const Real radius);
 

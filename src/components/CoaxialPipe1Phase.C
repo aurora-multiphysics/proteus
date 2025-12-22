@@ -129,15 +129,15 @@ CoaxialPipe1Phase::CoaxialPipe1Phase(const InputParameters &params)
   AddSolidShell(params);
 
   // Add connections between fluid and solid
-  AddHeatTransferConnection(params, "inner", "tube", "INNER",
+  AddHeatTransferConnection("inner", "tube", "INNER",
                             params.get<Real>("tube_inner_radius"));
 
   auto tube_widths = params.get<std::vector<Real>>("tube_widths");
   Real outer_radius =
       params.get<Real>("tube_inner_radius") +
       std::accumulate(tube_widths.begin(), tube_widths.end(), 0.);
-  AddHeatTransferConnection(params, "outer", "tube", "OUTER", outer_radius);
-  AddHeatTransferConnection(params, "outer", "shell", "INNER",
+  AddHeatTransferConnection("outer", "tube", "OUTER", outer_radius);
+  AddHeatTransferConnection("outer", "shell", "INNER",
                             params.get<Real>("shell_inner_radius"));
 }
 
@@ -289,8 +289,8 @@ void CoaxialPipe1Phase::AddSolidShell(const InputParameters &params) {
 }
 
 void CoaxialPipe1Phase::AddHeatTransferConnection(
-    const InputParameters &params, const std::string &flow_channel,
-    const std::string &hs, const std::string &hs_side, const Real radius) {
+    const std::string &flow_channel, const std::string &hs,
+    const std::string &hs_side, const Real radius) {
   const std::string class_name = "HeatTransferFromHeatStructure1Phase";
   auto ht_params = _factory.getValidParams(class_name);
   ht_params.set<THMProblem *>("_thm_problem") = &getTHMProblem();
