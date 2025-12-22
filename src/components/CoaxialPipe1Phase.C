@@ -109,7 +109,7 @@ InputParameters CoaxialPipe1Phase::validParams() {
   params.addParam<FunctionName>(
       "outer_tube_Hw", "Manually specified HTC for annular pipe to tube.");
   params.addParam<FunctionName>(
-      "outer_tube_Hw", "Manually specified HTC for annular pipe to shell.");
+      "outer_shell_Hw", "Manually specified HTC for annular pipe to shell.");
 
   // Add global parameter options
   params.addParam<UserObjectName>(
