@@ -103,6 +103,14 @@ InputParameters CoaxialPipe1Phase::validParams() {
       "shell_initial_T shell_inner_radius",
       "shell");
 
+  // heat transfer coefficients
+  params.addParam<FunctionName>(
+      "inner_tube_Hw", "Manually specified HTC for inner pipe to tube.");
+  params.addParam<FunctionName>(
+      "outer_tube_Hw", "Manually specified HTC for annular pipe to tube.");
+  params.addParam<FunctionName>(
+      "outer_tube_Hw", "Manually specified HTC for annular pipe to shell.");
+
   // Add global parameter options
   params.addParam<UserObjectName>(
       "fp", "Global fluid properties. Overriden by inner_fp and outer_fp.");
@@ -301,6 +309,11 @@ void CoaxialPipe1Phase::AddHeatTransferConnection(
 
   ht_params.set<FunctionName>("P_hf") = CreateFunctionFromValue(
       flow_channel + "_" + hs + "_p_hf", 2. * pi * radius);
+
+  std::string hw_param_key{flow_channel + "_" + hs + "_Hw"};
+  if (parameters().isParamSetByUser(hw_param_key))
+    ht_params.set<FunctionName>("Hw") =
+        parameters().get<FunctionName>(hw_param_key);
 
   getTHMProblem().addComponent(
       class_name, name() + "_" + flow_channel + "_" + hs, ht_params);
