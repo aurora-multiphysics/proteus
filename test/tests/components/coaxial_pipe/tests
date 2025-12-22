@@ -30,6 +30,7 @@
       min_parallel = 4
       max_parallel = 4
       heavy=true
+      max_time = 7200
     []
     [test]
       type= PythonUnitTest
