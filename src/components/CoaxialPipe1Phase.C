@@ -34,7 +34,15 @@ InputParameters CoaxialPipe1Phase::validParams() {
   // add basic parameters such n_elems, position, etc.
   InputParameters params = Component1D::validParams();
 
-  // add paramters for the inner pipe
+  params.addClassDescription(
+      "A 1D single-phase coaxial pipe. `inner' refers to the inner fluid pipe, "
+      "`tube' indicates the solid annulus between the inner and outer flow "
+      "channels, `outer' refers to the annular flow channel outside of the "
+      "tube, `shell' indicates the solid annulus on the outside of the outer "
+      "flow annulus. The boundary condition on the outside of the "
+      "`shell' should be specified using a `HSBoundary*' component.");
+
+  // add parameters for the inner pipe
   params.addParam<UserObjectName>("inner_fp", "Fluid property for inner pipe.");
   params.addParam<std::vector<std::string>>("inner_closures",
                                             "Fluid property for inner pipe.");
