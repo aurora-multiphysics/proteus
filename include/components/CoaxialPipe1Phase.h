@@ -1,4 +1,6 @@
-#include <Component1D.h>
+#pragma once
+
+#include <Component.h>
 #include <FlowChannel1Phase.h>
 #include <InputParameters.h>
 
