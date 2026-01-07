@@ -10,6 +10,30 @@
       test_case = TestCoaxialJunction.test_solid_continuity
       prereq = test_solid_connection/run
     []
+    [check_insufficient_connections]
+      type = RunException
+      input = junction_solid.i
+      cli_args = "Components/jct/coaxial_connections='coaxial1:out'"
+      expect_err = 'must have size 2'
+    []
+    [check_boundary]
+      type = RunException
+      input = junction_solid.i
+      cli_args = "Components/jct/coaxial_connections='coaxial1:out coaxial2:in1'"
+      expect_err = 'Boundary must be'
+    []
+    [check_no_inner]
+      type = RunException
+      input = junction_solid.i
+      cli_args = "Components/jct/connect_inner=false"
+      expect_err = "inner' does not have connected inlet."
+    []
+    [check_no_outer]
+      type = RunException
+      input = junction_solid.i
+      cli_args = "Components/jct/connect_outer=false"
+      expect_err = "outer' does not have connected inlet."
+    []
   []
   [test_fluid_connection]
     [run]
