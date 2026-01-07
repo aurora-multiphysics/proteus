@@ -7,6 +7,7 @@
 registerMooseObject("ProteusApp", CoaxialJunction1Phase);
 
 namespace {
+// Splits component name into component and boundary pair and checks validity
 inline std::pair<std::string, std::string>
 getComponentAndBoundary(const ComponentName &component) {
   auto it = component.rfind(":");
@@ -31,11 +32,13 @@ InputParameters CoaxialJunction1Phase::validParams() {
                              "<name>:in indicates start of the pipe, "
                              "<name>:out indicates the end of the pipe.");
 
+  // Passed to 2D coupler
   params.addRequiredParam<FunctionName>("tube_htc",
                                         "HTC used for coupling tube regions.");
   params.addRequiredParam<FunctionName>("shell_htc",
                                         "HTC used for coupling shell regions.");
 
+  // Allows other componenets such as pumps to be inserted instead
   params.addParam<bool>("connect_inner", true,
                         "Whether to connect inner pipe.");
   params.addParam<bool>("connect_outer", true,
@@ -73,6 +76,8 @@ void CoaxialJunction1Phase::ConnectSolidRegion(
   auto params = _factory.getValidParams(class_name);
   params.set<THMProblem *>("_thm_problem") = &getTHMProblem();
 
+  // The ends of the solid regions are called start and end rather than in and
+  // out
   auto boundary1 = (comp_boundary1.second == "in") ? "start" : "end";
   auto boundary2 = (comp_boundary2.second == "in") ? "start" : "end";
 
@@ -99,6 +104,8 @@ void CoaxialJunction1Phase::ConnectFlowRegion(const std::string &region_name,
   auto comp_boundary1 = getComponentAndBoundary(component1);
   auto comp_boundary2 = getComponentAndBoundary(component2);
 
+  // In the future, we could create a component to account for form
+  // loss due to geometry changes
   const std::string class_name = "JunctionOneToOne1Phase";
   auto params = _factory.getValidParams(class_name);
   params.set<THMProblem *>("_thm_problem") = &getTHMProblem();
