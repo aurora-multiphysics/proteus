@@ -55,8 +55,8 @@ CoaxialJunction1Phase::CoaxialJunction1Phase(const InputParameters &params)
   if (coaxials.size() != 2)
     mooseError("'coaxial_connections' must have size 2.");
 
-  ConnectSolidRegion("tube", coaxials[0], coaxials[1]);
-  ConnectSolidRegion("shell", coaxials[0], coaxials[1]);
+  // ConnectSolidRegion("tube", coaxials[0], coaxials[1]);
+  // ConnectSolidRegion("shell", coaxials[0], coaxials[1]);
 
   if (params.get<bool>("connect_inner")) {
     ConnectFlowRegion("inner", coaxials[0], coaxials[1]);

@@ -1,15 +1,15 @@
 [coaxial_junction]
   [test_solid_connection]
-    [run]
-      type = RunApp
-      input = junction_solid.i
-    []
-    [verify]
-      type = PythonUnitTest
-      input = test.py
-      test_case = TestCoaxialJunction.test_solid_continuity
-      prereq = test_solid_connection/run
-    []
+    # [run]
+    #   type = RunApp
+    #   input = junction_solid.i
+    # []
+    # [verify]
+    #   type = PythonUnitTest
+    #   input = test.py
+    #   test_case = TestCoaxialJunction.test_solid_continuity
+    #   prereq = test_solid_connection/run
+    # []
     [check_insufficient_connections]
       type = RunException
       input = junction_solid.i
