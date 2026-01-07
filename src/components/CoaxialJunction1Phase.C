@@ -1,7 +1,6 @@
 #include "CoaxialJunction1Phase.h"
 #include "Component.h"
 #include "InputParameters.h"
-#include "MooseError.h"
 #include "MooseTypes.h"
 #include "Registry.h"
 
