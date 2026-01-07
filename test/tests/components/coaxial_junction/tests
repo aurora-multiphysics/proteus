@@ -1,0 +1,26 @@
+[coaxial_junction]
+  [test_solid_connection]
+    [run]
+      type = RunApp
+      input = junction_solid.i
+    []
+    [verify]
+      type = PythonUnitTest
+      input = test.py
+      test_case = TestCoaxialJunction.test_solid_continuity
+      prereq = test_solid_connection/run
+    []
+  []
+  [test_fluid_connection]
+    [run]
+      type = RunApp
+      input = junction_fluid.i
+    []
+    [verify]
+      type = PythonUnitTest
+      input = test.py
+      test_case = TestCoaxialJunction.test_solid_continuity
+      prereq = test_fluid_connection/run
+    []
+  []
+[]

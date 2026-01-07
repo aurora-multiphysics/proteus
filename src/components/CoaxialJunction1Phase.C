@@ -3,6 +3,9 @@
 #include "InputParameters.h"
 #include "MooseError.h"
 #include "MooseTypes.h"
+#include "Registry.h"
+
+registerMooseObject("ProteusApp", CoaxialJunction1Phase);
 
 namespace {
 inline std::pair<std::string, std::string>
@@ -13,10 +16,10 @@ getComponentAndBoundary(const ComponentName &component) {
                "as <coaxial>:<boundary>.");
 
   auto comp = component.substr(0, it);
-  auto boundary = component.substr(it);
+  auto boundary = component.substr(it + 1);
 
   if (!(boundary == "in" || boundary == "out"))
-    mooseError("Boundary must be 'in' or 'out'.");
+    mooseError("Boundary must be 'in' or 'out', not '", boundary, "'.");
 
   return {comp, boundary};
 }
@@ -69,18 +72,19 @@ void CoaxialJunction1Phase::ConnectSolidRegion(
 
   const std::string class_name = "HeatStructure2DCoupler";
   auto params = _factory.getValidParams(class_name);
+  params.set<THMProblem *>("_thm_problem") = &getTHMProblem();
 
   auto boundary1 = (comp_boundary1.second == "in") ? "start" : "end";
   auto boundary2 = (comp_boundary2.second == "in") ? "start" : "end";
 
   params.set<std::string>("primary_heat_structure") =
       comp_boundary1.first + "/" + region_name;
-  params.set<std::string>("primary_boundary") =
+  params.set<BoundaryName>("primary_boundary") =
       comp_boundary1.first + "/" + region_name + ":" + boundary1;
 
   params.set<std::string>("secondary_heat_structure") =
-      comp_boundary1.first + "/" + region_name;
-  params.set<std::string>("secondary_boundary") =
+      comp_boundary2.first + "/" + region_name;
+  params.set<BoundaryName>("secondary_boundary") =
       comp_boundary2.first + "/" + region_name + ":" + boundary2;
 
   params.set<FunctionName>("heat_transfer_coefficient") =
@@ -98,6 +102,7 @@ void CoaxialJunction1Phase::ConnectFlowRegion(const std::string &region_name,
 
   const std::string class_name = "JunctionOneToOne1Phase";
   auto params = _factory.getValidParams(class_name);
+  params.set<THMProblem *>("_thm_problem") = &getTHMProblem();
 
   std::vector<BoundaryName> connections = {
       comp_boundary1.first + "/" + region_name + ":" + comp_boundary1.second,
