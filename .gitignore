@@ -91,10 +91,12 @@ temp_print_trace.*
 *.data
 *.processor.*
 .clang_complete
+.clangd
 .failed_tests
 failed-unittest
 compile_commands.json
 build
+*_cp
 
 # Allow certain files in gold directories
 !**/gold/*.e
