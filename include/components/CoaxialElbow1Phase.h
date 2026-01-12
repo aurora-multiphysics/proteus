@@ -1,17 +1,16 @@
 #pragma once
 
-#include "VolumeJunction1Phase.h"
+#include "Coaxial1PhaseBase.h"
 
-class CoaxialElbow1Phase : public VolumeJunction1Phase {
+class CoaxialElbow1Phase : public Coaxial1PhaseBase {
 public:
   CoaxialElbow1Phase(const InputParameters &params);
 
-protected:
-  void buildVolumeJunctionUserObject() override;
-
-  // radius of curvature
-  const Real _r_curv;
-
 public:
   static InputParameters validParams();
+
+protected:
+  void AddElbowInner();
+
+  void AddElbowOuter();
 };
