@@ -1,7 +1,25 @@
 #include "CoaxialElbow1Phase.h"
 #include "CoaxialPipe1Phase.h"
+#include "InputParameters.h"
+#include "MooseTypes.h"
+#include "Registry.h"
 #include <cmath>
+#include <cstdio>
 
+registerMooseObject("ProteusApp", CoaxialElbow1Phase);
+
+namespace {
+Real getElbowKPrime(const Real &R_c, const Real &D_h) {
+  const Real length = 0.5 * pi * R_c;
+  Real k;
+  if (R_c / D_h > 1.)
+    k = 0.21 / sqrt(R_c / D_h);
+  else
+    k = 0.21 / pow(R_c / D_h, 2.5);
+
+  return k / length;
+}
+} // namespace
 InputParameters CoaxialElbow1Phase::validParams() {
 
   InputParameters params = CoaxialPipe1Phase::validParams();
@@ -76,16 +94,19 @@ void CoaxialElbow1Phase::AddElbowInner() {
 
     getTHMProblem().addComponent(class_name, component_name, pipe_params);
   }
-
-  // Add form loss
+  // Add form loss from Handbook of Hydraulic Resistance p. 195
   {
     const std::string class_name = "FormLossFromFunction1Phase";
     auto loss_params = _factory.getValidParams(class_name);
-    loss_params.set<std::string>("flow_channel") = component_name;
-    Real rad_curv = getParam<Real>("radius");
-    Real k_prime = (0.21 / (sqrt(rad_curv / d_h))) / (rad_curv * pi / 2);
+    loss_params.set<SubdomainName>("flow_channel") = component_name;
+
+    auto r_c = getParam<Real>("radius");
+
     loss_params.set<FunctionName>("K_prime") =
-        CreateFunctionFromValue("inner_loss", k_prime);
+        CreateFunctionFromValue("inner_k_prime", getElbowKPrime(r_c, d_h));
+
+    getTHMProblem().addComponent(class_name, component_name + "_loss",
+                                 loss_params);
   }
 }
 
@@ -139,10 +160,14 @@ void CoaxialElbow1Phase::AddElbowOuter() {
   {
     const std::string class_name = "FormLossFromFunction1Phase";
     auto loss_params = _factory.getValidParams(class_name);
-    loss_params.set<std::string>("flow_channel") = component_name;
-    Real rad_curv = getParam<Real>("radius");
-    Real k_prime = (0.21 / (sqrt(rad_curv / d_h))) / (rad_curv * pi / 2);
+    loss_params.set<SubdomainName>("flow_channel") = component_name;
+
+    auto r_c = getParam<Real>("radius");
+
     loss_params.set<FunctionName>("K_prime") =
-        CreateFunctionFromValue("inner_loss", k_prime);
+        CreateFunctionFromValue("outer_k_prime", getElbowKPrime(r_c, d_h));
+
+    getTHMProblem().addComponent(class_name, component_name + "_loss",
+                                 loss_params);
   }
 }
