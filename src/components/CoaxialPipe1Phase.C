@@ -3,7 +3,6 @@
 #include "FEProblemBase.h"
 #include "Factory.h"
 #include "InputParameters.h"
-#include "MooseError.h"
 #include "MooseTypes.h"
 #include "Registry.h"
 #include "THMProblem.h"
@@ -111,7 +110,9 @@ InputParameters CoaxialPipe1Phase::validParams() {
   params.addParam<FunctionName>("initial_p", "Global pressure initialisation");
   params.addParam<FunctionName>("initial_vel",
                                 "Global velocity initialisation");
-  params.addParamNamesToGroup("fp closures initial_T initial_p initial_vel",
+  params.addParam<RealVectorValue>("gravity_vector", RealVectorValue{0, 0, 9.81},
+                                "gravity vector.");
+  params.addParamNamesToGroup("fp closures initial_T initial_p initial_vel gravity_vector",
                               "global");
 
   return params;

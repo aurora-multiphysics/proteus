@@ -9,9 +9,9 @@ class TestCoaxialPipe(unittest.TestCase):
         """Compares energy increase in pipes to heat flux input on shell exterior."""
 
         _, t_inner, t_outer, q = np.loadtxt("energy_balance_out.csv",
-                                               skiprows=2,
-                                               delimiter=',',
-                                               unpack=True)[:,-1]
+                                            skiprows=2,
+                                            delimiter=',',
+                                            unpack=True)[:,-1]
 
         # mass flow rate in pipe and annulus 0.1 kg/s
         m_dot = 0.1
