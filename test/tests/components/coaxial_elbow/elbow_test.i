@@ -1,21 +1,18 @@
-# Energy balance test
+# Elbow pressure drop tests
 # ===================
 #
-# Apply 10 kW/m^2 to outer surface of the
-# shell and check the increase in temperature at the fluid outlets
+# Check pressure drop matches correlations
 
-T_in = ${fparse 50 + 273.15} # Cold inlet temperature in annulus
+T_in = ${fparse 50 + 273.15} # Arbitrary reference temperature
 mdot = 0.5 # nominal mass flow rate for primary
 press = 1e5 # operating pressure
 
 
 [GlobalParams]
   initial_p = ${press}
-  closures = thm_closures
   initial_T = ${T_in}
   fp=fluid
   gravity_vector = '0 0 0'
-  f = 0.
 []
 
 [FluidProperties]
@@ -24,12 +21,9 @@ press = 1e5 # operating pressure
   []
 []
 
-[SolidProperties]
+[SolidProperties] // Not currently needed as solid heat transfer not considered yet
   [adamantium] # fake solid material that ensures solid heats quickly
     type = ThermalFunctionSolidProperties
-    cp = 40
-    k = 50
-    rho = 100
   []
 []
 
@@ -114,20 +108,20 @@ press = 1e5 # operating pressure
     boundary = coaxial/inner:in
     variable = vel_y
   []
-  [rho_outer]
-    type = ADSideAverageMaterialProperty
-    boundary = coaxial/outer:out
-    property = rho
+  [vel_inlet_outer]
+    type = SideAverageValue
+    boundary = coaxial/outer:in
+    variable = vel_y
   []
   [rho_inner]
     type = ADSideAverageMaterialProperty
     boundary = coaxial/inner:out
     property = rho
   []
-  [vel_inlet_outer]
-    type = SideAverageValue
-    boundary = coaxial/outer:in
-    variable = vel_y
+  [rho_outer]
+    type = ADSideAverageMaterialProperty
+    boundary = coaxial/outer:out
+    property = rho
   []
   [delta_p_inner]
     type = ParsedPostprocessor

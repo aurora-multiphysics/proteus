@@ -8,6 +8,8 @@
 registerMooseObject("ProteusApp", CoaxialElbow1Phase);
 
 namespace {
+// Compute momentum loss per unit length using Handbook of Hydraulic Resistance
+// p. 195
 Real getElbowKPrime(const Real &R_c, const Real &D_h) {
   const Real length = 0.5 * pi * R_c;
   Real k;
@@ -19,6 +21,7 @@ Real getElbowKPrime(const Real &R_c, const Real &D_h) {
   return k / length;
 }
 } // namespace
+
 InputParameters CoaxialElbow1Phase::validParams() {
 
   InputParameters params = CoaxialPipe1Phase::validParams();
@@ -71,12 +74,11 @@ CoaxialElbow1Phase::CoaxialElbow1Phase(const InputParameters &params)
 
 void CoaxialElbow1Phase::AddElbowInner() {
 
-  // Create elbow geometry
   const std::string component_name = name() + "/inner";
   Real radius = getParam<Real>("tube_inner_radius");
   const Real d_h = 2 * radius;
 
-  // Add elbow geometry for inner pipe
+  // Add elbow geometry for inner pipe and pipe information
   {
     const std::string class_name = "ElbowPipe1Phase";
     auto pipe_params = _factory.getValidParams(class_name);
