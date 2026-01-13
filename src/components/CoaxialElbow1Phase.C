@@ -1,10 +1,7 @@
-#include "Closures1PhaseNone.h"
 #include "CoaxialElbow1Phase.h"
 #include "CoaxialPipe1Phase.h"
 #include "InputParameters.h"
-#include "MooseTypes.h"
 #include "Registry.h"
-#include "THMProblem.h"
 #include <cmath>
 #include <cstdio>
 
@@ -56,9 +53,12 @@ CoaxialElbow1Phase::CoaxialElbow1Phase(const InputParameters &params)
   auto start_angle = getParam<Real>("start_angle");
   auto end_angle = getParam<Real>("end_angle");
 
+  // This component is for 90 degree bends
   if (!MooseUtils::relativeFuzzyEqual(abs(start_angle - end_angle), 90.))
     mooseError("Difference between start and end angles should be 90 degrees.");
 
+  // Closure has been removed as a parameter to be specified but we must specify
+  // it
   auto closure_params = _factory.getValidParams("Closures1PhaseSimple");
   closure_params.set<THMProblem *>("_thm_problem") = &getTHMProblem();
   closure_params.set<Logger *>("_logger") = &(getTHMProblem().log());
@@ -76,6 +76,7 @@ void CoaxialElbow1Phase::AddElbowInner() {
   Real radius = getParam<Real>("tube_inner_radius");
   const Real d_h = 2 * radius;
 
+  // Add elbow geometry for inner pipe
   {
     const std::string class_name = "ElbowPipe1Phase";
     auto pipe_params = _factory.getValidParams(class_name);
@@ -112,6 +113,7 @@ void CoaxialElbow1Phase::AddElbowInner() {
 
     getTHMProblem().addComponent(class_name, component_name, pipe_params);
   }
+
   // Add form loss from Handbook of Hydraulic Resistance p. 195
   {
     const std::string class_name = "FormLossFromFunction1Phase";
@@ -138,6 +140,7 @@ void CoaxialElbow1Phase::AddElbowOuter() {
   Real outer_radius = getParam<Real>("shell_inner_radius");
   const Real d_h = 2 * (outer_radius - inner_radius);
 
+  // Add elbow geometry for outer annulus
   const std::string component_name = name() + "/outer";
   {
     const std::string class_name = "ElbowPipe1Phase";
