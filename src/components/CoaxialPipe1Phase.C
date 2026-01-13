@@ -32,10 +32,10 @@ InputParameters CoaxialPipe1Phase::validParams() {
                                 "Initial inner pipe pressure.");
   params.addParam<FunctionName>("inner_initial_vel",
                                 "Initial inner pipe velocity.");
-
+  params.addParam<FunctionName>("inner_f", "Friction factor for inner tube.");
   params.addParamNamesToGroup(
       "inner_fp inner_closures inner_initial_T inner_initial_p "
-      "inner_initial_vel",
+      "inner_initial_vel inner_f",
       "inner");
 
   // add parameters for the outer annulus
@@ -44,14 +44,16 @@ InputParameters CoaxialPipe1Phase::validParams() {
   params.addParam<std::vector<std::string>>(
       "outer_closures", "Fluid property for outer annulus.");
   params.addParam<FunctionName>("outer_initial_T",
-                                "Initial inner pipe temperature.");
+                                "Initial outer annulus temperature.");
   params.addParam<FunctionName>("outer_initial_p",
-                                "Initial inner pipe pressure.");
+                                "Initial outer annulus pressure.");
   params.addParam<FunctionName>("outer_initial_vel",
-                                "Initial inner pipe velocity.");
+                                "Initial outer annulus velocity.");
+  params.addParam<FunctionName>("outer_f",
+                                "Friction factor for outer annulus.");
   params.addParamNamesToGroup(
       "outer_fp outer_closures outer_initial_T outer_initial_p "
-      "outer_initial_vel",
+      "outer_initial_vel outer_f",
       "outer");
 
   // Add parameters for the solid tube
@@ -110,10 +112,11 @@ InputParameters CoaxialPipe1Phase::validParams() {
   params.addParam<FunctionName>("initial_p", "Global pressure initialisation");
   params.addParam<FunctionName>("initial_vel",
                                 "Global velocity initialisation");
-  params.addParam<RealVectorValue>("gravity_vector", RealVectorValue{0, 0, 9.81},
-                                "gravity vector.");
-  params.addParamNamesToGroup("fp closures initial_T initial_p initial_vel gravity_vector",
-                              "global");
+  params.addParam<RealVectorValue>(
+      "gravity_vector", RealVectorValue{0, 0, 9.81}, "gravity vector.");
+  params.addParam<FunctionName>("f", "Global friction factor");
+  params.addParamNamesToGroup(
+      "fp closures initial_T initial_p initial_vel gravity_vector f", "global");
 
   return params;
 }
