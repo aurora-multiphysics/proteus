@@ -26,7 +26,7 @@ class TestCoaxialElbow(unittest.TestCase):
         )
 
     def test_outer_pressure_loss(self):
-        """Compares pressure drop with expected value for outer pipe."""
+        """Compares pressure drop with expected value for outer annulus."""
 
         r_c = 0.1
 
@@ -40,5 +40,5 @@ class TestCoaxialElbow(unittest.TestCase):
 
         diff = abs((expected - delta_p_inner)/expected)
         assert diff < 5e-3, (
-            f"Inner pressure loss wrong {expected} vs {delta_p_inner}. Diff {diff}"
+            f"Outer pressure loss wrong {expected} vs {delta_p_inner}. Diff {diff}"
         )
