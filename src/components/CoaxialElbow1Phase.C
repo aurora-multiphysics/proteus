@@ -1,8 +1,10 @@
+#include "Closures1PhaseNone.h"
 #include "CoaxialElbow1Phase.h"
 #include "CoaxialPipe1Phase.h"
 #include "InputParameters.h"
 #include "MooseTypes.h"
 #include "Registry.h"
+#include "THMProblem.h"
 #include <cmath>
 #include <cstdio>
 
@@ -34,6 +36,15 @@ InputParameters CoaxialElbow1Phase::validParams() {
   params.set<std::vector<Real>>("length") = {0.0};
   params.suppressParameter<std::vector<Real>>("length");
 
+  // Momentum losses provided by minor loss formula
+  params.suppressParameter<std::vector<std::string>>("inner_closures");
+  params.suppressParameter<std::vector<std::string>>("outer_closures");
+  params.suppressParameter<std::vector<std::string>>("closures");
+  // f set to zero
+  params.suppressParameter<FunctionName>("inner_f");
+  params.suppressParameter<FunctionName>("outer_f");
+  params.suppressParameter<FunctionName>("f");
+
   params.addClassDescription("Bent pipe for 1-phase coaxial flow");
 
   return params;
@@ -48,6 +59,12 @@ CoaxialElbow1Phase::CoaxialElbow1Phase(const InputParameters &params)
   if (!MooseUtils::relativeFuzzyEqual(abs(start_angle - end_angle), 90.))
     mooseError("Difference between start and end angles should be 90 degrees.");
 
+  auto closure_params = _factory.getValidParams("Closures1PhaseSimple");
+  closure_params.set<THMProblem *>("_thm_problem") = &getTHMProblem();
+  closure_params.set<Logger *>("_logger") = &(getTHMProblem().log());
+  getTHMProblem().addClosures("Closures1PhaseSimple", name() + "_closure",
+                              closure_params);
+
   AddElbowInner();
   AddElbowOuter();
 }
@@ -57,7 +74,7 @@ void CoaxialElbow1Phase::AddElbowInner() {
   // Create elbow geometry
   const std::string component_name = name() + "/inner";
   Real radius = getParam<Real>("tube_inner_radius");
-  auto d_h = 2 * radius;
+  const Real d_h = 2 * radius;
 
   {
     const std::string class_name = "ElbowPipe1Phase";
@@ -67,8 +84,9 @@ void CoaxialElbow1Phase::AddElbowInner() {
     CopyParamFromParamWithGlobal<UserObjectName>("fp", "inner_fp", "fp",
                                                  pipe_params);
 
-    CopyParamFromParamWithGlobal<std::vector<std::string>>(
-        "closures", "inner_closures", "closures", pipe_params);
+    pipe_params.set<std::vector<std::string>>("closures") = {name() +
+                                                             "_closure"};
+    pipe_params.set<FunctionName>("f") = CreateFunctionFromValue("inner_f", 0.);
 
     passParameter<std::vector<unsigned int>>("n_elems", pipe_params);
     passParameter<Point>("position", pipe_params);
@@ -98,9 +116,10 @@ void CoaxialElbow1Phase::AddElbowInner() {
   {
     const std::string class_name = "FormLossFromFunction1Phase";
     auto loss_params = _factory.getValidParams(class_name);
-    loss_params.set<SubdomainName>("flow_channel") = component_name;
+    loss_params.set<THMProblem *>("_thm_problem") = &getTHMProblem();
+    loss_params.set<std::string>("flow_channel") = component_name;
 
-    auto r_c = getParam<Real>("radius");
+    const Real r_c = getParam<Real>("radius");
 
     loss_params.set<FunctionName>("K_prime") =
         CreateFunctionFromValue("inner_k_prime", getElbowKPrime(r_c, d_h));
@@ -117,7 +136,7 @@ void CoaxialElbow1Phase::AddElbowOuter() {
   Real inner_radius =
       tube_radius + std::accumulate(tube_widths.begin(), tube_widths.end(), 0.);
   Real outer_radius = getParam<Real>("shell_inner_radius");
-  auto d_h = 2 * (outer_radius - inner_radius);
+  const Real d_h = 2 * (outer_radius - inner_radius);
 
   const std::string component_name = name() + "/outer";
   {
@@ -128,8 +147,9 @@ void CoaxialElbow1Phase::AddElbowOuter() {
     CopyParamFromParamWithGlobal<UserObjectName>("fp", "outer_fp", "fp",
                                                  pipe_params);
 
-    CopyParamFromParamWithGlobal<std::vector<std::string>>(
-        "closures", "outer_closures", "closures", pipe_params);
+    pipe_params.set<std::vector<std::string>>("closures") = {name() +
+                                                             "_closure"};
+    pipe_params.set<FunctionName>("f") = CreateFunctionFromValue("outer_f", 0.);
 
     passParameter<std::vector<unsigned int>>("n_elems", pipe_params);
     passParameter<Point>("position", pipe_params);
@@ -160,7 +180,8 @@ void CoaxialElbow1Phase::AddElbowOuter() {
   {
     const std::string class_name = "FormLossFromFunction1Phase";
     auto loss_params = _factory.getValidParams(class_name);
-    loss_params.set<SubdomainName>("flow_channel") = component_name;
+    loss_params.set<THMProblem *>("_thm_problem") = &getTHMProblem();
+    loss_params.set<std::string>("flow_channel") = component_name;
 
     auto r_c = getParam<Real>("radius");
 

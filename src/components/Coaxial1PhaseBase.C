@@ -12,7 +12,7 @@ Coaxial1PhaseBase::CreateFunctionFromValue(const std::string &suffix,
 }
 
 template <typename T>
-inline void Coaxial1PhaseBase::CopyParamFromParamWithGlobal(
+void Coaxial1PhaseBase::CopyParamFromParamWithGlobal(
     const std::string dst_name, const std::string src_name,
     const std::string global_src_name, InputParameters &dst_params) {
 
