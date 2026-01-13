@@ -1,0 +1,10 @@
+[coaxial_elbow]
+    [run]
+        type = RunApp
+        input = elbow_test.i
+    []
+    [verify]
+        type = PythonUnitTest
+        input = test.py
+    []
+[]
