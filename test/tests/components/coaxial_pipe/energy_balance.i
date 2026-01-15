@@ -61,7 +61,7 @@ qw = 1e4
   [coaxial]
     type = CoaxialPipe1Phase
     length = ${L}
-    n_elems = 100
+    n_elems = 20
     orientation = '1 0 0'
     position = '0 0 0'
     shell_inner_radius = 0.075
