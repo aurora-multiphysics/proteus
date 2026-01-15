@@ -32,6 +32,7 @@
       type= PythonUnitTest
       input = test.py
       test_case = TestCoaxialPipe.test_energy_balance_outer
+      heavy=true
       prereq = energy_balance_inner/run
     []
     requirement = "Checks that inner pipe conserved energy in isolation"
