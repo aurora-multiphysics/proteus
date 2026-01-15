@@ -44,6 +44,11 @@ InputParameters CoaxialJunction1Phase::validParams() {
   params.addParam<bool>("connect_outer", true,
                         "Whether to connect the outer annulus.");
 
+  params.addParam<bool>("connect_tube", true,
+                        "Whether to connect the solid tube regions.");
+  params.addParam<bool>("connect_shell", true,
+                        "Whether to connect the solid shell regions.");
+
   return params;
 }
 
@@ -55,8 +60,13 @@ CoaxialJunction1Phase::CoaxialJunction1Phase(const InputParameters &params)
   if (coaxials.size() != 2)
     mooseError("'coaxial_connections' must have size 2.");
 
-  ConnectSolidRegion("tube", coaxials[0], coaxials[1]);
-  ConnectSolidRegion("shell", coaxials[0], coaxials[1]);
+  if (getParam<bool>("connect_tube")) {
+    ConnectSolidRegion("tube", coaxials[0], coaxials[1]);
+  }
+
+  if (getParam<bool>("connect_shell")) {
+    ConnectSolidRegion("shell", coaxials[0], coaxials[1]);
+  }
 
   if (params.get<bool>("connect_inner")) {
     ConnectFlowRegion("inner", coaxials[0], coaxials[1]);
