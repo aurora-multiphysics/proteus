@@ -21,9 +21,12 @@ press = 1e5 # operating pressure
   []
 []
 
-[SolidProperties] // Not currently needed as solid heat transfer not considered yet
+[SolidProperties] # Not currently needed as solid heat transfer not considered yet
   [adamantium] # fake solid material that ensures solid heats quickly
     type = ThermalFunctionSolidProperties
+    cp = 40
+    k = 50
+    rho = 100
   []
 []
 
