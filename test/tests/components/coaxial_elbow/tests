@@ -1,0 +1,22 @@
+[Tests]
+    [coaxial_elbow]
+        [run]
+            type = RunApp
+            input = elbow_test.i
+            requirement = 'This system shall permit a valid elbow component to run.'
+        []
+        [verify]
+            type = PythonUnitTest
+            input = test.py
+            prereq = coaxial_elbow/run
+            requirement = 'This system shall calculate pressure drops corresponding with empirical correlations'
+        []
+        [angle_check]
+            type = RunException
+            input = elbow_test.i
+            cli_args = 'Components/coaxial/end_angle=100'
+            expect_err = 'Difference between start and end angles should be 90 degrees'
+            requirement = 'This system shall only permit elbow angles of 90 degrees'
+        []
+    []
+[]

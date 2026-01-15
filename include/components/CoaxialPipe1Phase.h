@@ -1,10 +1,10 @@
 #pragma once
 
-#include <Component.h>
+#include <Coaxial1PhaseBase.h>
 #include <FlowChannel1Phase.h>
 #include <InputParameters.h>
 
-class CoaxialPipe1Phase : public Component {
+class CoaxialPipe1Phase : public Coaxial1PhaseBase {
 public:
   static InputParameters validParams();
 
@@ -27,8 +27,4 @@ protected:
   void AddHeatTransferConnection(const std::string &flow_channel,
                                  const std::string &hs,
                                  const std::string &hs_side, const Real radius);
-
-  // Create constant function based on scalar value
-  FunctionName CreateFunctionFromValue(const std::string &suffix,
-                                       const Real value);
 };
