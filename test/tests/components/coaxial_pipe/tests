@@ -2,8 +2,8 @@
   [fp_err]
     type = RunException
     input = energy_balance.i
-    min_parallel = 4
-    max_parallel = 4
+    min_parallel = 2
+    max_parallel = 2
     requirement = "Checks that copyParamFromParamWithGlobal works properly"
     expect_err = "Either inner_fp or fp must be set"
   []
@@ -11,8 +11,8 @@
     [run]
       type = RunApp
       input = energy_balance.i
-      min_parallel = 4
-      max_parallel = 4
+      min_parallel = 2
+      max_parallel = 2
       requirement = "Checks energy balance for the coaxial pipe"
       cli_args = "GlobalParams/fp=fluid"
     []
@@ -44,8 +44,8 @@
     [run]
       type = RunApp
       input = energy_balance_outer.i
-      min_parallel = 4
-      max_parallel = 4
+      min_parallel = 2
+      max_parallel = 2
     []
     [test]
       type= PythonUnitTest
