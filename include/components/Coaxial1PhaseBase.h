@@ -15,8 +15,8 @@ protected:
   // Function that copies parameters depending on whether the
   // local parameter or global parameter is specified
   template <typename T>
-  inline void CopyParamFromParamWithGlobal(const std::string dst_name,
-                                           const std::string src_name,
-                                           const std::string global_src_name,
-                                           InputParameters &dst_params);
+  void CopyParamFromParamWithGlobal(const std::string &dst_name,
+                                    const std::string &src_name,
+                                    const std::string &global_src_name,
+                                    InputParameters &dst_params);
 };

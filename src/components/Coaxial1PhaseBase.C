@@ -13,8 +13,8 @@ Coaxial1PhaseBase::CreateFunctionFromValue(const std::string &suffix,
 
 template <typename T>
 void Coaxial1PhaseBase::CopyParamFromParamWithGlobal(
-    const std::string dst_name, const std::string src_name,
-    const std::string global_src_name, InputParameters &dst_params) {
+    const std::string &dst_name, const std::string &src_name,
+    const std::string &global_src_name, InputParameters &dst_params) {
 
   if (!isParamSetByUser(src_name) && !isParamSetByUser(global_src_name))
     mooseError("Either ", src_name, " or ", global_src_name, " must be set.");
