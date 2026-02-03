@@ -1,0 +1,2 @@
+# Prevent linter from complaining about sourcing profiles.
+disable=SC1091
