@@ -27,7 +27,8 @@ export F77=mpif77
 export FC=mpif90
 export MOOSE_DIR=$HOME/moose
 export PATH=\$PATH:$PROTEUS_DIR" > "$HOME/.proteus_profile"
-source $HOME/.proteus_profile
+# shellcheck source=/dev/null
+source "$HOME/.proteus_profile"
 
 # Clone MOOSE from git
 
