@@ -27,4 +27,12 @@ protected:
   void AddHeatTransferConnection(const std::string &flow_channel,
                                  const std::string &hs,
                                  const std::string &hs_side, const Real radius);
+
+  // Add ambient convection to shell surface
+  void AddAmbientConvection(const Real T_ambient, const Real p_ambient,
+                            MooseEnum ambient_properties);
+
+  // Create constant function based on scalar value
+  FunctionName CreateFunctionFromValue(const std::string &suffix,
+                                       const Real value);
 };
