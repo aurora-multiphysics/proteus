@@ -373,7 +373,7 @@ void CoaxialPipe1Phase::AddAmbientConvection(const Real T_ambient,
   {
     const std::string class_name = "ADParsedMaterial";
     auto params = _factory.getValidParams(class_name);
-    params.set<THMProblem *>("_thm_problem") = &getTHMProblem();
+    params.set<FEProblemBase *>("_fe_problem_base") = &getTHMProblem();
     params.set<std::string>("property_name") = "Ra";
     params.set<std::string>("expression") =
         "abs(rho*beta*(Th-Ta)*D*D*D*g)/(mu*k/(rho*cp))";
@@ -409,7 +409,7 @@ void CoaxialPipe1Phase::AddAmbientConvection(const Real T_ambient,
   {
     const std::string class_name = "ADParsedMaterial";
     auto params = _factory.getValidParams(class_name);
-    params.set<THMProblem *>("_thm_problem") = &getTHMProblem();
+    params.set<FEProblemBase *>("_fe_problem_base") = &getTHMProblem();
     params.set<std::string>("property_name") = "Nu";
 
     params.set<std::string>("expression") =
@@ -429,7 +429,7 @@ void CoaxialPipe1Phase::AddAmbientConvection(const Real T_ambient,
   {
     const std::string class_name = "ADParsedMaterial";
     auto params = _factory.getValidParams(class_name);
-    params.set<THMProblem *>("_thm_problem") = &getTHMProblem();
+    params.set<FEProblemBase *>("_fe_problem_base") = &getTHMProblem();
     params.set<std::string>("property_name") = "Hw";
     params.set<std::vector<std::string>>("boundary") = {name() +
                                                         "/shell:outer"};
