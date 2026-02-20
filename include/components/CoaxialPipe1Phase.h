@@ -23,16 +23,19 @@ protected:
   // Add solid shell around annulus
   void AddSolidShell(const InputParameters &params);
 
+  void addMooseObjects() override;
+
   // Add solid-fluid connection based on component names
   void AddHeatTransferConnection(const std::string &flow_channel,
                                  const std::string &hs,
                                  const std::string &hs_side, const Real radius);
 
   // Add ambient convection to shell surface
-  void AddAmbientConvection(const Real T_ambient, const Real p_ambient,
-                            MooseEnum ambient_properties);
+  void AddAmbientConvection();
 
   // Create constant function based on scalar value
   FunctionName CreateFunctionFromValue(const std::string &suffix,
                                        const Real value);
+
+  const Real _T_ambient, _p_ambient;
 };
