@@ -160,6 +160,10 @@ void CoaxialPipe1Phase::AddInnerPipe(const InputParameters &params) {
       params.get<RealVectorValue>("orientation");
   pipe_params.set<std::vector<Real>>("length") =
       params.get<std::vector<Real>>("length");
+  pipe_params.set<std::vector<std::string>>("axial_region_names") =
+      params.get<std::vector<std::string>>("axial_region_names");
+  pipe_params.set<RealVectorValue>("gravity_vector") =
+      params.get<RealVectorValue>("gravity_vector");
 
   Real radius = params.get<Real>("tube_inner_radius");
 
@@ -199,6 +203,10 @@ void CoaxialPipe1Phase::AddOuterAnnulus(const InputParameters &params) {
       params.get<RealVectorValue>("orientation");
   pipe_params.set<std::vector<Real>>("length") =
       params.get<std::vector<Real>>("length");
+  pipe_params.set<std::vector<std::string>>("axial_region_names") =
+      params.get<std::vector<std::string>>("axial_region_names");
+  pipe_params.set<RealVectorValue>("gravity_vector") =
+      params.get<RealVectorValue>("gravity_vector");
 
   Real tube_radius = params.get<Real>("tube_inner_radius");
   auto tube_widths = params.get<std::vector<Real>>("tube_widths");
@@ -249,6 +257,8 @@ void CoaxialPipe1Phase::AddSolidTube(const InputParameters &params) {
       params.get<RealVectorValue>("orientation");
   tube_params.set<std::vector<Real>>("length") =
       params.get<std::vector<Real>>("length");
+  tube_params.set<std::vector<std::string>>("axial_region_names") =
+      params.get<std::vector<std::string>>("axial_region_names");
 
   CopyParamFromParamWithGlobal<FunctionName>("initial_T", "tube_initial_T",
                                              "initial_T", tube_params);
@@ -282,6 +292,8 @@ void CoaxialPipe1Phase::AddSolidShell(const InputParameters &params) {
       params.get<RealVectorValue>("orientation");
   tube_params.set<std::vector<Real>>("length") =
       params.get<std::vector<Real>>("length");
+  tube_params.set<std::vector<std::string>>("axial_region_names") =
+      params.get<std::vector<std::string>>("axial_region_names");
 
   CopyParamFromParamWithGlobal<FunctionName>("initial_T", "shell_initial_T",
                                              "initial_T", tube_params);

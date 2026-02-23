@@ -1,0 +1,55 @@
+[coaxial_junction]
+  [test_solid_connection]
+    [run]
+      type = RunApp
+      input = junction_solid.i
+    []
+    [verify]
+      type = PythonUnitTest
+      input = test.py
+      test_case = TestCoaxialJunction.test_solid_continuity
+      prereq = test_solid_connection/run
+    []
+    [run_expansion]
+      type = RunApp
+      input = junction_solid_expand.i
+      requirement = "This system shall allow the coaxial junction to have small changes in geometry"
+    []
+    [check_insufficient_connections]
+      type = RunException
+      input = junction_solid.i
+      cli_args = "Components/jct/coaxial_connections='coaxial1:out'"
+      expect_err = 'must have size 2'
+    []
+    [check_boundary]
+      type = RunException
+      input = junction_solid.i
+      cli_args = "Components/jct/coaxial_connections='coaxial1:out coaxial2:in1'"
+      expect_err = 'Boundary must be'
+    []
+    [check_no_inner]
+      type = RunException
+      input = junction_solid.i
+      cli_args = "Components/jct/connect_inner=false"
+      expect_err = "inner' does not have connected inlet."
+    []
+    [check_no_outer]
+      type = RunException
+      input = junction_solid.i
+      cli_args = "Components/jct/connect_outer=false"
+      expect_err = "outer' does not have connected inlet."
+    []
+  []
+  [test_fluid_connection]
+    [run]
+      type = RunApp
+      input = junction_fluid.i
+    []
+    [verify]
+      type = PythonUnitTest
+      input = test.py
+      test_case = TestCoaxialJunction.test_solid_continuity
+      prereq = test_fluid_connection/run
+    []
+  []
+[]
