@@ -113,7 +113,7 @@ InputParameters CoaxialPipe1Phase::validParams() {
   params.addParam<FunctionName>("initial_vel",
                                 "Global velocity initialisation");
   params.addParam<RealVectorValue>(
-      "gravity_vector", RealVectorValue{0, 0, 9.81}, "gravity vector.");
+      "gravity_vector", RealVectorValue{0, 0, -9.81}, "gravity vector.");
   params.addParam<FunctionName>("f", "Global friction factor");
   params.addParamNamesToGroup(
       "fp closures initial_T initial_p initial_vel gravity_vector f", "global");
