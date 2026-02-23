@@ -3,32 +3,12 @@
 #include "FEProblemBase.h"
 #include "Factory.h"
 #include "InputParameters.h"
-#include "MooseError.h"
 #include "MooseTypes.h"
 #include "Registry.h"
 #include "THMProblem.h"
 #include <numeric>
 
 registerMooseObject("ProteusApp", CoaxialPipe1Phase);
-
-namespace {
-// Function that copies parameters depending on whether the
-// local parameter or global parameter is specified
-template <typename T>
-inline void copyParamFromParamWithGlobal(const std::string dst_name,
-                                         const std::string src_name,
-                                         const std::string global_src_name,
-                                         InputParameters &dst_params,
-                                         const InputParameters &src_params) {
-  if (!src_params.isParamSetByUser(src_name) &&
-      !src_params.isParamSetByUser(global_src_name))
-    mooseError("Either ", src_name, " or ", global_src_name, " must be set.");
-
-  dst_params.set<T>(dst_name) = (src_params.isParamSetByUser(src_name))
-                                    ? src_params.get<T>(src_name)
-                                    : src_params.get<T>(global_src_name);
-}
-} // namespace
 
 InputParameters CoaxialPipe1Phase::validParams() {
   // add basic parameters such n_elems, position, etc.
@@ -52,10 +32,10 @@ InputParameters CoaxialPipe1Phase::validParams() {
                                 "Initial inner pipe pressure.");
   params.addParam<FunctionName>("inner_initial_vel",
                                 "Initial inner pipe velocity.");
-
+  params.addParam<FunctionName>("inner_f", "Friction factor for inner tube.");
   params.addParamNamesToGroup(
       "inner_fp inner_closures inner_initial_T inner_initial_p "
-      "inner_initial_vel",
+      "inner_initial_vel inner_f",
       "inner");
 
   // add parameters for the outer annulus
@@ -64,14 +44,16 @@ InputParameters CoaxialPipe1Phase::validParams() {
   params.addParam<std::vector<std::string>>(
       "outer_closures", "Fluid property for outer annulus.");
   params.addParam<FunctionName>("outer_initial_T",
-                                "Initial inner pipe temperature.");
+                                "Initial outer annulus temperature.");
   params.addParam<FunctionName>("outer_initial_p",
-                                "Initial inner pipe pressure.");
+                                "Initial outer annulus pressure.");
   params.addParam<FunctionName>("outer_initial_vel",
-                                "Initial inner pipe velocity.");
+                                "Initial outer annulus velocity.");
+  params.addParam<FunctionName>("outer_f",
+                                "Friction factor for outer annulus.");
   params.addParamNamesToGroup(
       "outer_fp outer_closures outer_initial_T outer_initial_p "
-      "outer_initial_vel",
+      "outer_initial_vel outer_f",
       "outer");
 
   // Add parameters for the solid tube
@@ -131,15 +113,16 @@ InputParameters CoaxialPipe1Phase::validParams() {
   params.addParam<FunctionName>("initial_vel",
                                 "Global velocity initialisation");
   params.addParam<RealVectorValue>(
-      "gravity_vector", RealVectorValue{0, 0, -9.81}, "Gravity vector");
+      "gravity_vector", RealVectorValue{0, 0, -9.81}, "gravity vector.");
+  params.addParam<FunctionName>("f", "Global friction factor");
   params.addParamNamesToGroup(
-      "fp closures initial_T initial_p initial_vel gravity_vector", "global");
+      "fp closures initial_T initial_p initial_vel gravity_vector f", "global");
 
   return params;
 }
 
 CoaxialPipe1Phase::CoaxialPipe1Phase(const InputParameters &params)
-    : Component(params) {
+    : Coaxial1PhaseBase(params) {
   // Add components
   AddInnerPipe(params);
   AddOuterAnnulus(params);
@@ -164,11 +147,11 @@ void CoaxialPipe1Phase::AddInnerPipe(const InputParameters &params) {
   auto pipe_params = _factory.getValidParams(class_name);
   pipe_params.set<THMProblem *>("_thm_problem") = &getTHMProblem();
 
-  copyParamFromParamWithGlobal<UserObjectName>("fp", "inner_fp", "fp",
-                                               pipe_params, params);
+  CopyParamFromParamWithGlobal<UserObjectName>("fp", "inner_fp", "fp",
+                                               pipe_params);
 
-  copyParamFromParamWithGlobal<std::vector<std::string>>(
-      "closures", "inner_closures", "closures", pipe_params, params);
+  CopyParamFromParamWithGlobal<std::vector<std::string>>(
+      "closures", "inner_closures", "closures", pipe_params);
 
   pipe_params.set<std::vector<unsigned int>>("n_elems") =
       params.get<std::vector<unsigned int>>("n_elems");
@@ -192,12 +175,12 @@ void CoaxialPipe1Phase::AddInnerPipe(const InputParameters &params) {
   pipe_params.set<FunctionName>("D_h") =
       CreateFunctionFromValue("inner_dh", d_h);
 
-  copyParamFromParamWithGlobal<FunctionName>("initial_T", "inner_initial_T",
-                                             "initial_T", pipe_params, params);
-  copyParamFromParamWithGlobal<FunctionName>("initial_p", "inner_initial_p",
-                                             "initial_p", pipe_params, params);
-  copyParamFromParamWithGlobal<FunctionName>(
-      "initial_vel", "inner_initial_vel", "initial_vel", pipe_params, params);
+  CopyParamFromParamWithGlobal<FunctionName>("initial_T", "inner_initial_T",
+                                             "initial_T", pipe_params);
+  CopyParamFromParamWithGlobal<FunctionName>("initial_p", "inner_initial_p",
+                                             "initial_p", pipe_params);
+  CopyParamFromParamWithGlobal<FunctionName>("initial_vel", "inner_initial_vel",
+                                             "initial_vel", pipe_params);
 
   getTHMProblem().addComponent(class_name, name() + "/inner", pipe_params);
 }
@@ -207,11 +190,11 @@ void CoaxialPipe1Phase::AddOuterAnnulus(const InputParameters &params) {
   auto pipe_params = _factory.getValidParams(class_name);
   pipe_params.set<THMProblem *>("_thm_problem") = &getTHMProblem();
 
-  copyParamFromParamWithGlobal<UserObjectName>("fp", "outer_fp", "fp",
-                                               pipe_params, params);
+  CopyParamFromParamWithGlobal<UserObjectName>("fp", "outer_fp", "fp",
+                                               pipe_params);
 
-  copyParamFromParamWithGlobal<std::vector<std::string>>(
-      "closures", "outer_closures", "closures", pipe_params, params);
+  CopyParamFromParamWithGlobal<std::vector<std::string>>(
+      "closures", "outer_closures", "closures", pipe_params);
 
   pipe_params.set<std::vector<unsigned int>>("n_elems") =
       params.get<std::vector<unsigned int>>("n_elems");
@@ -239,12 +222,12 @@ void CoaxialPipe1Phase::AddOuterAnnulus(const InputParameters &params) {
   pipe_params.set<FunctionName>("D_h") =
       CreateFunctionFromValue("outer_dh", d_h);
 
-  copyParamFromParamWithGlobal<FunctionName>("initial_T", "outer_initial_T",
-                                             "initial_T", pipe_params, params);
-  copyParamFromParamWithGlobal<FunctionName>("initial_p", "outer_initial_p",
-                                             "initial_p", pipe_params, params);
-  copyParamFromParamWithGlobal<FunctionName>(
-      "initial_vel", "outer_initial_vel", "initial_vel", pipe_params, params);
+  CopyParamFromParamWithGlobal<FunctionName>("initial_T", "outer_initial_T",
+                                             "initial_T", pipe_params);
+  CopyParamFromParamWithGlobal<FunctionName>("initial_p", "outer_initial_p",
+                                             "initial_p", pipe_params);
+  CopyParamFromParamWithGlobal<FunctionName>("initial_vel", "outer_initial_vel",
+                                             "initial_vel", pipe_params);
 
   getTHMProblem().addComponent(class_name, name() + "/outer", pipe_params);
 }
@@ -277,8 +260,8 @@ void CoaxialPipe1Phase::AddSolidTube(const InputParameters &params) {
   tube_params.set<std::vector<std::string>>("axial_region_names") =
       params.get<std::vector<std::string>>("axial_region_names");
 
-  copyParamFromParamWithGlobal<FunctionName>("initial_T", "tube_initial_T",
-                                             "initial_T", tube_params, params);
+  CopyParamFromParamWithGlobal<FunctionName>("initial_T", "tube_initial_T",
+                                             "initial_T", tube_params);
 
   getTHMProblem().addComponent(class_name, name() + "/tube", tube_params);
 }
@@ -312,8 +295,8 @@ void CoaxialPipe1Phase::AddSolidShell(const InputParameters &params) {
   tube_params.set<std::vector<std::string>>("axial_region_names") =
       params.get<std::vector<std::string>>("axial_region_names");
 
-  copyParamFromParamWithGlobal<FunctionName>("initial_T", "shell_initial_T",
-                                             "initial_T", tube_params, params);
+  CopyParamFromParamWithGlobal<FunctionName>("initial_T", "shell_initial_T",
+                                             "initial_T", tube_params);
 
   getTHMProblem().addComponent(class_name, name() + "/shell", tube_params);
 }
@@ -339,15 +322,4 @@ void CoaxialPipe1Phase::AddHeatTransferConnection(
 
   getTHMProblem().addComponent(
       class_name, name() + "_" + flow_channel + "_" + hs, ht_params);
-}
-
-FunctionName
-CoaxialPipe1Phase::CreateFunctionFromValue(const std::string &suffix,
-                                           const Real value) {
-  auto func_params = _factory.getValidParams("ConstantFunction");
-  func_params.set<Real>("value") = value;
-
-  auto func_name = name() + "_" + suffix;
-  getTHMProblem().addFunction("ConstantFunction", func_name, func_params);
-  return func_name;
 }
