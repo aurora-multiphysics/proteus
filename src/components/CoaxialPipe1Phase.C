@@ -416,7 +416,7 @@ void CoaxialPipe1Phase::addMooseObjects() {
     params.set<std::string>("property_name") = "Nu";
 
     params.set<std::string>("expression") =
-        "pow(0.825 + (0.387*pow(Ra,1./6.))/pow(1 + pow(0.492/Pr,9./16.),8/27), "
+        "pow(0.6 + (0.387*pow(Ra,1./6.))/pow(1 + pow(0.559/Pr,9./16.),8/27), "
         "2)";
 
     params.set<std::vector<std::string>>("functor_symbols") = {"Pr", "Ra"};
