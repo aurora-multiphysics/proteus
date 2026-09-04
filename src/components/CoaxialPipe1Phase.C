@@ -1,5 +1,6 @@
 #include "CoaxialPipe1Phase.h"
 #include "Component1D.h"
+#include "Conversion.h"
 #include "FEProblemBase.h"
 #include "Factory.h"
 #include "FlowModel.h"
@@ -419,15 +420,16 @@ void CoaxialPipe1Phase::addMooseObjects() {
     params.set<std::vector<std::string>>("functor_symbols") = {
         "rho", "beta", "mu", "k", "cp", "T_solid", "T_a", "L", "g"};
 
-    std::vector<std::string> functor_names{std::to_string(rho),
-                                           std::to_string(beta),
-                                           std::to_string(mu),
-                                           std::to_string(k),
-                                           std::to_string(cp),
-                                           "T_solid",
-                                           std::to_string(_T_ambient),
-                                           std::to_string(l),
-                                           std::to_string(gravity.norm())};
+    std::vector<std::string> functor_names{
+        Moose::stringifyExact(rho),
+        Moose::stringifyExact(beta),
+        Moose::stringifyExact(mu),
+        Moose::stringifyExact(k),
+        Moose::stringifyExact(cp),
+        "T_solid",
+        Moose::stringifyExact(_T_ambient),
+        Moose::stringifyExact(l),
+        Moose::stringifyExact(gravity.norm())};
     params.set<std::vector<std::string>>("functor_names") = functor_names;
     params.set<std::vector<SubdomainName>>("block") = {
         name() +
@@ -447,7 +449,7 @@ void CoaxialPipe1Phase::addMooseObjects() {
 
     params.set<std::vector<std::string>>("functor_symbols") = {"Pr", "Ra"};
     params.set<std::vector<std::string>>("functor_names") = {
-        std::to_string(mu * cp / k), "Ra"};
+        Moose::stringifyExact(mu * cp / k), "Ra"};
 
     params.set<std::vector<SubdomainName>>("block") = {
         name() +
@@ -468,7 +470,7 @@ void CoaxialPipe1Phase::addMooseObjects() {
     params.set<std::string>("expression") = "Nu*k/L";
     params.set<std::vector<std::string>>("functor_symbols") = {"k", "L", "Nu"};
     params.set<std::vector<std::string>>("functor_names") = {
-        std::to_string(k), std::to_string(l), "Nu"};
+        Moose::stringifyExact(k), Moose::stringifyExact(l), "Nu"};
     getTHMProblem().addMaterial(class_name, name() + "/Hw_conv", params);
   }
 }
