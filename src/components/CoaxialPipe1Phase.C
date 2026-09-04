@@ -111,6 +111,9 @@ InputParameters CoaxialPipe1Phase::validParams() {
                         "surface of the shell");
   params.addParam<Real>("T_ambient", 298, "Ambient temperature [K].");
   params.addParam<Real>("p_ambient", 101325, "Ambient pressure [Pa].");
+  params.addParam<RealVectorValue>(
+      "vertical_vector", RealVectorValue{0., 1., 0.},
+      "Vertical vector for determining external convection correlation.");
 
   MooseEnum ambient_properties("air", "air");
   params.addParam<MooseEnum>("ambient_properties", ambient_properties,
@@ -367,6 +370,33 @@ void CoaxialPipe1Phase::addMooseObjects() {
   if (!getParam<bool>("use_ambient_convection"))
     return;
 
+  auto vertical_vect = getParam<RealVectorValue>("vertical_vector");
+  if (vertical_vect.norm() < 1e-8)
+    mooseError("The vertical vector must have magnitude greater than 0");
+
+  auto v = getParam<RealVectorValue>("orientation");
+  Real l{0.};
+  Real dot_prod{fabs(v * vertical_vect / (v.norm() * vertical_vect.norm()))};
+  std::string expression;
+
+  if (dot_prod < 1e-8) { // horizontal pipe
+    auto widths = getParam<std::vector<Real>>("shell_widths");
+    l = 2. * std::accumulate(widths.begin(), widths.end(),
+                             getParam<Real>("shell_inner_radius"));
+    expression = "pow(0.6 + (0.387*pow(Ra,1./6.))/pow(1 + "
+                 "pow(0.559/Pr,9./16.),8./27.), 2)";
+
+  } else if (fabs(dot_prod - 1) < 1e-8) { // vertical pipe
+    auto lengths = getParam<std::vector<Real>>("length");
+    l = std::accumulate(lengths.begin(), lengths.end(), 0.);
+    expression = "pow(0.825 + (0.387*pow(Ra,1./6.))/pow(1 + "
+                 "pow(0.492/Pr,9./16.),8/27), 2)";
+  } else {
+    mooseError("Ambient convection only usable for vertical "
+               "and horizontal pipes.");
+    return;
+  }
+
   Real mu, k, cp, rho, R, gamma, beta;
   if (getParam<MooseEnum>("ambient_properties") == "air") {
     mu = 1.823e-05;
@@ -381,10 +411,6 @@ void CoaxialPipe1Phase::addMooseObjects() {
   mooseInfo("Ambient properties\n", "\tk: ", k, "\n\tmu: ", mu, "\n\tcp: ", cp,
             "\n\tbeta: ", beta, "\n\trho: ", rho, "\n");
 
-  auto widths = getParam<std::vector<Real>>("shell_widths");
-  const Real Dshell = std::accumulate(widths.begin(), widths.end(), 0.) +
-                      getParam<Real>("shell_inner_radius");
-
   // Create Rayleigh number property
   {
     const std::string class_name = "ADParsedFunctorMaterial";
@@ -392,14 +418,14 @@ void CoaxialPipe1Phase::addMooseObjects() {
     params.set<FEProblemBase *>("_fe_problem_base") = &getTHMProblem();
     params.set<std::string>("property_name") = "Ra";
     params.set<std::string>("expression") =
-        "rho*beta*(T_solid-T_a)*D*D*D*g/(mu*k/(rho*cp))";
+        "rho*beta*abs(T_solid-T_a)*L*L*L*g/(mu*k/(rho*cp))";
     params.set<std::vector<std::string>>("functor_symbols") = {
-        "rho", "beta", "mu", "k", "cp", "T_solid", "T_a", "D", "g"};
+        "rho", "beta", "mu", "k", "cp", "T_solid", "T_a", "L", "g"};
 
     std::vector<std::string> functor_names{
-        std::to_string(rho),        std::to_string(beta),   std::to_string(mu),
-        std::to_string(k),          std::to_string(cp),     "T_solid",
-        std::to_string(_T_ambient), std::to_string(Dshell), "9.81"};
+        std::to_string(rho),        std::to_string(beta), std::to_string(mu),
+        std::to_string(k),          std::to_string(cp),   "T_solid",
+        std::to_string(_T_ambient), std::to_string(l),    "9.81"};
     params.set<std::vector<std::string>>("functor_names") = functor_names;
     params.set<std::vector<SubdomainName>>("block") = {
         name() +
@@ -415,9 +441,7 @@ void CoaxialPipe1Phase::addMooseObjects() {
     params.set<FEProblemBase *>("_fe_problem_base") = &getTHMProblem();
     params.set<std::string>("property_name") = "Nu";
 
-    params.set<std::string>("expression") =
-        "pow(0.825 + (0.387*pow(Ra,1./6.))/pow(1 + pow(0.492/Pr,9./16.),8/27), "
-        "2)";
+    params.set<std::string>("expression") = expression;
 
     params.set<std::vector<std::string>>("functor_symbols") = {"Pr", "Ra"};
     params.set<std::vector<std::string>>("functor_names") = {
@@ -442,7 +466,7 @@ void CoaxialPipe1Phase::addMooseObjects() {
     params.set<std::string>("expression") = "Nu*k/L";
     params.set<std::vector<std::string>>("functor_symbols") = {"k", "L", "Nu"};
     params.set<std::vector<std::string>>("functor_names") = {
-        std::to_string(k), std::to_string(Dshell), "Nu"};
+        std::to_string(k), std::to_string(l), "Nu"};
     getTHMProblem().addMaterial(class_name, name() + "/Hw_conv", params);
   }
 }
