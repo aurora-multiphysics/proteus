@@ -111,9 +111,6 @@ InputParameters CoaxialPipe1Phase::validParams() {
                         "surface of the shell");
   params.addParam<Real>("T_ambient", 298, "Ambient temperature [K].");
   params.addParam<Real>("p_ambient", 101325, "Ambient pressure [Pa].");
-  params.addParam<RealVectorValue>(
-      "vertical_vector", RealVectorValue{0., 1., 0.},
-      "Vertical vector for determining external convection correlation.");
 
   MooseEnum ambient_properties("air", "air");
   params.addParam<MooseEnum>("ambient_properties", ambient_properties,
@@ -370,13 +367,13 @@ void CoaxialPipe1Phase::addMooseObjects() {
   if (!getParam<bool>("use_ambient_convection"))
     return;
 
-  auto vertical_vect = getParam<RealVectorValue>("vertical_vector");
-  if (vertical_vect.norm() < 1e-8)
+  auto gravity = getParam<RealVectorValue>("gravity_vector");
+  if (gravity.norm() < 1e-8)
     mooseError("The vertical vector must have magnitude greater than 0");
 
   auto v = getParam<RealVectorValue>("orientation");
   Real l{0.};
-  Real dot_prod{fabs(v * vertical_vect / (v.norm() * vertical_vect.norm()))};
+  Real dot_prod{fabs(v * gravity / (v.norm() * gravity.norm()))};
   std::string expression;
 
   if (dot_prod < 1e-8) { // horizontal pipe
@@ -422,10 +419,15 @@ void CoaxialPipe1Phase::addMooseObjects() {
     params.set<std::vector<std::string>>("functor_symbols") = {
         "rho", "beta", "mu", "k", "cp", "T_solid", "T_a", "L", "g"};
 
-    std::vector<std::string> functor_names{
-        std::to_string(rho),        std::to_string(beta), std::to_string(mu),
-        std::to_string(k),          std::to_string(cp),   "T_solid",
-        std::to_string(_T_ambient), std::to_string(l),    "9.81"};
+    std::vector<std::string> functor_names{std::to_string(rho),
+                                           std::to_string(beta),
+                                           std::to_string(mu),
+                                           std::to_string(k),
+                                           std::to_string(cp),
+                                           "T_solid",
+                                           std::to_string(_T_ambient),
+                                           std::to_string(l),
+                                           std::to_string(gravity.norm())};
     params.set<std::vector<std::string>>("functor_names") = functor_names;
     params.set<std::vector<SubdomainName>>("block") = {
         name() +

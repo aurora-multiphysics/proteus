@@ -31,7 +31,7 @@
     [test]
       type= PythonUnitTest
       input = test.py
-      test_case = TestCoaxialPipe.test_energy_balance_outer
+      test_case = TestCoaxialPipe.test_energy_balance_inner
       heavy=true
       prereq = energy_balance_inner/run
     []
