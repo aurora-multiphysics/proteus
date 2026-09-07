@@ -53,24 +53,24 @@ unset PETSC_DIR PETSC_ARCH
     --skip-submodule-update \
     --CXXOPTFLAGS="-O3 -march=native" \
     --COPTFLAGS="-O3 -march=native" \
-    --FOPTFLAGS="-O3 -march=native" | tee "$PROTEUS_DIR/log.petsc_build"
+    --FOPTFLAGS="-O3 -march=native" 2>&1 | tee "$PROTEUS_DIR/log.petsc_build"
 
 # Build libMesh
 
-./scripts/update_and_rebuild_libmesh.sh --with-mpi | tee "$PROTEUS_DIR/log.libmesh_build"
+./scripts/update_and_rebuild_libmesh.sh --with-mpi 2>&1 | tee "$PROTEUS_DIR/log.libmesh_build"
 
 # Build WASP
 
-./scripts/update_and_rebuild_wasp.sh | tee "$PROTEUS_DIR/log.wasp_build"
+./scripts/update_and_rebuild_wasp.sh 2>&1 | tee "$PROTEUS_DIR/log.wasp_build"
 
 # Configure AD
 # Derivative size should be the total of
 # 8 for each first order variable
 # 27 for each second order variable
 
-./configure --with-derivative-size=89 | tee "$PROTEUS_DIR/log.moose_configure"
+./configure --with-derivative-size=89 2>&1 | tee "$PROTEUS_DIR/log.moose_configure"
 
 cd "$PROTEUS_DIR" || exit
-make -j "$MOOSE_JOBS" | tee "$PROTEUS_DIR/log.proteus_build"
+make -j "$MOOSE_JOBS" 2>&1 | tee "$PROTEUS_DIR/log.proteus_build"
 
 echo "Installation complete."

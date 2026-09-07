@@ -45,24 +45,24 @@ unset PETSC_DIR PETSC_ARCH
     --COPTFLAGS="-O3 -march=cascadelake -mtune=cascadelake" \
     --FOPTFLAGS="-O3 -march=cascadelake -mtune=cascadelake" \
     --download-mumps=0 --download-superlu_dist=0 --with-64-bit-indices=1 \
-    --download-cmake
+    --download-cmake 2>&1 | tee "$PROTEUS_DIR/log.petsc_build"
 
 # Build libMesh
 
-METHODS="opt" ./scripts/update_and_rebuild_libmesh.sh --with-mpi
+METHODS="opt" ./scripts/update_and_rebuild_libmesh.sh --with-mpi 2>&1 | tee "$PROTEUS_DIR/log.libmesh_build"
 
 # Build WASP
 
-./scripts/update_and_rebuild_wasp.sh
+./scripts/update_and_rebuild_wasp.sh 2>&1 | tee "$PROTEUS_DIR/log.wasp_build"
 
 # Configure AD
 # Derivative size should be the total of
 # 8 for each first order variable
 # 27 for each second order variable
 
-./configure --with-derivative-size=89
+./configure --with-derivative-size=89 2>&1 | tee "$PROTEUS_DIR/log.moose_configure"
 
 cd $PROTEUS_DIR
-make -j $MOOSE_JOBS
+make -j $MOOSE_JOBS 2>&1 | tee "PROTEUS_DIR/log.proteus_build"
 
 echo "Installation complete."

@@ -39,29 +39,29 @@ cd $MOOSE_DIR
 unset PETSC_DIR PETSC_ARCH
 ./scripts/update_and_rebuild_petsc.sh --download-cmake \
 --download-kokkos=0 --download-kokkos-kernels=0 \
---download-libceed=0 | tee $PROTEUS_DIR/log.petsc_build
+--download-libceed=0 2>&1 | tee "$PROTEUS_DIR/log.petsc_build"
 
 # Build libMesh
 
 ./scripts/update_and_rebuild_libmesh.sh \
---with-mpi --disable-netgen | tee $PROTEUS_DIR/log.libmesh_build
+--with-mpi --disable-netgen 2>&1 | tee "$PROTEUS_DIR/log.libmesh_build"
 
 # Build WASP
 
-./scripts/update_and_rebuild_wasp.sh | tee $PROTEUS_DIR/log.wasp_build
+./scripts/update_and_rebuild_wasp.sh 2>&1 | tee "$PROTEUS_DIR/log.wasp_build"
 
 # Configure AD
 # Derivative size should be the total of
 # 8 for each first order variable
 # 27 for each second order variable
 
-./configure --with-derivative-size=89 | tee $PROTEUS_DIR/log.moose_configure
+./configure --with-derivative-size=89 2>&1 | tee "$PROTEUS_DIR/log.moose_configure"
 
 # Apply patch for Intel compilers
 
-git apply $PROTEUS_DIR/scripts/intel.patch
+git apply $PROTEUS_DIR/scripts/intel.patch 2>&1 | tee "$PROTEUS_DIR/log.intel_patch"
 
 cd $PROTEUS_DIR
-make -j $MOOSE_JOBS | tee $PROTEUS_DIR/log.proteus_build
+make -j $MOOSE_JOBS 2>&1 | tee "$PROTEUS_DIR/log.proteus_build"
 
 echo "Installation complete."
