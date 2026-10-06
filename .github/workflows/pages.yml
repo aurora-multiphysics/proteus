@@ -32,7 +32,7 @@ jobs:
   build-docs:
     runs-on: ubuntu-latest
     name: BuildDocsUbuntu
-    env:  
+    env:
       PRCOMMITSHA: ${{ github.event.pull_request.head.sha }}
       PRREPOSITORY: ${{ github.event.pull_request.head.repo.full_name }}
     steps:
@@ -40,10 +40,10 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ secrets.DOCKER_USERNAME }}/proteus:main          
+          images: ${{ secrets.DOCKER_USERNAME }}/proteus:main
       # First check out the repository to get the docker file
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@main
       # Print the context for this GitHub workflow
       - name: PrintGithubContext
         run: echo "${PRCOMMITSHA:-$GITHUB_SHA}" "${PRREPOSITORY:-$GITHUB_REPOSITORY}"
@@ -56,8 +56,8 @@ jobs:
                           docker/proteus
       - name: CopyStaticDocs
         run: |
-             docker run --name doccontainer -d ci-docs-ubuntu 
-             docker cp doccontainer:/opt/proteus/doc/build ${{ runner.temp }}/site        
+             docker run --name doccontainer -d ci-docs-ubuntu
+             docker cp doccontainer:/opt/proteus/doc/build ${{ runner.temp }}/site
       - name: UploadStaticDocs
         uses: actions/upload-pages-artifact@v3
         with:
@@ -74,4 +74,3 @@ jobs:
       - name: Deploy MooseDocs to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-

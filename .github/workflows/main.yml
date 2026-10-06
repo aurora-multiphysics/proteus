@@ -20,7 +20,7 @@ jobs:
     steps:
       # First check out the repository to get the docker file
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@main
       # Print the context for this GitHub workflow
       - name: PrintGithubContext
         run: echo "${PRCOMMITSHA:-$GITHUB_SHA}" "${PRREPOSITORY:-$GITHUB_REPOSITORY}"
