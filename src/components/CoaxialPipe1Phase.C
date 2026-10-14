@@ -1,12 +1,17 @@
 #include "CoaxialPipe1Phase.h"
 #include "Component1D.h"
+#include "Conversion.h"
 #include "FEProblemBase.h"
 #include "Factory.h"
+#include "FlowModel.h"
 #include "InputParameters.h"
+#include "MooseEnum.h"
 #include "MooseTypes.h"
 #include "Registry.h"
+#include "SubProblem.h"
 #include "THMProblem.h"
 #include <numeric>
+#include <string>
 
 registerMooseObject("ProteusApp", CoaxialPipe1Phase);
 
@@ -101,6 +106,17 @@ InputParameters CoaxialPipe1Phase::validParams() {
   params.addParam<FunctionName>(
       "outer_shell_Hw", "Manually specified HTC for annular pipe to shell.");
 
+  // Parameters for ambient convection
+  params.addParam<bool>("use_ambient_convection", false,
+                        "Whether to apply ambient convection to the external "
+                        "surface of the shell");
+  params.addParam<Real>("T_ambient", 298, "Ambient temperature [K].");
+  params.addParam<Real>("p_ambient", 101325, "Ambient pressure [Pa].");
+
+  MooseEnum ambient_properties("air", "air");
+  params.addParam<MooseEnum>("ambient_properties", ambient_properties,
+                             "Ambient fluid properties");
+
   // Add global parameter options
   params.addParam<UserObjectName>(
       "fp", "Global fluid properties. Overriden by inner_fp and outer_fp.");
@@ -122,7 +138,8 @@ InputParameters CoaxialPipe1Phase::validParams() {
 }
 
 CoaxialPipe1Phase::CoaxialPipe1Phase(const InputParameters &params)
-    : Coaxial1PhaseBase(params) {
+    : Coaxial1PhaseBase(params), _T_ambient(getParam<Real>("T_ambient")),
+      _p_ambient(getParam<Real>("p_ambient")) {
   // Add components
   AddInnerPipe(params);
   AddOuterAnnulus(params);
@@ -140,6 +157,10 @@ CoaxialPipe1Phase::CoaxialPipe1Phase(const InputParameters &params)
   AddHeatTransferConnection("outer", "tube", "OUTER", outer_radius);
   AddHeatTransferConnection("outer", "shell", "INNER",
                             params.get<Real>("shell_inner_radius"));
+
+  if (getParam<bool>("use_ambient_convection")) {
+    AddAmbientConvection();
+  }
 }
 
 void CoaxialPipe1Phase::AddInnerPipe(const InputParameters &params) {
@@ -322,4 +343,145 @@ void CoaxialPipe1Phase::AddHeatTransferConnection(
 
   getTHMProblem().addComponent(
       class_name, name() + "_" + flow_channel + "_" + hs, ht_params);
+}
+
+void CoaxialPipe1Phase::AddAmbientConvection() {
+
+  // Ambient convection
+  {
+    const std::string class_name = "HSBoundaryAmbientConvection";
+    auto params = _factory.getValidParams(class_name);
+    params.set<THMProblem *>("_thm_problem") = &getTHMProblem();
+
+    params.set<MooseFunctorName>("T_ambient") =
+        CreateFunctionFromValue("T_ambient", _T_ambient);
+    params.set<std::vector<BoundaryName>>("boundary") = {name() +
+                                                         "/shell:outer"};
+    params.set<std::string>("hs") = {name() + "/shell"};
+    params.set<MooseFunctorName>("htc_ambient") = "Hw";
+
+    getTHMProblem().addComponent(class_name, name() + "/conv_ambient", params);
+  }
+}
+
+void CoaxialPipe1Phase::addMooseObjects() {
+  if (!getParam<bool>("use_ambient_convection"))
+    return;
+
+  auto gravity = getParam<RealVectorValue>("gravity_vector");
+  if (gravity.norm() < 1e-8)
+    mooseError("The vertical vector must have magnitude greater than 0");
+
+  auto v = getParam<RealVectorValue>("orientation");
+  Real l{0.};
+  Real dot_prod{fabs(v * gravity / (v.norm() * gravity.norm()))};
+  std::string expression;
+
+  if (dot_prod < 1e-8) { // horizontal pipe
+    auto widths = getParam<std::vector<Real>>("shell_widths");
+    l = 2. * std::accumulate(widths.begin(), widths.end(),
+                             getParam<Real>("shell_inner_radius"));
+    expression = "pow(0.6 + (0.387*pow(Ra,1./6.))/pow(1 + "
+                 "pow(0.559/Pr,9./16.),8./27.), 2)";
+
+  } else if (fabs(dot_prod - 1) < 1e-8) { // vertical pipe
+    auto lengths = getParam<std::vector<Real>>("length");
+    l = std::accumulate(lengths.begin(), lengths.end(), 0.);
+    expression = "pow(0.825 + (0.387*pow(Ra,1./6.))/pow(1 + "
+                 "pow(0.492/Pr,9./16.),8/27), 2)";
+  } else {
+    mooseError("Ambient convection only usable for vertical "
+               "and horizontal pipes.");
+    return;
+  }
+
+  Real mu, k, cp, rho, R, gamma, beta;
+  if (getParam<MooseEnum>("ambient_properties") == "air") {
+    mu = 1.823e-05;
+    k = 0.02568;
+    R = 8.31446261815324 / 0.0289647;
+    gamma = 1.4;
+    cp = gamma * R / (gamma - 1);
+    rho = _p_ambient / (R * _T_ambient);
+    beta = 1 / _T_ambient;
+  }
+
+  mooseInfo("Ambient properties\n", "\tk: ", k, "\n\tmu: ", mu, "\n\tcp: ", cp,
+            "\n\tbeta: ", beta, "\n\trho: ", rho, "\n");
+
+  // Create Rayleigh number property
+  {
+    const std::string class_name = "ADParsedFunctorMaterial";
+    auto params = _factory.getValidParams(class_name);
+    params.set<FEProblemBase *>("_fe_problem_base") = &getTHMProblem();
+    params.set<std::string>("property_name") = "Ra";
+    params.set<std::string>("expression") =
+        "rho*beta*abs(T_solid-T_a)*L*L*L*g/(mu*k/(rho*cp))";
+    params.set<std::vector<std::string>>("functor_symbols") = {
+        "rho", "beta", "mu", "k", "cp", "T_solid", "T_a", "L", "g"};
+
+    std::vector<std::string> functor_names{
+        Moose::stringifyExact(rho),
+        Moose::stringifyExact(beta),
+        Moose::stringifyExact(mu),
+        Moose::stringifyExact(k),
+        Moose::stringifyExact(cp),
+        "T_solid",
+        Moose::stringifyExact(_T_ambient),
+        Moose::stringifyExact(l),
+        Moose::stringifyExact(gravity.norm())};
+    params.set<std::vector<std::string>>("functor_names") = functor_names;
+    params.set<std::vector<SubdomainName>>("block") = {
+        name() +
+        "/shell:" + getParam<std::vector<std::string>>("shell_names").back()};
+
+    getTHMProblem().addMaterial(class_name, name() + "/Ra_conv", params);
+  }
+
+  // Nusselt number
+  {
+    const std::string class_name = "ADParsedFunctorMaterial";
+    auto params = _factory.getValidParams(class_name);
+    params.set<FEProblemBase *>("_fe_problem_base") = &getTHMProblem();
+    params.set<std::string>("property_name") = "Nu";
+
+    params.set<std::string>("expression") = expression;
+
+    params.set<std::vector<std::string>>("functor_symbols") = {"Pr", "Ra"};
+    params.set<std::vector<std::string>>("functor_names") = {
+        Moose::stringifyExact(mu * cp / k), "Ra"};
+
+    params.set<std::vector<SubdomainName>>("block") = {
+        name() +
+        "/shell:" + getParam<std::vector<std::string>>("shell_names").back()};
+    getTHMProblem().addMaterial(class_name, name() + "/Nu_conv", params);
+  }
+
+  // HTC
+  {
+    const std::string class_name = "ADParsedFunctorMaterial";
+    auto params = _factory.getValidParams(class_name);
+    params.set<FEProblemBase *>("_fe_problem_base") = &getTHMProblem();
+    params.set<std::string>("property_name") = "Hw";
+    params.set<std::vector<SubdomainName>>("block") = {
+        name() +
+        "/shell:" + getParam<std::vector<std::string>>("shell_names").back()};
+
+    params.set<std::string>("expression") = "Nu*k/L";
+    params.set<std::vector<std::string>>("functor_symbols") = {"k", "L", "Nu"};
+    params.set<std::vector<std::string>>("functor_names") = {
+        Moose::stringifyExact(k), Moose::stringifyExact(l), "Nu"};
+    getTHMProblem().addMaterial(class_name, name() + "/Hw_conv", params);
+  }
+}
+
+FunctionName
+CoaxialPipe1Phase::CreateFunctionFromValue(const std::string &suffix,
+                                           const Real value) {
+  auto func_params = _factory.getValidParams("ConstantFunction");
+  func_params.set<Real>("value") = value;
+
+  auto func_name = name() + "_" + suffix;
+  getTHMProblem().addFunction("ConstantFunction", func_name, func_params);
+  return func_name;
 }

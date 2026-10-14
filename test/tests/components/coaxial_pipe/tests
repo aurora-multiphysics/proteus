@@ -31,7 +31,7 @@
     [test]
       type= PythonUnitTest
       input = test.py
-      test_case = TestCoaxialPipe.test_energy_balance_outer
+      test_case = TestCoaxialPipe.test_energy_balance_inner
       heavy=true
       prereq = energy_balance_inner/run
     []
@@ -49,5 +49,91 @@
       prereq = energy_balance_outer/run
     []
     requirement = "Checks that outer pipe conserved energy in isolation"
+  []
+  [ambient_convection]
+    [horizontal]
+      [run]
+        type = RunApp
+        input = ambient_convection.i
+        cli_args = "Outputs/file_base=ambient_convection_horizontal"
+      []
+      [test]
+        type = PythonUnitTest
+        input = test.py
+        test_case = TestCoaxialPipe.test_ambient_convection_horizontal
+        prereq = ambient_convection/horizontal/run
+      []
+      requirement = "The system shall compute ambient natural convection for a horizontal coaxial pipe using its outer diameter."
+    []
+    [vertical]
+      [run]
+        type = RunApp
+        input = ambient_convection.i
+        cli_args = "Components/coaxial/orientation='0 0 1' Outputs/file_base=ambient_convection_vertical"
+      []
+      [test]
+        type = PythonUnitTest
+        input = test.py
+        test_case = TestCoaxialPipe.test_ambient_convection_vertical
+        prereq = ambient_convection/vertical/run
+      []
+      requirement = "The system shall compute ambient natural convection for a vertical coaxial pipe using its total axial length."
+    []
+    [vertical_reversed]
+      [run]
+        type = RunApp
+        input = ambient_convection.i
+        cli_args = "Components/coaxial/orientation='0 0 -1' Outputs/file_base=ambient_convection_vertical_reversed"
+      []
+      [test]
+        type = PythonUnitTest
+        input = test.py
+        test_case = TestCoaxialPipe.test_ambient_convection_vertical_reversed
+        prereq = ambient_convection/vertical_reversed/run
+      []
+      requirement = "The system shall compute identical ambient convection for either vertical pipe direction."
+    []
+    [cold_surface]
+      [run]
+        type = RunApp
+        input = ambient_convection.i
+        cli_args = "T_solid=250 Outputs/file_base=ambient_convection_cold_surface"
+      []
+      [test]
+        type = PythonUnitTest
+        input = test.py
+        test_case = TestCoaxialPipe.test_ambient_convection_cold_surface
+        prereq = ambient_convection/cold_surface/run
+      []
+      requirement = "The system shall compute finite ambient convection properties when the pipe is colder than its environment."
+    []
+    [gravity_magnitude]
+      [run]
+        type = RunApp
+        input = ambient_convection.i
+        cli_args = "Components/coaxial/gravity_vector='0 0 -4.905' Outputs/file_base=ambient_convection_gravity_magnitude"
+      []
+      [test]
+        type = PythonUnitTest
+        input = test.py
+        test_case = TestCoaxialPipe.test_ambient_convection_gravity_magnitude
+        prereq = ambient_convection/gravity_magnitude/run
+      []
+      requirement = "The system shall use the configured gravity magnitude in the ambient convection correlation."
+    []
+    [oblique]
+      type = RunException
+      input = ambient_convection.i
+      cli_args = "Components/coaxial/orientation='1 0 1'"
+      expect_err = "Ambient convection only usable for vertical and horizontal pipes."
+      requirement = "The system shall reject ambient convection for an oblique coaxial pipe."
+    []
+    [zero_gravity]
+      type = RunException
+      input = ambient_convection.i
+      cli_args = "Components/coaxial/gravity_vector='0 0 0'"
+      expect_err = "magnitude greater than 0"
+      requirement = "The system shall reject ambient convection when gravity has zero magnitude."
+    []
   []
 []
